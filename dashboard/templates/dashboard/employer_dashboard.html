@@ -1,0 +1,693 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-dashboard-page {
+        padding: 42px 0 70px;
+    }
+
+    /* Dashboard Header */
+
+    .nc-dashboard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .nc-dashboard-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--nc-primary, #159a78);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .nc-dashboard-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .nc-post-job-btn,
+    .nc-create-company-btn {
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: 0 7px 18px rgba(21, 154, 120, 0.13);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-post-job-btn:hover,
+    .nc-create-company-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(21, 154, 120, 0.18);
+    }
+
+    /* Company Warning */
+
+    .nc-company-warning {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 0;
+        border-radius: 13px;
+        padding: 14px 17px;
+        margin-bottom: 25px;
+    }
+
+    .nc-company-warning i {
+        font-size: 1.1rem;
+    }
+
+    /* Stats */
+
+    .nc-stat-card {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 19px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-stat-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(21, 154, 120, 0.22);
+        box-shadow: 0 12px 30px rgba(23, 34, 53, 0.08);
+    }
+
+    .nc-stat-icon {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.15rem;
+    }
+
+    .nc-stat-icon.success {
+        background: #eaf8f0;
+        color: #198754;
+    }
+
+    .nc-stat-icon.info {
+        background: #eef6ff;
+        color: #2778c8;
+    }
+
+    .nc-stat-icon.warning {
+        background: #fff7e8;
+        color: #d98b00;
+    }
+
+    .nc-stat-label {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin: 0 0 3px;
+    }
+
+    .nc-stat-value {
+        color: var(--nc-heading, #172235);
+        font-size: 1.45rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin: 0;
+    }
+
+    .nc-secondary-stats {
+        margin-top: 2px;
+    }
+
+    /* Content Cards */
+
+    .nc-dashboard-card {
+        height: 100%;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        overflow: hidden;
+    }
+
+    .nc-dashboard-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+        background: #ffffff;
+    }
+
+    .nc-card-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .nc-card-title i {
+        color: var(--nc-primary, #159a78);
+        font-size: 1.05rem;
+    }
+
+    .nc-dashboard-card-body {
+        padding: 4px 22px 18px;
+    }
+
+    /* Lists */
+
+    .nc-dashboard-list {
+        margin: 0;
+    }
+
+    .nc-dashboard-list .list-group-item {
+        padding: 17px 0;
+        border-color: #edf2ef;
+        background: transparent;
+    }
+
+    .nc-dashboard-list .list-group-item:last-child {
+        border-bottom: 0;
+    }
+
+    .nc-job-link,
+    .nc-applicant-link {
+        color: var(--nc-heading, #172235);
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.18s ease;
+    }
+
+    .nc-job-link:hover,
+    .nc-applicant-link:hover {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-item-meta {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.78rem;
+        margin-top: 4px;
+    }
+
+    .nc-status-badge {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.73rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Empty List */
+
+    .nc-list-empty {
+        padding: 30px 0 15px;
+        text-align: center;
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-list-empty i {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+        color: var(--nc-primary, #159a78);
+    }
+
+    /* Responsive */
+
+    @media (max-width: 767.98px) {
+
+        .nc-dashboard-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-dashboard-header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nc-dashboard-title {
+            font-size: 1.55rem;
+        }
+
+        .nc-post-job-btn,
+        .nc-create-company-btn {
+            width: 100%;
+        }
+
+        .nc-stat-card {
+            padding: 16px;
+        }
+
+        .nc-stat-icon {
+            width: 42px;
+            height: 42px;
+            flex-basis: 42px;
+        }
+
+        .nc-stat-value {
+            font-size: 1.3rem;
+        }
+
+        .nc-dashboard-card-header {
+            padding: 18px;
+        }
+
+        .nc-dashboard-card-body {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .nc-dashboard-list .list-group-item {
+            padding: 15px 0;
+        }
+    }
+</style>
+
+
+<div class="nc-dashboard-page">
+
+    <div class="container">
+
+        <!-- Dashboard Header -->
+
+        <div class="nc-dashboard-header reveal">
+
+            <div>
+
+                <div class="nc-dashboard-eyebrow">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </div>
+
+                <h2 class="nc-dashboard-title">
+                    {{ company.name|default:"Employer Dashboard" }}
+                </h2>
+
+            </div>
+
+
+            {% if company %}
+
+                <a
+                    href="{% url 'jobs:create' %}"
+                    class="btn btn-primary nc-post-job-btn"
+                >
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Post a Job
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'companies:create' %}"
+                    class="btn btn-primary nc-create-company-btn"
+                >
+                    Create Company Profile
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if not company %}
+
+            <div class="alert alert-warning nc-company-warning reveal">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                <span>
+                    You need to create a company profile before you can post jobs.
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- Primary Statistics -->
+
+        <div class="row g-3 mb-4 stagger-grid">
+
+            <div class="col-md-3 col-6">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon">
+                        <i class="bi bi-briefcase"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Total Jobs
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ total_jobs }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3 col-6">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon success">
+                        <i class="bi bi-broadcast"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Active Jobs
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ active_jobs }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3 col-6">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon info">
+                        <i class="bi bi-people"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Total Applications
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ total_applications }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3 col-6">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon warning">
+                        <i class="bi bi-hourglass-split"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Pending Review
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ pending_applications }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Profile Statistics -->
+
+        <div class="row g-3 mb-4 stagger-grid">
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Profiles With Resume
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ profiles_with_resume }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon info">
+                        <i class="bi bi-linkedin"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Profiles With LinkedIn
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ profiles_with_linkedin }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon">
+                        <i class="bi bi-github"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Profiles With GitHub
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ profiles_with_github }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent Activity -->
+
+        <div class="row g-4">
+
+            <!-- Recent Jobs -->
+
+            <div class="col-lg-7">
+
+                <div class="nc-dashboard-card reveal">
+
+                    <div class="nc-dashboard-card-header">
+
+                        <h5 class="nc-card-title">
+                            <i class="bi bi-briefcase-fill"></i>
+                            Your Recent Jobs
+                        </h5>
+
+                    </div>
+
+
+                    <div class="nc-dashboard-card-body">
+
+                        {% if recent_jobs %}
+
+                            <ul class="list-group list-group-flush nc-dashboard-list">
+
+                                {% for job in recent_jobs %}
+
+                                    <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+
+                                        <div>
+
+                                            <a
+                                                href="{% url 'jobs:detail' job.pk %}"
+                                                class="nc-job-link"
+                                            >
+                                                {{ job.title }}
+                                            </a>
+
+                                            <p class="nc-item-meta mb-0">
+                                                {{ job.application_count }}
+                                                application{{ job.application_count|pluralize }}
+                                            </p>
+
+                                        </div>
+
+
+                                        <span
+                                            class="badge badge-status bg-{{ job.badge_class }} nc-status-badge"
+                                        >
+                                            {{ job.get_status_display }}
+                                        </span>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <div class="nc-list-empty">
+
+                                <i class="bi bi-briefcase"></i>
+
+                                <p class="mb-0">
+                                    You haven't posted any jobs yet.
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Applications -->
+
+            <div class="col-lg-5">
+
+                <div class="nc-dashboard-card reveal">
+
+                    <div class="nc-dashboard-card-header">
+
+                        <h5 class="nc-card-title">
+                            <i class="bi bi-people-fill"></i>
+                            Recent Applications
+                        </h5>
+
+                    </div>
+
+
+                    <div class="nc-dashboard-card-body">
+
+                        {% if recent_applications %}
+
+                            <ul class="list-group list-group-flush nc-dashboard-list">
+
+                                {% for application in recent_applications %}
+
+                                    <li class="list-group-item">
+
+                                        <a
+                                            href="{% url 'applications:detail' application.pk %}"
+                                            class="nc-applicant-link"
+                                        >
+                                            {{ application.applicant.get_full_name|default:application.applicant.username }}
+                                        </a>
+
+                                        <p class="nc-item-meta mb-0">
+                                            applied for {{ application.job.title }}
+                                        </p>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <div class="nc-list-empty">
+
+                                <i class="bi bi-person-lines-fill"></i>
+
+                                <p class="mb-0">
+                                    No applications received yet.
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

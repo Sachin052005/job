@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block title %}Edit Profile - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================
+   EDIT PROFILE PAGE
+   UI ONLY
+========================================= */
+
+.profile-edit-page {
+    padding: 45px 0 70px;
+    background: #f7faf8;
+    min-height: calc(100vh - 72px);
+}
+
+/* Main card */
+.profile-edit-card {
+    border: 1px solid #e1e8e4;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
+    overflow: hidden;
+}
+
+/* Header */
+.profile-edit-header {
+    padding: 30px 35px;
+    border-bottom: 1px solid #e8eeeb;
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #fbfdfc 100%
+    );
+}
+
+.profile-edit-header h3 {
+    margin: 0;
+    color: #172235;
+    font-family: "Manrope", sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+.profile-edit-header p {
+    margin: 8px 0 0;
+    color: #8994a3;
+    font-size: 0.9rem;
+}
+
+/* Form area */
+.profile-edit-form {
+    padding: 35px;
+}
+
+/* Section headings */
+.profile-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 20px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid #edf1ef;
+    color: #172235;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.profile-section-title::before {
+    content: "";
+    width: 4px;
+    height: 17px;
+    border-radius: 10px;
+    background: #159a78;
+}
+
+/* Labels */
+.profile-edit-form .form-label {
+    margin-bottom: 7px;
+    color: #344054;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+/* Inputs */
+.profile-edit-form .form-control {
+    min-height: 45px;
+    padding: 10px 13px;
+    border: 1px solid #dfe7e3;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #172235;
+    font-size: 0.88rem;
+    box-shadow: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-edit-form textarea.form-control {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.profile-edit-form .form-control:hover {
+    border-color: #c7d6d0;
+}
+
+.profile-edit-form .form-control:focus {
+    border-color: #159a78;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+    outline: none;
+}
+
+.profile-edit-form .form-control::placeholder {
+    color: #a3adb8;
+}
+
+/* File inputs */
+.profile-edit-form input[type="file"] {
+    padding: 7px 10px;
+}
+
+.profile-edit-form input[type="file"]::file-selector-button {
+    margin-right: 10px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: #e8f6f1;
+    color: #08785d;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Form helper */
+.profile-edit-form .form-text {
+    margin-top: 7px;
+    color: #8994a3;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+/* Professional links helper text */
+.profile-helper {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #8994a3;
+    font-size: 0.8rem;
+}
+
+/* Icons inside labels */
+.profile-edit-form .form-label i {
+    color: #159a78;
+}
+
+/* Alert */
+.profile-edit-alert {
+    margin-bottom: 28px;
+    padding: 13px 15px;
+    border: 1px solid #cce9df;
+    border-radius: 11px;
+    background: #f0faf6;
+    color: #08785d;
+    font-size: 0.84rem;
+}
+
+.profile-edit-alert i {
+    color: #159a78;
+}
+
+/* Validation */
+.profile-edit-form .invalid-feedback {
+    margin-top: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.profile-edit-form .is-invalid {
+    border-color: #dc6b6b;
+}
+
+.profile-edit-form .is-invalid:focus {
+    border-color: #dc6b6b;
+    box-shadow: 0 0 0 3px rgba(220, 107, 107, 0.10);
+}
+
+/* Buttons */
+.profile-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 25px;
+    border-top: 1px solid #edf1ef;
+}
+
+.profile-form-actions .btn {
+    min-height: 44px;
+    padding: 9px 22px;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.profile-form-actions .btn-primary {
+    border: 0;
+    background: #159a78;
+    box-shadow: 0 5px 14px rgba(21, 154, 120, 0.16);
+}
+
+.profile-form-actions .btn-primary:hover {
+    background: #08785d;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(21, 154, 120, 0.22);
+}
+
+.profile-form-actions .btn-outline-secondary {
+    border-color: #d9e2de;
+    color: #586678;
+    background: #ffffff;
+}
+
+.profile-form-actions .btn-outline-secondary:hover {
+    border-color: #c4d2cc;
+    background: #f7faf8;
+    color: #344054;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 767.98px) {
+
+    .profile-edit-page {
+        padding: 25px 0 45px;
+    }
+
+    .profile-edit-card {
+        border-radius: 17px;
+    }
+
+    .profile-edit-header {
+        padding: 24px 20px;
+    }
+
+    .profile-edit-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .profile-edit-form {
+        padding: 24px 20px;
+    }
+
+    .profile-section-title {
+        margin-top: 5px;
+    }
+
+    .profile-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-form-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .profile-edit-page {
+        padding: 18px 0 35px;
+    }
+
+    .profile-edit-header {
+        padding: 21px 17px;
+    }
+
+    .profile-edit-form {
+        padding: 21px 17px;
+    }
+
+    .profile-edit-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .profile-edit-form .form-control {
+        min-height: 43px;
+        font-size: 0.84rem;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .profile-edit-form .form-control,
+    .profile-form-actions .btn {
+        transition: none !important;
+    }
+}
+
+</style>
+
+<div class="profile-edit-page">
+
+
+<div class="container">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="profile-edit-card">
+
+                <div class="profile-edit-header">
+                    <h3>Edit Profile</h3>
+                </div>
+
+                <div class="profile-edit-form">
+
+                    {% if next_url %}
+                    <div class="alert alert-info profile-edit-alert reveal">
+                        <i class="bi bi-info-circle me-1"></i>Complete your profile to continue with Easy Apply. You'll be returned to the job afterward.
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+
+                        {% csrf_token %}
+
+                        {% if next_url %}
+                        <input type="hidden" name="next" value="{{ next_url }}">
+                        {% endif %}
+
+                        <h6 class="profile-section-title">
+                            Account
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                {{ user_form.first_name|add_class:"form-control" }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                {{ user_form.last_name|add_class:"form-control" }}
+                            </div>
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label">Email</label>
+
+                            {{ user_form.email|add_class:"form-control" }}
+
+                            {% for error in user_form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <h6 class="profile-section-title">
+                            Profile
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone</label>
+                                {{ form.phone|add_class:"form-control" }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Location</label>
+                                {{ form.location|add_class:"form-control" }}
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Headline</label>
+                            {{ form.headline|add_class:"form-control" }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Summary</label>
+                            {{ form.summary|add_class:"form-control" }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Skills (comma-separated)</label>
+                            {{ form.skills|add_class:"form-control" }}
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Years of Experience</label>
+                                {{ form.experience_years|add_class:"form-control" }}
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">Profile Photo</label>
+
+                                {{ form.photo|add_class:"form-control" }}
+
+                                {% for error in form.photo.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">Resume</label>
+
+                                {{ form.resume|add_class:"form-control" }}
+
+                                {% for error in form.resume.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                                <div class="form-text">
+                                    PDF or DOCX recommended for automatic ATS analysis.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <h6 class="profile-section-title">
+                            Professional Links
+                        </h6>
+
+                        <p class="profile-helper">
+                            Optional, but recommended - used for Easy Apply and profile completeness.
+                        </p>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    <i class="bi bi-linkedin me-1"></i>LinkedIn URL
+                                </label>
+
+                                {{ form.linkedin_url|add_class:"form-control" }}
+
+                                {% for error in form.linkedin_url.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    <i class="bi bi-github me-1"></i>GitHub URL
+                                </label>
+
+                                {{ form.github_url|add_class:"form-control" }}
+
+                                {% for error in form.github_url.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    <i class="bi bi-globe me-1"></i>Portfolio URL
+                                </label>
+
+                                {{ form.portfolio_url|add_class:"form-control" }}
+
+                                {% for error in form.portfolio_url.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    <i class="bi bi-link-45deg me-1"></i>Personal Website URL
+                                </label>
+
+                                {{ form.website_url|add_class:"form-control" }}
+
+                                {% for error in form.website_url.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="profile-form-actions">
+
+                            <button type="submit" class="btn btn-primary">
+                                Save Changes
+                            </button>
+
+                            <a href="{% url 'accounts:profile' %}"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

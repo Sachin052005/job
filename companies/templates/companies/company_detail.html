@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.name }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-company-page {
+        padding: 42px 0 70px;
+    }
+
+    /* Company Header */
+
+    .nc-company-hero {
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 42px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
+    }
+
+    .nc-company-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(
+            90deg,
+            var(--nc-primary, #159a78),
+            var(--nc-primary-dark, #08785d)
+        );
+    }
+
+    .nc-company-main {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    .nc-company-identity {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-width: 0;
+    }
+
+    .nc-company-logo {
+        width: 82px;
+        height: 82px;
+        flex: 0 0 82px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 20px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        border: 1px solid rgba(21, 154, 120, 0.12);
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .nc-company-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-company-name {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 7px;
+    }
+
+    .nc-company-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        color: var(--nc-text, #586678);
+        margin-bottom: 7px;
+    }
+
+    .nc-company-meta i {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-company-website {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--nc-primary, #159a78);
+        font-weight: 600;
+        text-decoration: none;
+        word-break: break-word;
+    }
+
+    .nc-company-website:hover {
+        color: var(--nc-primary-dark, #08785d);
+        text-decoration: underline;
+    }
+
+    .nc-edit-company-btn {
+        border-radius: 10px;
+        padding: 10px 17px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .nc-company-description {
+        position: relative;
+        margin-top: 28px;
+        padding-top: 25px;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+        color: var(--nc-text, #586678);
+        line-height: 1.8;
+    }
+
+    /* Jobs Section */
+
+    .nc-positions-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .nc-section-label {
+        color: var(--nc-primary, #159a78);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .nc-positions-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0;
+    }
+
+    .nc-job-grid {
+        margin-top: 0;
+    }
+
+    /* Empty State */
+
+    .nc-company-empty {
+        padding: 70px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+    }
+
+    .nc-company-empty-icon {
+        width: 82px;
+        height: 82px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 22px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-company-empty p {
+        color: var(--nc-text, #586678);
+    }
+
+    /* Responsive */
+
+    @media (max-width: 767.98px) {
+        .nc-company-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-company-hero {
+            padding: 24px 20px;
+            border-radius: 19px;
+            margin-bottom: 32px;
+        }
+
+        .nc-company-main {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .nc-company-identity {
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .nc-company-logo {
+            width: 68px;
+            height: 68px;
+            flex-basis: 68px;
+            border-radius: 16px;
+            font-size: 1.6rem;
+        }
+
+        .nc-company-name {
+            font-size: 1.55rem;
+        }
+
+        .nc-edit-company-btn {
+            width: 100%;
+        }
+
+        .nc-positions-title {
+            font-size: 1.35rem;
+        }
+
+        .nc-company-empty {
+            padding: 55px 20px;
+        }
+    }
+</style>
+
+
+<div class="nc-company-page">
+
+    <div class="container">
+
+        <!-- Company Header -->
+
+        <div class="nc-company-hero reveal">
+
+            <div class="nc-company-main">
+
+                <div class="nc-company-identity">
+
+                    <div class="nc-company-logo">
+
+                        {% if company.logo %}
+
+                            <img
+                                src="{{ company.logo.url }}"
+                                alt="{{ company.name }}"
+                            >
+
+                        {% else %}
+
+                            {{ company.name|slice:":1" }}
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <h2 class="nc-company-name">
+                            {{ company.name }}
+                        </h2>
+
+                        <p class="nc-company-meta mb-2">
+
+                            {% if company.industry %}
+                                <span>{{ company.industry }}</span>
+                                <span>&middot;</span>
+                            {% endif %}
+
+                            {% if company.location %}
+                                <span>
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ company.location }}
+                                </span>
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if company.website %}
+
+                            <a
+                                href="{{ company.website }}"
+                                target="_blank"
+                                rel="noopener"
+                                class="nc-company-website small"
+                            >
+                                <i class="bi bi-globe2"></i>
+                                {{ company.website }}
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                {% if user.is_authenticated and user == company.owner %}
+
+                    <a
+                        href="{% url 'companies:edit' company.slug %}"
+                        class="btn btn-outline-primary nc-edit-company-btn"
+                    >
+                        <i class="bi bi-pencil me-1"></i>
+                        Edit Company
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if company.description %}
+
+                <div class="nc-company-description">
+
+                    <p class="mb-0">
+                        {{ company.description|linebreaks }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Open Positions -->
+
+        <div class="nc-positions-header reveal">
+
+            <div>
+
+                <div class="nc-section-label">
+                    <i class="bi bi-briefcase-fill me-1"></i>
+                    Careers
+                </div>
+
+                <h4 class="nc-positions-title">
+                    Open Positions at {{ company.name }}
+                </h4>
+
+            </div>
+
+        </div>
+
+
+        {% if page_obj.object_list %}
+
+            <div class="row g-4 nc-job-grid stagger-grid">
+
+                {% for job in page_obj %}
+
+                    <div class="col-md-6 col-lg-4">
+
+                        {% include "components/job_card.html" %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+            <!-- Empty State -->
+
+            <div class="nc-company-empty reveal">
+
+                <div class="nc-company-empty-icon">
+
+                    <i class="bi bi-briefcase display-1"></i>
+
+                </div>
+
+                <p class="mt-4 mb-0">
+                    No open positions right now.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

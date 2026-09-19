@@ -1,0 +1,171 @@
+<style>
+    .nc-profile-card {
+        position: relative;
+        overflow: hidden;
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.055);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-profile-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-profile-card-body {
+        padding: 28px 22px 24px;
+        text-align: center;
+    }
+
+    .nc-profile-avatar {
+        width: 88px;
+        height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin: 0 auto 17px;
+        border-radius: 22px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        border: 1px solid rgba(21, 154, 120, 0.14);
+        color: var(--nc-primary, #159a78);
+        font-size: 2rem;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(23, 34, 53, 0.07);
+    }
+
+    .nc-profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-profile-name {
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.4;
+        margin-bottom: 5px;
+    }
+
+    .nc-profile-headline {
+        min-height: 21px;
+        color: var(--nc-text, #586678);
+        font-size: 0.78rem;
+        line-height: 1.5;
+        margin-bottom: 17px;
+    }
+
+    .nc-profile-progress {
+        height: 7px;
+        overflow: hidden;
+        margin-bottom: 9px;
+        border-radius: 999px;
+        background: #edf3f0;
+    }
+
+    .nc-profile-progress .progress-bar {
+        width: 0;
+        height: 100%;
+        border-radius: 999px;
+        background: var(--nc-primary, #159a78);
+        transition: width 0.7s ease;
+    }
+
+    .nc-profile-completion {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.72rem;
+        margin: 0;
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-profile-card-body {
+            padding: 25px 20px 22px;
+        }
+
+        .nc-profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 19px;
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+
+<div class="nc-profile-card">
+
+    <div class="nc-profile-card-body">
+
+        <div class="nc-profile-avatar">
+
+            {% if profile.photo %}
+
+                <img
+                    src="{{ profile.photo.url }}"
+                    alt="{{ profile.user.username }}"
+                >
+
+            {% else %}
+
+                {{ profile.user.username|slice:":1"|upper }}
+
+            {% endif %}
+
+        </div>
+
+
+        <h5 class="nc-profile-name">
+            {{ profile.user.get_full_name|default:profile.user.username }}
+        </h5>
+
+
+        <p class="nc-profile-headline">
+            {{ profile.headline|default:profile.get_role_display }}
+        </p>
+
+
+        <div
+            class="progress nc-profile-progress"
+            role="progressbar"
+            aria-valuenow="{{ profile.completion_percent }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+        >
+            <div
+                class="progress-bar"
+                data-progress="{{ profile.completion_percent }}"
+            ></div>
+        </div>
+
+
+        <p class="nc-profile-completion">
+            Profile {{ profile.completion_percent }}% complete
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".nc-profile-progress .progress-bar[data-progress]").forEach(function (bar) {
+            var value = parseFloat(bar.getAttribute("data-progress")) || 0;
+
+            value = Math.max(0, Math.min(100, value));
+
+            bar.style.width = value + "%";
+        });
+    });
+</script>

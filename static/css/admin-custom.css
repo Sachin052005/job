@@ -1,0 +1,528 @@
+/* =========================================================
+   NammaCareer - Jazzmin Login Page
+   Screenshot Style
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.login-page {
+    background: #f7faf8 !important;
+    color: #586678 !important;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.login-logo {
+    width: 100% !important;
+    margin: 0 0 15px 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.login-logo a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.login-logo img:first-of-type {
+    display: block !important;
+
+    width: 80px !important;
+    height: 80px !important;
+
+    max-width: 80px !important;
+    max-height: 80px !important;
+
+    margin: 0 auto !important;
+    padding: 0 !important;
+
+    object-fit: contain !important;
+
+    border-radius: 50% !important;
+}
+
+.login-logo img:not(:first-of-type) {
+    display: none !important;
+}
+
+
+/* =========================================================
+   LOGIN BOX
+   ========================================================= */
+
+.login-box {
+    width: 100% !important;
+    max-width: 420px !important;
+
+    margin: 15px auto 30px !important;
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   DARK LOGIN CARD
+   ========================================================= */
+
+.login-box .card {
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #222629 !important;
+
+    border: none !important;
+    border-radius: 15px !important;
+
+    box-shadow:
+        0 15px 35px rgba(23, 34, 53, 0.14) !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   CARD BODY - INNER SPACING
+   ========================================================= */
+
+.login-box .card-body {
+    padding: 32px 30px 30px !important;
+}
+
+
+/* =========================================================
+   WELCOME MESSAGE
+   ========================================================= */
+
+.login-box .login-box-msg {
+    display: block !important;
+
+    margin: 0 0 22px !important;
+    padding: 0 !important;
+
+    color: #ffffff !important;
+
+    font-size: 14px !important;
+    font-weight: 500 !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.login-box form {
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.login-box .form-group {
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   GAP BETWEEN USERNAME AND PASSWORD
+   ========================================================= */
+
+.login-box .form-group + .form-group {
+    margin-top: 10px !important;
+}
+
+
+/* =========================================================
+   HIDE LABELS
+   ========================================================= */
+
+.login-box label {
+    display: none !important;
+}
+
+
+/* =========================================================
+   INPUT GROUP
+   ========================================================= */
+
+.login-box .input-group {
+    position: relative !important;
+
+    display: block !important;
+
+    width: 100% !important;
+    height: 46px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   USERNAME / PASSWORD INPUT
+   ========================================================= */
+
+.login-box .input-group .form-control,
+.login-box .input-group input[type="text"],
+.login-box .input-group input[type="email"],
+.login-box .input-group input[type="password"] {
+
+    display: block !important;
+
+    width: 100% !important;
+    height: 46px !important;
+
+    margin: 0 !important;
+
+    padding: 10px 58px 10px 14px !important;
+
+    background: #303b4f !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #dfe5eb !important;
+    border-radius: 9px !important;
+
+    outline: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box !important;
+
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.login-box .form-control::placeholder {
+    color: #c1c8d1 !important;
+    opacity: 1 !important;
+}
+
+
+/* =========================================================
+   RIGHT-SIDE ICON CONTAINER
+   ========================================================= */
+
+.login-box .input-group-prepend {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 10 !important;
+}
+
+
+/* =========================================================
+   ICON BOX
+   ========================================================= */
+
+.login-box .input-group-text {
+    width: 46px !important;
+    height: 46px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #f1f4f5 !important;
+
+    color: #8795a7 !important;
+
+    border: 1px solid #dfe5eb !important;
+
+    border-radius: 0 9px 9px 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.login-box .input-group-text i {
+    width: 18px !important;
+    height: 18px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #8795a7 !important;
+
+    font-size: 16px !important;
+    line-height: 18px !important;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
+
+.login-box .input-group:focus-within .form-control {
+    background: #303b4f !important;
+
+    color: #ffffff !important;
+
+    border-color: #159a78 !important;
+
+    box-shadow: none !important;
+}
+
+.login-box .input-group:focus-within .input-group-text {
+    background: #f1f4f5 !important;
+
+    color: #159a78 !important;
+
+    border-color: #159a78 !important;
+}
+
+.login-box .input-group:focus-within .input-group-text i {
+    color: #159a78 !important;
+}
+
+
+/* =========================================================
+   REMEMBER ME - GAP FROM PASSWORD
+   ========================================================= */
+
+.login-box .icheck-primary {
+    width: 100% !important;
+
+    margin: 18px 0 !important;
+    padding: 0 !important;
+
+    color: #b7c0cc !important;
+
+    font-size: 13px !important;
+}
+
+
+/* =========================================================
+   REMEMBER ME TEXT
+   ========================================================= */
+
+.login-box .icheck-primary label {
+    display: inline-block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #b7c0cc !important;
+
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+   ========================================================= */
+
+.login-box button[type="submit"],
+.login-box .btn-primary {
+
+    width: 100% !important;
+    height: 46px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 10px 16px !important;
+
+    background: #159a78 !important;
+
+    color: #ffffff !important;
+
+    border: none !important;
+    border-radius: 9px !important;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+
+    box-shadow: none !important;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease !important;
+}
+
+
+/* =========================================================
+   BUTTON HOVER
+   ========================================================= */
+
+.login-box button[type="submit"]:hover,
+.login-box .btn-primary:hover {
+    background: #08785d !important;
+
+    transform: none !important;
+
+    box-shadow: none !important;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+.login-box a {
+    color: #159a78 !important;
+
+    font-weight: 600 !important;
+
+    transition: color 0.2s ease !important;
+}
+
+.login-box a:hover {
+    color: #20b88f !important;
+
+    text-decoration: none !important;
+}
+
+
+/* =========================================================
+   BOTTOM LINKS / ACTION AREA
+   ========================================================= */
+
+.login-box .row {
+    margin-top: 18px !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.login-box .row > div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+
+/* =========================================================
+   ALERT
+   ========================================================= */
+
+.login-box .alert {
+    margin: 0 0 12px !important;
+
+    padding: 9px 12px !important;
+
+    background: #303b4f !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #23b663 !important;
+
+    border-radius: 8px !important;
+
+    font-size: 13px !important;
+}
+
+/* =========================================================
+   REMOVE USERNAME / PASSWORD ICONS
+   ========================================================= */
+
+.login-box .input-group-prepend,
+.login-box .input-group-text {
+    display: none !important;
+}
+
+/* Remove extra space reserved for the icon */
+
+.login-box .input-group .form-control,
+.login-box .input-group input[type="text"],
+.login-box .input-group input[type="email"],
+.login-box .input-group input[type="password"] {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    border-radius: 9px !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+    .login-box {
+        width: 92% !important;
+        max-width: 92% !important;
+
+        margin: 12px auto 25px !important;
+    }
+
+    .login-box .card-body {
+        padding: 27px 22px 28px !important;
+    }
+
+    .login-logo {
+        margin-bottom: 12px !important;
+    }
+
+    .login-logo img:first-of-type {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    .login-box .login-box-msg {
+        margin-bottom: 20px !important;
+    }
+
+    .login-box .input-group,
+    .login-box .input-group-prepend,
+    .login-box .input-group-text {
+        height: 46px !important;
+    }
+
+    .login-box .input-group .form-control {
+        height: 46px !important;
+        padding-right: 58px !important;
+    }
+}

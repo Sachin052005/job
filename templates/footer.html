@@ -1,0 +1,388 @@
+{% load static %}
+
+<footer class="app-footer mt-5">
+
+    <div class="container">
+
+        <div class="footer-main">
+
+            <div class="row g-4">
+
+                <!-- Brand -->
+                <div class="col-md-4">
+
+                    <div class="footer-brand">
+
+                        <h5 class="footer-brand-title">
+                            <img
+                                src="{% static 'images/logo.png' %}"
+                                alt="NammaCareer"
+                                class="footer-logo"
+                            >
+                            <span>NammaCareer</span>
+                        </h5>
+
+                        <p class="footer-description mb-0">
+                            Connecting talented job seekers with great employers.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Quick Links -->
+                <div class="col-md-4">
+
+                    <div class="footer-column">
+
+                        <h6>Quick Links</h6>
+
+                        <ul class="list-unstyled mb-0">
+
+                            <li>
+                                <a href="{% url 'jobs:list' %}">
+                                    <i class="bi bi-arrow-right"></i>
+                                    Browse Jobs
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{% url 'companies:list' %}">
+                                    <i class="bi bi-arrow-right"></i>
+                                    Companies
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{% url 'accounts:register' %}">
+                                    <i class="bi bi-arrow-right"></i>
+                                    Create Account
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Employers -->
+                <div class="col-md-4">
+
+                    <div class="footer-column">
+
+                        <h6>For Employers</h6>
+
+                        <ul class="list-unstyled mb-0">
+
+                            <li>
+                                <a href="{% url 'companies:create' %}">
+                                    <i class="bi bi-arrow-right"></i>
+                                    Create Company Profile
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{% url 'accounts:register' %}">
+                                    <i class="bi bi-arrow-right"></i>
+                                    Post a Job
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bottom -->
+        <div class="footer-bottom">
+
+            <p class="text-center mb-0">
+                &copy; {% now "Y" %} NammaCareer. All rights reserved.
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<style>
+
+/* =========================================
+   NAMMACAREER FOOTER
+   UI ONLY
+========================================= */
+
+.app-footer {
+    position: relative;
+    background: #172235;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+
+/* =========================================
+   TOP ACCENT
+========================================= */
+
+.app-footer::before {
+    content: "";
+    display: block;
+    height: 4px;
+
+    background: linear-gradient(
+        90deg,
+        #159a78,
+        #20b88f,
+        #159a78
+    );
+}
+
+
+/* =========================================
+   MAIN FOOTER
+========================================= */
+
+.footer-main {
+    padding: 55px 0 45px;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.footer-brand-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin: 0;
+
+    font-family: "Manrope", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+
+/* =========================================
+   NAMMACAREER LOGO
+========================================= */
+
+.footer-logo {
+    width: 48px;
+    height: 48px;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    padding: 0;
+
+    border: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.footer-description {
+    max-width: 330px;
+
+    margin-top: 18px;
+
+    color: #aeb8c5;
+
+    font-size: 0.92rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   FOOTER COLUMNS
+========================================= */
+
+.footer-column h6 {
+    margin-bottom: 20px;
+
+    color: #ffffff;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+.footer-column ul {
+    display: flex;
+    flex-direction: column;
+
+    gap: 11px;
+}
+
+
+.footer-column li {
+    margin: 0;
+}
+
+
+.footer-column a {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #aeb8c5;
+
+    text-decoration: none;
+
+    font-size: 0.9rem;
+
+    transition:
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.footer-column a i {
+    color: #159a78;
+
+    font-size: 0.72rem;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+.footer-column a:hover {
+    color: #ffffff;
+
+    transform: translateX(4px);
+}
+
+
+.footer-column a:hover i {
+    transform: translateX(3px);
+}
+
+
+/* =========================================
+   BOTTOM AREA
+========================================= */
+
+.footer-bottom {
+    padding: 22px 0 25px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+
+.footer-bottom p {
+    color: #8994a3;
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 767px) {
+
+    .footer-main {
+        padding: 42px 0 30px;
+    }
+
+
+    .footer-brand {
+        margin-bottom: 10px;
+    }
+
+
+    .footer-column {
+        padding-top: 8px;
+    }
+
+
+    .footer-column h6 {
+        margin-bottom: 14px;
+    }
+
+
+    .footer-bottom {
+        padding: 20px 0 22px;
+    }
+
+}
+
+
+@media (max-width: 575px) {
+
+    .footer-main {
+        padding: 36px 0 25px;
+    }
+
+
+    .footer-brand-title {
+        font-size: 1.1rem;
+    }
+
+
+    .footer-logo {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 50%;
+    }
+
+
+    .footer-description {
+        font-size: 0.86rem;
+    }
+
+
+    .footer-column a {
+        font-size: 0.86rem;
+    }
+
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .footer-column a,
+    .footer-column a i {
+        transition: none;
+    }
+
+}
+
+</style>

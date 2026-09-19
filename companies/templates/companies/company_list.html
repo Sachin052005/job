@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Companies - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-companies-page {
+        padding: 42px 0 70px;
+    }
+
+    /* Page Header */
+
+    .nc-companies-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .nc-section-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--nc-primary, #159a78);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .nc-section-eyebrow i {
+        font-size: 0.9rem;
+    }
+
+    .nc-companies-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    /* Search */
+
+    .nc-company-search {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .nc-search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .nc-search-wrapper .nc-search-icon {
+        position: absolute;
+        left: 14px;
+        color: var(--nc-muted, #8994a3);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .nc-company-search input {
+        min-height: 45px;
+        width: 100%;
+        padding: 10px 50px 10px 40px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 11px;
+        background: #ffffff;
+        color: var(--nc-heading, #172235);
+        box-shadow: 0 5px 16px rgba(23, 34, 53, 0.04);
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-company-search input:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+        outline: none;
+    }
+
+    .nc-company-search input::placeholder {
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-search-submit {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        bottom: 5px;
+        width: 36px;
+        border: 0;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--nc-primary, #159a78);
+        color: #ffffff;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .nc-search-submit:hover {
+        background: var(--nc-primary-dark, #08785d);
+        transform: translateY(-1px);
+    }
+
+    /* Company Grid */
+
+    .nc-company-grid {
+        margin-top: 0;
+    }
+
+    .nc-company-item {
+        height: 100%;
+    }
+
+    /* Empty State */
+
+    .nc-companies-empty {
+        padding: 75px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+    }
+
+    .nc-empty-icon {
+        width: 82px;
+        height: 82px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 22px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-companies-empty p {
+        color: var(--nc-text, #586678);
+    }
+
+    /* Responsive */
+
+    @media (max-width: 767.98px) {
+
+        .nc-companies-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-companies-header {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .nc-companies-title {
+            font-size: 1.55rem;
+        }
+
+        .nc-company-search {
+            max-width: none;
+        }
+
+        .nc-companies-empty {
+            padding: 55px 20px;
+        }
+    }
+</style>
+
+
+<div class="nc-companies-page">
+
+    <div class="container">
+
+        <!-- Page Header -->
+
+        <div class="nc-companies-header reveal">
+
+            <div>
+
+                <div class="nc-section-eyebrow">
+                    <i class="bi bi-building"></i>
+                    Companies
+                </div>
+
+                <h2 class="nc-companies-title">
+                    Companies Hiring Now
+                </h2>
+
+            </div>
+
+
+            <!-- Search -->
+
+            <form
+                method="get"
+                class="nc-company-search"
+            >
+
+                <div class="nc-search-wrapper">
+
+                    <i class="bi bi-search nc-search-icon"></i>
+
+                    <input
+                        type="text"
+                        name="keyword"
+                        value="{{ request.GET.keyword }}"
+                        class="form-control"
+                        placeholder="Search companies"
+                    >
+
+                    <button
+                        type="submit"
+                        class="nc-search-submit"
+                        aria-label="Search companies"
+                    >
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        {% if companies %}
+
+            <!-- Company Grid -->
+
+            <div class="row g-4 nc-company-grid stagger-grid">
+
+                {% for company in companies %}
+
+                    <div class="col-md-4 col-lg-3 nc-company-item">
+
+                        {% include "components/company_card.html" %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+            <!-- Empty State -->
+
+            <div class="nc-companies-empty reveal">
+
+                <div class="nc-empty-icon">
+
+                    <i class="bi bi-building display-1"></i>
+
+                </div>
+
+                <p class="mt-4 mb-0">
+                    No companies found.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

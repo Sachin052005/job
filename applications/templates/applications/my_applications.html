@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-my-applications-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-page-header {
+        margin-bottom: 28px;
+    }
+
+    .nc-page-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .nc-page-subtitle {
+        color: var(--nc-text, #586678);
+    }
+
+    /* Applications table */
+
+    .nc-applications-table-wrapper {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+    }
+
+    .nc-applications-table {
+        margin-bottom: 0;
+    }
+
+    .nc-applications-table thead th {
+        padding: 16px 20px;
+        background: #f7faf8;
+        color: var(--nc-muted, #8994a3);
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .nc-applications-table tbody td {
+        padding: 19px 20px;
+        border-bottom: 1px solid #edf2ef;
+        color: var(--nc-text, #586678);
+        vertical-align: middle;
+    }
+
+    .nc-applications-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .nc-applications-table tbody tr {
+        transition: background 0.18s ease;
+    }
+
+    .nc-applications-table tbody tr:hover {
+        background: #fbfdfc;
+    }
+
+    .nc-job-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 750;
+    }
+
+    .nc-company-name {
+        color: var(--nc-text, #586678);
+        font-weight: 550;
+    }
+
+    .nc-applied-date {
+        color: var(--nc-text, #586678);
+        white-space: nowrap;
+    }
+
+    .nc-status-badge {
+        border-radius: 999px;
+        padding: 7px 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .nc-view-btn {
+        border-radius: 9px;
+        padding: 7px 15px;
+        font-weight: 650;
+        white-space: nowrap;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-view-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* Empty state */
+
+    .nc-empty-state {
+        padding: 75px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+    }
+
+    .nc-empty-icon {
+        width: 82px;
+        height: 82px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 22px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-empty-state p {
+        color: var(--nc-text, #586678);
+    }
+
+    .nc-browse-btn {
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(21, 154, 120, 0.15);
+    }
+
+    .nc-browse-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* Mobile */
+
+    @media (max-width: 767.98px) {
+        .nc-my-applications-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-page-title {
+            font-size: 1.55rem;
+        }
+
+        .nc-applications-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .nc-applications-table {
+            min-width: 720px;
+        }
+
+        .nc-empty-state {
+            padding: 55px 20px;
+        }
+    }
+</style>
+
+
+<div class="nc-my-applications-page">
+    <div class="container">
+
+        <!-- Page Header -->
+
+        <div class="nc-page-header reveal">
+
+            <h2 class="nc-page-title mb-1">
+                My Applications
+            </h2>
+
+        </div>
+
+
+        {% if applications %}
+
+        <!-- Applications Table -->
+
+        <div class="nc-applications-table-wrapper reveal">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle nc-applications-table">
+
+                    <thead>
+                        <tr>
+
+                            <th>
+                                Job
+                            </th>
+
+                            <th>
+                                Company
+                            </th>
+
+                            <th>
+                                Applied On
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                            </th>
+
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for application in applications %}
+
+                        <tr>
+
+                            <td>
+                                <span class="nc-job-title">
+                                    {{ application.job.title }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="nc-company-name">
+                                    {{ application.job.company.name }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="nc-applied-date">
+                                    {{ application.applied_at|date:"M d, Y" }}
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <span
+                                    class="badge badge-status bg-{{ application.badge_class }} nc-status-badge"
+                                >
+                                    {{ application.get_status_display }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'applications:detail' application.pk %}"
+                                    class="btn btn-sm btn-outline-primary nc-view-btn"
+                                >
+                                    View
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+        <!-- Empty State -->
+
+        <div class="nc-empty-state reveal">
+
+            <div class="nc-empty-icon">
+
+                <i class="bi bi-file-earmark-text display-1"></i>
+
+            </div>
+
+            <p class="mt-4 mb-3">
+                You haven't applied to any jobs yet.
+            </p>
+
+            <a
+                href="{% url 'jobs:list' %}"
+                class="btn btn-primary nc-browse-btn"
+            >
+                Browse Jobs
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,616 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Register - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       NAMMACAREER REGISTER — UI ONLY
+       CONTENT + FUNCTIONALITY UNCHANGED
+    ========================================================= */
+
+    .nc-register-page {
+        --register-green: #159a78;
+        --register-green-dark: #08785d;
+        --register-green-soft: #e8f6f1;
+        --register-heading: #172235;
+        --register-text: #586678;
+        --register-muted: #8994a3;
+        --register-border: #e1e8e4;
+        --register-bg: #f7faf8;
+        --register-white: #ffffff;
+        --register-shadow: 0 14px 40px rgba(23, 34, 53, .07);
+        --register-shadow-hover: 0 20px 50px rgba(23, 34, 53, .10);
+
+        min-height: calc(100vh - 80px);
+        padding: 55px 0 75px;
+        background:
+            radial-gradient(
+                circle at 10% 10%,
+                rgba(21, 154, 120, .07),
+                transparent 28%
+            ),
+            radial-gradient(
+                circle at 90% 85%,
+                rgba(21, 154, 120, .05),
+                transparent 30%
+            ),
+            var(--register-bg);
+    }
+
+    /* =========================================================
+       REGISTER CARD
+    ========================================================= */
+
+    .nc-register-card {
+        border: 1px solid var(--register-border);
+        border-radius: 22px;
+        background: var(--register-white);
+        box-shadow: var(--register-shadow);
+        overflow: hidden;
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease;
+    }
+
+    .nc-register-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--register-shadow-hover);
+    }
+
+    .nc-register-card-inner {
+        padding: 34px;
+    }
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .nc-register-header {
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .nc-register-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        background: var(--register-green-soft);
+        color: var(--register-green);
+        font-size: 22px;
+    }
+
+    .nc-register-header h3 {
+        margin-bottom: 0 !important;
+        color: var(--register-heading);
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -.025em;
+    }
+
+    /* =========================================================
+       FORM
+    ========================================================= */
+
+    .nc-register-form .form-label {
+        margin-bottom: 7px;
+        color: var(--register-heading);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .nc-register-form .form-control {
+        min-height: 46px;
+        padding: 10px 13px;
+        border: 1px solid var(--register-border);
+        border-radius: 11px;
+        background: #fbfdfc;
+        color: var(--register-heading);
+        font-size: 13px;
+        box-shadow: none;
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+    .nc-register-form .form-control:hover {
+        border-color: rgba(21, 154, 120, .35);
+    }
+
+    .nc-register-form .form-control:focus {
+        border-color: var(--register-green);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(21, 154, 120, .10);
+    }
+
+    .nc-register-form .form-control::placeholder {
+        color: #a2abb5;
+    }
+
+    /* =========================================================
+       ROLE SELECTION
+    ========================================================= */
+
+    .nc-role-wrapper {
+        padding: 14px;
+        border: 1px solid var(--register-border);
+        border-radius: 13px;
+        background: #fbfdfc;
+    }
+
+    .nc-role-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nc-role-options .form-check {
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nc-role-options .form-check-input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .nc-role-options .form-check-label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 8px 14px;
+        border: 1px solid var(--register-border);
+        border-radius: 10px;
+        background: #ffffff;
+        color: var(--register-text);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            color .2s ease,
+            transform .2s ease;
+    }
+
+    .nc-role-options .form-check-label:hover {
+        transform: translateY(-1px);
+        border-color: rgba(21, 154, 120, .35);
+        color: var(--register-green-dark);
+    }
+
+    .nc-role-options .form-check-input:checked + .form-check-label {
+        border-color: var(--register-green);
+        background: var(--register-green-soft);
+        color: var(--register-green-dark);
+    }
+
+    /* =========================================================
+       ERROR MESSAGES
+    ========================================================= */
+
+    .nc-register-form .invalid-feedback {
+        margin-top: 6px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .nc-register-alert {
+        border: 0;
+        border-radius: 11px;
+        font-size: 12px;
+    }
+
+    .nc-register-form .form-text {
+        margin-top: 7px;
+        color: var(--register-muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       CREATE ACCOUNT BUTTON
+    ========================================================= */
+
+    .nc-register-submit {
+        min-height: 48px;
+        margin-top: 8px;
+        border: 0;
+        border-radius: 11px;
+        background: linear-gradient(
+            135deg,
+            var(--register-green),
+            var(--register-green-dark)
+        );
+        font-size: 13px;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(21, 154, 120, .18);
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .nc-register-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(21, 154, 120, .24);
+    }
+
+    .nc-register-submit:active {
+        transform: translateY(0);
+    }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .nc-register-divider {
+        margin: 27px 0 21px;
+        border-color: var(--register-border);
+        opacity: 1;
+    }
+
+    .nc-register-login {
+        color: var(--register-muted);
+        font-size: 12px;
+    }
+
+    .nc-register-login a {
+        color: var(--register-green-dark);
+        font-weight: 800;
+        text-decoration: none;
+        transition: color .2s ease;
+    }
+
+    .nc-register-login a:hover {
+        color: var(--register-green);
+        text-decoration: underline;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 767px) {
+        .nc-register-page {
+            padding: 30px 0 55px;
+        }
+
+        .nc-register-card-inner {
+            padding: 26px 22px;
+        }
+
+        .nc-register-header h3 {
+            font-size: 22px;
+        }
+
+        .nc-register-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .nc-register-page {
+            padding: 20px 0 45px;
+        }
+
+        .nc-register-card {
+            border-radius: 17px;
+        }
+
+        .nc-register-card-inner {
+            padding: 22px 17px;
+        }
+
+        .nc-role-options {
+            flex-direction: column;
+        }
+
+        .nc-role-options .form-check-label {
+            width: 100%;
+        }
+
+        .nc-register-form .row {
+            --bs-gutter-y: 0;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        .nc-register-card,
+        .nc-register-form .form-control,
+        .nc-role-options .form-check-label,
+        .nc-register-submit,
+        .nc-register-login a {
+            transition: none !important;
+        }
+    }
+</style>
+
+
+<div class="nc-register-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-7 col-lg-6">
+
+                <div class="card nc-register-card reveal">
+
+                    <div class="nc-register-card-inner">
+
+                        <!-- HEADER -->
+
+                        <div class="nc-register-header">
+
+                            <div class="nc-register-icon">
+                                <i class="bi bi-person-plus-fill"></i>
+                            </div>
+
+                            <h3>
+                                Create your account
+                            </h3>
+
+                        </div>
+
+
+                        <!-- FORM -->
+
+                        <form
+                            method="post"
+                            novalidate
+                            class="nc-register-form"
+                        >
+
+                            {% csrf_token %}
+
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger nc-register-alert">
+                                    {{ form.non_field_errors }}
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- ROLE -->
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                    I am a
+                                </label>
+
+                                <div class="nc-role-wrapper">
+
+                                    <div class="nc-role-options">
+
+                                        {% for radio in form.role %}
+
+                                            <div class="form-check">
+
+                                                {{ radio.tag }}
+
+                                                <label
+                                                    class="form-check-label"
+                                                    for="{{ radio.id_for_label }}"
+                                                >
+                                                    {{ radio.choice_label }}
+                                                </label>
+
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                                {% for error in form.role.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- FIRST NAME / LAST NAME -->
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        class="form-label"
+                                        for="{{ form.first_name.id_for_label }}"
+                                    >
+                                        First Name
+                                    </label>
+
+                                    {{ form.first_name|add_class:"form-control" }}
+
+                                    {% for error in form.first_name.errors %}
+
+                                        <div class="invalid-feedback d-block">
+                                            {{ error }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-3">
+
+                                    <label
+                                        class="form-label"
+                                        for="{{ form.last_name.id_for_label }}"
+                                    >
+                                        Last Name
+                                    </label>
+
+                                    {{ form.last_name|add_class:"form-control" }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- USERNAME -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.username.id_for_label }}"
+                                >
+                                    Username
+                                </label>
+
+                                {{ form.username|add_class:"form-control" }}
+
+                                {% for error in form.username.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.email.id_for_label }}"
+                                >
+                                    Email
+                                </label>
+
+                                {{ form.email|add_class:"form-control" }}
+
+                                {% for error in form.email.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- PASSWORD -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.password1.id_for_label }}"
+                                >
+                                    Password
+                                </label>
+
+                                {{ form.password1|add_class:"form-control" }}
+
+                                {% for error in form.password1.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                                {% if form.password1.help_text %}
+
+                                    <div class="form-text">
+                                        {{ form.password1.help_text|safe }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- CONFIRM PASSWORD -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.password2.id_for_label }}"
+                                >
+                                    Confirm Password
+                                </label>
+
+                                {{ form.password2|add_class:"form-control" }}
+
+                                {% for error in form.password2.errors %}
+
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <!-- SUBMIT -->
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 nc-register-submit"
+                            >
+                                Create Account
+                            </button>
+
+                        </form>
+
+
+                        <!-- LOGIN -->
+
+                        <hr class="nc-register-divider">
+
+                        <p class="text-center mb-0 nc-register-login">
+                            Already have an account?
+                            <a href="{% url 'accounts:login' %}">
+                                Login
+                            </a>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

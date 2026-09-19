@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Company Profile - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-company-form-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-company-form-card {
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
+        overflow: hidden;
+    }
+
+    .nc-company-form-header {
+        position: relative;
+        padding: 30px 32px 25px;
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+        background: linear-gradient(
+            135deg,
+            #ffffff 0%,
+            var(--nc-primary-soft, #e8f6f1) 100%
+        );
+    }
+
+    .nc-company-form-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+            90deg,
+            var(--nc-primary, #159a78),
+            var(--nc-primary-dark, #08785d)
+        );
+    }
+
+    .nc-form-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: #ffffff;
+        color: var(--nc-primary, #159a78);
+        border: 1px solid rgba(21, 154, 120, 0.14);
+        box-shadow: 0 6px 18px rgba(23, 34, 53, 0.06);
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+    }
+
+    .nc-company-form-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 6px;
+    }
+
+    .nc-company-form-subtitle {
+        color: var(--nc-text, #586678);
+        font-size: 0.92rem;
+        margin-bottom: 0;
+    }
+
+    .nc-company-form-body {
+        padding: 32px;
+    }
+
+    .nc-form-section {
+        margin-bottom: 28px;
+    }
+
+    .nc-form-section:last-of-type {
+        margin-bottom: 25px;
+    }
+
+    .nc-form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--nc-heading, #172235);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+        margin-bottom: 17px;
+    }
+
+    .nc-form-section-title i {
+        color: var(--nc-primary, #159a78);
+        font-size: 1rem;
+    }
+
+    .nc-field {
+        margin-bottom: 19px;
+    }
+
+    .nc-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .nc-form-label {
+        display: block;
+        color: var(--nc-heading, #172235);
+        font-size: 0.87rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .nc-company-form-body .form-control {
+        min-height: 46px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 10px;
+        padding: 10px 13px;
+        color: var(--nc-heading, #172235);
+        background: #ffffff;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .nc-company-form-body textarea.form-control {
+        min-height: 125px;
+        resize: vertical;
+    }
+
+    .nc-company-form-body .form-control:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.11);
+        background: #ffffff;
+    }
+
+    .nc-company-form-body .form-control::placeholder {
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-logo-field {
+        padding: 18px;
+        border: 1px dashed #cbd9d3;
+        border-radius: 13px;
+        background: #fbfdfc;
+    }
+
+    .nc-logo-field .form-control {
+        background: #ffffff;
+    }
+
+    .nc-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 6px;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+    }
+
+    .nc-save-company-btn {
+        min-height: 45px;
+        padding: 10px 21px;
+        border-radius: 10px;
+        font-weight: 700;
+        box-shadow: 0 7px 18px rgba(21, 154, 120, 0.14);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-save-company-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(21, 154, 120, 0.18);
+    }
+
+    .nc-error {
+        margin-top: 6px;
+        font-size: 0.82rem;
+    }
+
+    .nc-form-alert {
+        border-radius: 11px;
+        border: 0;
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-company-form-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-company-form-header {
+            padding: 26px 20px 22px;
+        }
+
+        .nc-company-form-body {
+            padding: 24px 20px;
+        }
+
+        .nc-company-form-title {
+            font-size: 1.45rem;
+        }
+
+        .nc-form-actions {
+            display: block;
+        }
+
+        .nc-save-company-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="nc-company-form-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="nc-company-form-card reveal">
+
+                    <!-- Header -->
+
+                    <div class="nc-company-form-header">
+
+                        <div class="nc-form-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <h3 class="nc-company-form-title">
+                            {% if object %}
+                                Edit Company Profile
+                            {% else %}
+                                Create Company Profile
+                            {% endif %}
+                        </h3>
+
+                        <p class="nc-company-form-subtitle">
+                            {% if object %}
+                                Update your company information and profile details.
+                            {% else %}
+                                Add your company information to create a professional profile.
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+
+                    <!-- Form Body -->
+
+                    <div class="nc-company-form-body">
+
+                        <form
+                            method="post"
+                            enctype="multipart/form-data"
+                            novalidate
+                        >
+
+                            {% csrf_token %}
+
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger nc-form-alert">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    {{ form.non_field_errors }}
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- Basic Information -->
+
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    <i class="bi bi-building"></i>
+                                    Company Information
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Company Name
+                                    </label>
+
+                                    {{ form.name|add_class:"form-control" }}
+
+                                    {% for error in form.name.errors %}
+                                        <div class="invalid-feedback d-block nc-error">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Description
+                                    </label>
+
+                                    {{ form.description|add_class:"form-control" }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Company Details -->
+
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    <i class="bi bi-bar-chart"></i>
+                                    Company Details
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Industry
+                                            </label>
+
+                                            {{ form.industry|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Company Size
+                                            </label>
+
+                                            {{ form.size|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Website
+                                            </label>
+
+                                            {{ form.website|add_class:"form-control" }}
+
+                                            {% for error in form.website.errors %}
+                                                <div class="invalid-feedback d-block nc-error">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Founded Year
+                                            </label>
+
+                                            {{ form.founded_year|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Location
+                                    </label>
+
+                                    {{ form.location|add_class:"form-control" }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Company Branding -->
+
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    <i class="bi bi-image"></i>
+                                    Company Branding
+                                </div>
+
+
+                                <div class="nc-logo-field">
+
+                                    <div class="nc-field mb-0">
+
+                                        <label class="nc-form-label">
+                                            Logo
+                                        </label>
+
+                                        {{ form.logo|add_class:"form-control" }}
+
+                                        {% for error in form.logo.errors %}
+                                            <div class="invalid-feedback d-block nc-error">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Actions -->
+
+                            <div class="nc-form-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary nc-save-company-btn"
+                                >
+                                    <i class="bi bi-check2-circle me-1"></i>
+                                    Save Company
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

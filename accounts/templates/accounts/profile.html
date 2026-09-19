@@ -1,0 +1,1017 @@
+{% extends "base.html" %}
+{% block title %}My Profile - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       NAMMACAREER PROFILE — UI ONLY
+       CONTENT + FUNCTIONALITY UNCHANGED
+    ========================================================= */
+
+    .nc-profile-page {
+        --profile-green: #159a78;
+        --profile-green-dark: #08785d;
+        --profile-green-soft: #e8f6f1;
+        --profile-heading: #172235;
+        --profile-text: #586678;
+        --profile-muted: #8994a3;
+        --profile-border: #e1e8e4;
+        --profile-bg: #f7faf8;
+        --profile-white: #ffffff;
+        --profile-shadow: 0 10px 30px rgba(23, 34, 53, .06);
+        --profile-shadow-hover: 0 16px 38px rgba(23, 34, 53, .09);
+
+        padding: 35px 0 75px;
+        color: var(--profile-text);
+    }
+
+    .nc-profile-page .nc-profile-layout {
+        align-items: flex-start;
+    }
+
+    /* =========================================================
+       COMMON CARD
+    ========================================================= */
+
+    .nc-profile-card {
+        border: 1px solid var(--profile-border);
+        border-radius: 18px;
+        background: var(--profile-white);
+        box-shadow: var(--profile-shadow);
+        overflow: hidden;
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease,
+            border-color .25s ease;
+    }
+
+    .nc-profile-card:hover {
+        border-color: rgba(21, 154, 120, .18);
+        box-shadow: var(--profile-shadow-hover);
+    }
+
+    .nc-profile-card-body {
+        padding: 28px;
+    }
+
+    /* =========================================================
+       LEFT COLUMN
+    ========================================================= */
+
+    .nc-profile-sidebar {
+        position: sticky;
+        top: 90px;
+    }
+
+    .nc-profile-edit-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 46px;
+        border-radius: 11px;
+        border-width: 1px;
+        font-size: 13px;
+        font-weight: 700;
+
+        transition:
+            transform .2s ease,
+            background .2s ease,
+            color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .nc-profile-edit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(21, 154, 120, .12);
+    }
+
+    /* =========================================================
+       COMPLETENESS
+    ========================================================= */
+
+    .nc-completeness-card {
+        position: relative;
+    }
+
+    .nc-card-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .nc-card-heading-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        border-radius: 10px;
+        background: var(--profile-green-soft);
+        color: var(--profile-green);
+        font-size: 16px;
+    }
+
+    .nc-card-heading h6 {
+        margin: 0;
+        color: var(--profile-heading);
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .nc-completeness-progress {
+        height: 9px !important;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf2ef;
+    }
+
+    .nc-completeness-progress .progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(
+            90deg,
+            var(--profile-green),
+            #32b993
+        );
+        transition: width .5s ease;
+    }
+
+    .nc-completion-percent {
+        margin: 9px 0 20px;
+        color: var(--profile-muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .nc-complete-title {
+        margin-bottom: 9px;
+        color: var(--profile-heading);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .nc-missing-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px !important;
+    }
+
+    .nc-missing-list li {
+        display: flex;
+        align-items: center;
+        padding: 7px 9px;
+        border-radius: 8px;
+        background: #fff8e7;
+        color: #a16b00 !important;
+        font-size: 12px;
+    }
+
+    .nc-complete-message {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--profile-green-soft);
+        color: var(--profile-green-dark) !important;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       RIGHT CONTENT
+    ========================================================= */
+
+    .nc-profile-main {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .nc-profile-section-card {
+        padding: 28px;
+    }
+
+    .nc-profile-section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 22px;
+        color: var(--profile-heading);
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -.02em;
+    }
+
+    .nc-profile-section-title::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        border-radius: 99px;
+        background: var(--profile-green);
+    }
+
+    /* =========================================================
+       CONTACT INFORMATION
+    ========================================================= */
+
+    .nc-contact-list {
+        margin: 0;
+    }
+
+    .nc-contact-row {
+        padding: 14px 0;
+        border-bottom: 1px solid #edf1ef;
+    }
+
+    .nc-contact-row:first-child {
+        padding-top: 0;
+    }
+
+    .nc-contact-row:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .nc-contact-label {
+        color: var(--profile-muted);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .nc-contact-value {
+        color: var(--profile-heading);
+        font-size: 13px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    /* =========================================================
+       PROFESSIONAL LINKS
+    ========================================================= */
+
+    .nc-links-grid {
+        --bs-gutter-y: 14px;
+    }
+
+    .nc-link-item {
+        height: 100%;
+        padding: 16px;
+        border: 1px solid var(--profile-border);
+        border-radius: 13px;
+        background: #fbfdfc;
+
+        transition:
+            transform .2s ease,
+            border-color .2s ease,
+            background .2s ease;
+    }
+
+    .nc-link-item:hover {
+        transform: translateY(-2px);
+        border-color: rgba(21, 154, 120, .25);
+        background: #ffffff;
+    }
+
+    .nc-link-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .nc-link-name {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        color: var(--profile-heading);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .nc-link-name i {
+        color: var(--profile-green);
+        font-size: 17px;
+    }
+
+    .nc-link-status {
+        flex: 0 0 auto;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .nc-link-status.bg-success {
+        background: var(--profile-green-soft) !important;
+        color: var(--profile-green-dark) !important;
+    }
+
+    .nc-link-status.bg-secondary {
+        background: #eef1f0 !important;
+        color: #68736f !important;
+    }
+
+    .nc-link-status.bg-warning {
+        background: #fff3d6 !important;
+        color: #996600 !important;
+    }
+
+    .nc-link-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--profile-green-dark);
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: gap .2s ease;
+    }
+
+    .nc-link-open:hover {
+        color: var(--profile-green);
+        gap: 8px;
+    }
+
+    /* =========================================================
+       SUMMARY
+    ========================================================= */
+
+    .nc-summary {
+        margin: 0;
+        color: var(--profile-text);
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    /* =========================================================
+       SKILLS
+    ========================================================= */
+
+    .nc-skills-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .nc-skill-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border: 1px solid rgba(21, 154, 120, .15);
+        border-radius: 999px;
+        background: var(--profile-green-soft);
+        color: var(--profile-green-dark);
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       RESUME
+    ========================================================= */
+
+    .nc-resume-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px;
+        border: 1px solid var(--profile-border);
+        border-radius: 13px;
+        background: #fbfdfc;
+    }
+
+    .nc-resume-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .nc-resume-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        border-radius: 11px;
+        background: #eef4f1;
+        color: var(--profile-green-dark);
+        font-size: 19px;
+    }
+
+    .nc-resume-label {
+        margin: 0;
+        color: var(--profile-heading);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .nc-resume-button {
+        flex: 0 0 auto;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 991px) {
+        .nc-profile-sidebar {
+            position: static;
+        }
+
+        .nc-profile-card-body,
+        .nc-profile-section-card {
+            padding: 24px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .nc-profile-page {
+            padding-top: 20px;
+            padding-bottom: 50px;
+        }
+
+        .nc-profile-card-body,
+        .nc-profile-section-card {
+            padding: 20px;
+        }
+
+        .nc-profile-section-title {
+            font-size: 17px;
+        }
+
+        .nc-contact-row {
+            padding: 12px 0;
+        }
+
+        .nc-resume-box {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .nc-resume-button {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .nc-profile-page .row {
+            --bs-gutter-y: 18px;
+        }
+
+        .nc-link-item {
+            padding: 14px;
+        }
+
+        .nc-link-top {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nc-link-status {
+            align-self: flex-start;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        .nc-profile-card,
+        .nc-profile-edit-btn,
+        .nc-link-item,
+        .nc-link-open,
+        .nc-completeness-progress .progress-bar {
+            transition: none !important;
+        }
+    }
+</style>
+
+
+<div class="nc-profile-page">
+    <div class="container">
+
+        <div class="row g-4 nc-profile-layout">
+
+            <!-- =================================================
+                 LEFT SIDEBAR
+            ================================================== -->
+
+            <div class="col-md-4">
+
+                <div class="nc-profile-sidebar">
+
+                    {% include "components/profile_card.html" %}
+
+                    <a
+                        href="{% url 'accounts:profile_edit' %}"
+                        class="btn btn-outline-primary w-100 mt-3 nc-profile-edit-btn"
+                    >
+                        <i class="bi bi-pencil"></i>
+                        Edit Profile
+                    </a>
+
+
+                    <div class="card nc-profile-card nc-completeness-card p-4 mt-4 reveal">
+
+                        <div class="nc-card-heading">
+
+                            <span class="nc-card-heading-icon">
+                                <i class="bi bi-bar-chart-line"></i>
+                            </span>
+
+                            <h6>
+                                Profile Completeness
+                            </h6>
+
+                        </div>
+
+
+                        <!-- FIXED PROGRESS BAR -->
+
+                        <div
+                            class="progress nc-completeness-progress mb-2"
+                            role="progressbar"
+                            aria-valuenow="{{ profile.completion_percent }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            data-progress="{{ profile.completion_percent }}"
+                        >
+                            <div class="progress-bar"></div>
+                        </div>
+
+
+                        <p class="nc-completion-percent">
+                            {{ profile.completion_percent }}% complete
+                        </p>
+
+
+                        {% if missing_sections %}
+
+                        <p class="nc-complete-title">
+                            Complete your profile
+                        </p>
+
+                        <ul class="list-unstyled small mb-0 d-flex flex-column gap-1 nc-missing-list">
+
+                            {% for label in missing_sections %}
+
+                            <li class="text-warning">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                {{ label }} missing
+                            </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                        {% else %}
+
+                        <p class="nc-complete-message mb-0">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Your profile is fully complete.
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MAIN PROFILE CONTENT
+            ================================================== -->
+
+            <div class="col-md-8">
+
+                <div class="nc-profile-main">
+
+
+                    <!-- =========================================
+                         CONTACT INFORMATION
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4 reveal">
+
+                        <h5 class="nc-profile-section-title">
+                            Contact Information
+                        </h5>
+
+
+                        <dl class="row mb-0 nc-contact-list">
+
+                            <div class="row nc-contact-row">
+
+                                <dt class="col-sm-4 nc-contact-label">
+                                    Email
+                                </dt>
+
+                                <dd class="col-sm-8 nc-contact-value mb-0">
+                                    {{ user.email|default:"Not set" }}
+                                </dd>
+
+                            </div>
+
+
+                            <div class="row nc-contact-row">
+
+                                <dt class="col-sm-4 nc-contact-label">
+                                    Phone
+                                </dt>
+
+                                <dd class="col-sm-8 nc-contact-value mb-0">
+                                    {{ profile.phone|default:"Not set" }}
+                                </dd>
+
+                            </div>
+
+
+                            <div class="row nc-contact-row">
+
+                                <dt class="col-sm-4 nc-contact-label">
+                                    Location
+                                </dt>
+
+                                <dd class="col-sm-8 nc-contact-value mb-0">
+                                    {{ profile.location|default:"Not set" }}
+                                </dd>
+
+                            </div>
+
+
+                            <div class="row nc-contact-row">
+
+                                <dt class="col-sm-4 nc-contact-label">
+                                    Experience
+                                </dt>
+
+                                <dd class="col-sm-8 nc-contact-value mb-0">
+                                    {{ profile.experience_years }} years
+                                </dd>
+
+                            </div>
+
+                        </dl>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PROFESSIONAL LINKS
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4 reveal">
+
+                        <h5 class="nc-profile-section-title">
+                            Professional Links
+                        </h5>
+
+
+                        <div class="row g-3 nc-links-grid">
+
+
+                            <!-- LINKEDIN -->
+
+                            <div class="col-sm-6">
+
+                                <div class="nc-link-item">
+
+                                    <div class="nc-link-top">
+
+                                        <span class="nc-link-name">
+                                            <i class="bi bi-linkedin me-2"></i>
+                                            LinkedIn
+                                        </span>
+
+
+                                        {% if link_status.linkedin == "available" %}
+
+                                        <span class="badge bg-success nc-link-status">
+                                            Available
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-secondary nc-link-status">
+                                            Not Provided
+                                        </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if profile.linkedin_url %}
+
+                                    <a
+                                        href="{{ profile.linkedin_url }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="small nc-link-open"
+                                    >
+                                        Open LinkedIn
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- GITHUB -->
+
+                            <div class="col-sm-6">
+
+                                <div class="nc-link-item">
+
+                                    <div class="nc-link-top">
+
+                                        <span class="nc-link-name">
+                                            <i class="bi bi-github me-2"></i>
+                                            GitHub
+                                        </span>
+
+
+                                        {% if link_status.github == "available" %}
+
+                                        <span class="badge bg-success nc-link-status">
+                                            Available
+                                        </span>
+
+                                        {% elif link_status.github == "not_provided" %}
+
+                                        <span class="badge bg-secondary nc-link-status">
+                                            Not Provided
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-warning nc-link-status">
+                                            Could Not Verify
+                                        </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if profile.github_url %}
+
+                                    <a
+                                        href="{{ profile.github_url }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="small nc-link-open"
+                                    >
+                                        Open GitHub
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PORTFOLIO -->
+
+                            <div class="col-sm-6">
+
+                                <div class="nc-link-item">
+
+                                    <div class="nc-link-top">
+
+                                        <span class="nc-link-name">
+                                            <i class="bi bi-globe me-2"></i>
+                                            Portfolio
+                                        </span>
+
+
+                                        {% if link_status.portfolio == "available" %}
+
+                                        <span class="badge bg-success nc-link-status">
+                                            Available
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-secondary nc-link-status">
+                                            Not Provided
+                                        </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if profile.portfolio_url %}
+
+                                    <a
+                                        href="{{ profile.portfolio_url }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="small nc-link-open"
+                                    >
+                                        Open Portfolio
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- WEBSITE -->
+
+                            <div class="col-sm-6">
+
+                                <div class="nc-link-item">
+
+                                    <div class="nc-link-top">
+
+                                        <span class="nc-link-name">
+                                            <i class="bi bi-link-45deg me-2"></i>
+                                            Website
+                                        </span>
+
+
+                                        {% if link_status.website == "available" %}
+
+                                        <span class="badge bg-success nc-link-status">
+                                            Available
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-secondary nc-link-status">
+                                            Not Provided
+                                        </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if profile.website_url %}
+
+                                    <a
+                                        href="{{ profile.website_url }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="small nc-link-open"
+                                    >
+                                        Open Website
+                                        <i class="bi bi-arrow-up-right"></i>
+                                    </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         SUMMARY
+                    ========================================== -->
+
+                    {% if profile.summary %}
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+
+                        <h5 class="nc-profile-section-title">
+                            Summary
+                        </h5>
+
+                        <p class="nc-summary mb-0">
+                            {{ profile.summary }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- =========================================
+                         SKILLS
+                    ========================================== -->
+
+                    {% if profile.skills_list %}
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+
+                        <h5 class="nc-profile-section-title">
+                            Skills
+                        </h5>
+
+
+                        <div class="nc-skills-wrapper">
+
+                            {% for skill in profile.skills_list %}
+
+                            <span class="badge skill-badge nc-skill-badge">
+                                {{ skill }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- =========================================
+                         RESUME
+                    ========================================== -->
+
+                    {% if profile.resume %}
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+
+                        <h5 class="nc-profile-section-title">
+                            Resume
+                        </h5>
+
+
+                        <div class="nc-resume-box">
+
+                            <div class="nc-resume-info">
+
+                                <span class="nc-resume-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </span>
+
+                                <div>
+
+                                    <p class="nc-resume-label">
+                                        Resume
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <a
+                                href="{{ profile.resume.url }}"
+                                class="btn btn-sm btn-outline-secondary nc-resume-button"
+                                target="_blank"
+                            >
+                                <i class="bi bi-file-earmark-text"></i>
+                                View Resume
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll(".nc-completeness-progress").forEach(function (progress) {
+        const bar = progress.querySelector(".progress-bar");
+
+        if (bar) {
+            const value = progress.dataset.progress || "0";
+            bar.style.width = value + "%";
+        }
+    });
+</script>
+
+{% endblock %}

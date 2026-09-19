@@ -1,0 +1,831 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-seeker-dashboard {
+        padding: 42px 0 70px;
+    }
+
+    /* Header */
+
+    .nc-dashboard-welcome {
+        margin-bottom: 30px;
+    }
+
+    .nc-dashboard-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--nc-primary, #159a78);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .nc-dashboard-welcome h2 {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin: 0;
+    }
+
+    /* Statistics */
+
+    .nc-stat-card {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 17px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-stat-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(21, 154, 120, 0.22);
+        box-shadow: 0 12px 30px rgba(23, 34, 53, 0.08);
+    }
+
+    .nc-stat-icon {
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.2rem;
+    }
+
+    .nc-stat-icon.info {
+        background: #eef6ff;
+        color: #2778c8;
+    }
+
+    .nc-stat-icon.success {
+        background: #eaf8f0;
+        color: #198754;
+    }
+
+    .nc-stat-label {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.77rem;
+        font-weight: 700;
+        margin: 0 0 4px;
+    }
+
+    .nc-stat-value {
+        color: var(--nc-heading, #172235);
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin: 0;
+    }
+
+    /* Main Cards */
+
+    .nc-dashboard-card {
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 19px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        overflow: hidden;
+    }
+
+    .nc-card-inner {
+        padding: 24px;
+    }
+
+    .nc-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .nc-card-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .nc-card-title i {
+        color: var(--nc-primary, #159a78);
+        font-size: 1.05rem;
+    }
+
+    .nc-view-all {
+        color: var(--nc-primary, #159a78);
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.18s ease;
+    }
+
+    .nc-view-all:hover {
+        color: var(--nc-primary-dark, #08785d);
+    }
+
+    /* Resume Health */
+
+    .nc-resume-intro {
+        color: var(--nc-text, #586678);
+        font-size: 0.86rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .nc-health-stat {
+        padding: 16px 10px;
+        border: 1px solid #edf2ef;
+        border-radius: 13px;
+        background: #fbfdfc;
+    }
+
+    .nc-health-label {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .nc-health-value {
+        color: var(--nc-heading, #172235);
+        font-size: 1.45rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .nc-connections {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        background: #f8faf9;
+        border-radius: 12px;
+        color: var(--nc-text, #586678);
+    }
+
+    .nc-connection {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .nc-connection i {
+        margin-left: 3px;
+    }
+
+    .nc-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .nc-card-actions .btn {
+        border-radius: 9px;
+        font-weight: 650;
+        padding: 8px 14px;
+    }
+
+    /* Job Match */
+
+    .nc-match-description {
+        color: var(--nc-muted, #8994a3);
+        line-height: 1.6;
+    }
+
+    .nc-match-item {
+        margin-bottom: 18px;
+    }
+
+    .nc-match-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .nc-match-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 650;
+    }
+
+    .nc-match-percent {
+        color: var(--nc-primary, #159a78);
+        font-weight: 800;
+    }
+
+    .nc-progress {
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #eaf0ed;
+    }
+
+    .nc-progress .progress-bar {
+        border-radius: 999px;
+        background: linear-gradient(
+            90deg,
+            var(--nc-primary, #159a78),
+            var(--nc-primary-dark, #08785d)
+        );
+    }
+
+    /* Application / Recommendation Lists */
+
+    .nc-dashboard-list {
+        margin: 0;
+    }
+
+    .nc-dashboard-list .list-group-item {
+        padding: 16px 0;
+        border-color: #edf2ef;
+        background: transparent;
+    }
+
+    .nc-dashboard-list .list-group-item:last-child {
+        border-bottom: 0;
+    }
+
+    .nc-item-link {
+        color: var(--nc-heading, #172235);
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.18s ease;
+    }
+
+    .nc-item-link:hover {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-item-meta {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.78rem;
+        margin-top: 4px;
+    }
+
+    .nc-status-badge {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.73rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* Empty States */
+
+    .nc-list-empty {
+        padding: 25px 0 10px;
+        text-align: center;
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-list-empty i {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--nc-primary, #159a78);
+        font-size: 1.6rem;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 767.98px) {
+
+        .nc-seeker-dashboard {
+            padding: 28px 0 50px;
+        }
+
+        .nc-dashboard-welcome h2 {
+            font-size: 1.55rem;
+        }
+
+        .nc-stat-card {
+            padding: 16px;
+        }
+
+        .nc-stat-icon {
+            width: 42px;
+            height: 42px;
+            flex-basis: 42px;
+            font-size: 1rem;
+        }
+
+        .nc-stat-value {
+            font-size: 1.3rem;
+        }
+
+        .nc-card-inner {
+            padding: 20px;
+        }
+
+        .nc-card-header {
+            align-items: flex-start;
+        }
+
+        .nc-health-stat {
+            padding: 13px 6px;
+        }
+
+        .nc-health-value {
+            font-size: 1.25rem;
+        }
+
+        .nc-card-actions .btn {
+            flex: 1 1 auto;
+        }
+    }
+</style>
+
+
+<div class="nc-seeker-dashboard">
+
+    <div class="container">
+
+        <!-- Welcome Header -->
+
+        <div class="nc-dashboard-welcome reveal">
+
+            <div class="nc-dashboard-eyebrow">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </div>
+
+            <h2>
+                Welcome back, {{ user.first_name|default:user.username }}
+            </h2>
+
+        </div>
+
+
+        <!-- Statistics -->
+
+        <div class="row g-3 mb-4 stagger-grid">
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon info">
+                        <i class="bi bi-send"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Applications Submitted
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ total_applications }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon">
+                        <i class="bi bi-bookmark-heart"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Saved Jobs
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ saved_jobs_count }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon success">
+                        <i class="bi bi-person-check"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Profile Completion
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ profile.completion_percent }}%
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Main Dashboard -->
+
+        <div class="row g-4 mb-4">
+
+            <!-- Left Column -->
+
+            <div class="col-lg-7">
+
+                <!-- Resume Health -->
+
+                <div class="nc-dashboard-card reveal">
+
+                    <div class="nc-card-inner">
+
+                        <div class="nc-card-header">
+
+                            <h5 class="nc-card-title">
+                                <i class="bi bi-file-earmark-check"></i>
+                                Resume Health
+                            </h5>
+
+                        </div>
+
+
+                        <div class="row g-3 text-center mb-4">
+
+                            <div class="col-4">
+
+                                <div class="nc-health-stat">
+
+                                    <p class="nc-health-label">
+                                        ATS Readiness
+                                    </p>
+
+                                    <p class="nc-health-value">
+                                        {{ resume_readiness_percent }}%
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-4">
+
+                                <div class="nc-health-stat">
+
+                                    <p class="nc-health-label">
+                                        Profile
+                                    </p>
+
+                                    <p class="nc-health-value">
+                                        {{ profile.completion_percent }}%
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-4">
+
+                                <div class="nc-health-stat">
+
+                                    <p class="nc-health-label">
+                                        Resume
+                                    </p>
+
+                                    <p class="nc-health-value">
+                                        {{ resume_readiness_percent }}%
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="nc-connections">
+
+                            <span class="nc-connection">
+
+                                LinkedIn
+
+                                {% if linkedin_connected %}
+
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    Connected
+
+                                {% else %}
+
+                                    <i class="bi bi-dash-circle text-muted"></i>
+                                    Not connected
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <span class="nc-connection">
+
+                                GitHub
+
+                                {% if github_connected %}
+
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    Connected
+
+                                {% else %}
+
+                                    <i class="bi bi-dash-circle text-muted"></i>
+                                    Not connected
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="nc-card-actions">
+
+                            <a
+                                href="{% url 'accounts:resume_analysis' %}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                Analyze Resume
+                            </a>
+
+                            <a
+                                href="{% url 'accounts:profile_edit' %}"
+                                class="btn btn-outline-secondary btn-sm"
+                            >
+                                Improve Profile
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Recent Job Matches -->
+
+                {% if recent_job_matches %}
+
+                <div class="nc-dashboard-card mt-4 reveal">
+
+                    <div class="nc-card-inner">
+
+                        <div class="nc-card-header">
+
+                            <h5 class="nc-card-title">
+                                <i class="bi bi-stars"></i>
+                                Recent Job Matches
+                            </h5>
+
+                        </div>
+
+
+                        <p class="nc-match-description small mb-4">
+                            Informational match estimates, not a guarantee of hiring.
+                        </p>
+
+
+                        {% for entry in recent_job_matches %}
+
+                        <div class="nc-match-item">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                <span class="small nc-match-title">
+                                    {{ entry.job_title }}
+                                </span>
+
+                                <span class="small nc-match-percent">
+                                    {{ entry.percent }}%
+                                </span>
+
+                            </div>
+
+
+                            <div class="progress nc-progress">
+
+                                <div
+                                    class="progress-bar"
+                                    role="progressbar"
+                                    data-progress="{{ entry.percent }}"
+                                    aria-valuenow="{{ entry.percent }}"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Right Column -->
+
+            <div class="col-lg-5">
+
+                <!-- Recent Applications -->
+
+                <div class="nc-dashboard-card reveal">
+
+                    <div class="nc-card-inner">
+
+                        <div class="nc-card-header">
+
+                            <h5 class="nc-card-title">
+                                <i class="bi bi-send-check"></i>
+                                Recent Applications
+                            </h5>
+
+                            <a
+                                href="{% url 'applications:mine' %}"
+                                class="small nc-view-all"
+                            >
+                                View all
+                            </a>
+
+                        </div>
+
+
+                        {% if recent_applications %}
+
+                        <ul class="list-group list-group-flush nc-dashboard-list">
+
+                            {% for application in recent_applications %}
+
+                            <li class="list-group-item d-flex justify-content-between align-items-center gap-3">
+
+                                <div>
+
+                                    <a
+                                        href="{% url 'applications:detail' application.pk %}"
+                                        class="nc-item-link"
+                                    >
+                                        {{ application.job.title }}
+                                    </a>
+
+                                    <p class="nc-item-meta mb-0">
+                                        {{ application.job.company.name }}
+                                    </p>
+
+                                </div>
+
+
+                                <span
+                                    class="badge badge-status bg-{{ application.badge_class }} nc-status-badge"
+                                >
+                                    {{ application.get_status_display }}
+                                </span>
+
+                            </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                        {% else %}
+
+                        <div class="nc-list-empty">
+
+                            <i class="bi bi-send"></i>
+
+                            <p class="mb-0">
+                                No applications yet.
+                            </p>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Recommended Jobs -->
+
+                <div class="nc-dashboard-card mt-4 reveal">
+
+                    <div class="nc-card-inner">
+
+                        <div class="nc-card-header">
+
+                            <h5 class="nc-card-title">
+                                <i class="bi bi-bookmark-star"></i>
+                                Jobs You Might Like
+                            </h5>
+
+                        </div>
+
+
+                        {% if recommended_jobs %}
+
+                        <ul class="list-group list-group-flush nc-dashboard-list">
+
+                            {% for job in recommended_jobs %}
+
+                            <li class="list-group-item px-0">
+
+                                <a
+                                    href="{% url 'jobs:detail' job.pk %}"
+                                    class="nc-item-link"
+                                >
+                                    {{ job.title }}
+                                </a>
+
+                                <p class="nc-item-meta mb-0">
+                                    {{ job.company.name }}
+                                    &middot;
+                                    {{ job.location }}
+                                </p>
+
+                            </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                        {% else %}
+
+                        <div class="nc-list-empty">
+
+                            <i class="bi bi-briefcase"></i>
+
+                            <p class="mb-0">
+                                No open jobs right now.
+                            </p>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("[data-progress]").forEach(function (bar) {
+            var value = parseFloat(bar.getAttribute("data-progress")) || 0;
+
+            value = Math.max(0, Math.min(100, value));
+
+            bar.style.width = value + "%";
+        });
+    });
+</script>
+
+{% endblock %}

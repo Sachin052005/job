@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}{% if object %}Edit Job{% else %}Post a Job{% endif %} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-job-form-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-job-form-card {
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
+        overflow: hidden;
+    }
+
+    .nc-job-form-header {
+        position: relative;
+        padding: 30px 35px;
+        background: linear-gradient(
+            135deg,
+            var(--nc-primary-soft, #e8f6f1),
+            #ffffff 72%
+        );
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+    }
+
+    .nc-job-form-header-inner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .nc-form-icon {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        background: var(--nc-primary, #159a78);
+        color: #ffffff;
+        font-size: 1.25rem;
+        box-shadow: 0 8px 20px rgba(21, 154, 120, 0.18);
+    }
+
+    .nc-job-form-title {
+        color: var(--nc-heading, #172235);
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .nc-job-form-body {
+        padding: 32px 35px 35px;
+    }
+
+    .nc-form-section {
+        margin-bottom: 28px;
+    }
+
+    .nc-form-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .nc-form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--nc-heading, #172235);
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-bottom: 17px;
+    }
+
+    .nc-form-section-title::before {
+        content: "";
+        width: 4px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-field {
+        margin-bottom: 18px;
+    }
+
+    .nc-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .nc-form-label {
+        display: block;
+        color: var(--nc-heading, #172235);
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .nc-job-form-body .form-control,
+    .nc-job-form-body .form-select {
+        min-height: 44px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 10px;
+        background: #ffffff;
+        color: var(--nc-heading, #172235);
+        padding: 10px 13px;
+        box-shadow: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .nc-job-form-body .form-control:focus,
+    .nc-job-form-body .form-select:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+        background: #ffffff;
+    }
+
+    .nc-job-form-body textarea.form-control {
+        min-height: 130px;
+        resize: vertical;
+        line-height: 1.65;
+    }
+
+    .nc-job-form-body input[type="number"].form-control {
+        appearance: textfield;
+    }
+
+    .nc-job-form-body input[type="number"].form-control::-webkit-outer-spin-button,
+    .nc-job-form-body input[type="number"].form-control::-webkit-inner-spin-button {
+        margin: 0;
+    }
+
+    .nc-form-error {
+        margin-top: 6px;
+        font-size: 0.78rem;
+    }
+
+    .nc-non-field-error {
+        border-radius: 11px;
+        border: 1px solid #f1b8bf;
+        background: #fff5f6;
+        color: #a52834;
+        padding: 12px 14px;
+        margin-bottom: 25px;
+        font-size: 0.84rem;
+    }
+
+    .nc-form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 25px;
+        margin-top: 30px;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+    }
+
+    .nc-submit-btn {
+        min-height: 44px;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-weight: 700;
+        box-shadow: 0 7px 18px rgba(21, 154, 120, 0.14);
+    }
+
+    .nc-submit-btn:hover {
+        box-shadow: 0 10px 22px rgba(21, 154, 120, 0.18);
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-job-form-page {
+            padding: 25px 0 50px;
+        }
+
+        .nc-job-form-header {
+            padding: 25px 22px;
+        }
+
+        .nc-job-form-body {
+            padding: 27px 22px 28px;
+        }
+
+        .nc-form-icon {
+            width: 46px;
+            height: 46px;
+            flex-basis: 46px;
+            border-radius: 13px;
+        }
+
+        .nc-job-form-title {
+            font-size: 1.3rem;
+        }
+
+        .nc-form-actions {
+            justify-content: stretch;
+        }
+
+        .nc-submit-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="nc-job-form-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-9 col-xl-8">
+
+                <div class="nc-job-form-card">
+
+                    <!-- Header -->
+                    <div class="nc-job-form-header">
+
+                        <div class="nc-job-form-header-inner">
+
+                            <div class="nc-form-icon">
+                                <i class="bi bi-briefcase-fill"></i>
+                            </div>
+
+                            <h3 class="nc-job-form-title">
+                                {% if object %}
+                                    Edit Job
+                                {% else %}
+                                    Post a New Job
+                                {% endif %}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Form -->
+                    <div class="nc-job-form-body">
+
+                        <form method="post" novalidate>
+
+                            {% csrf_token %}
+
+                            {% if form.non_field_errors %}
+                                <div class="nc-non-field-error">
+                                    {{ form.non_field_errors }}
+                                </div>
+                            {% endif %}
+
+
+                            <!-- Basic Information -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Job Information
+                                </div>
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Job Title
+                                    </label>
+
+                                    {{ form.title|add_class:"form-control" }}
+
+                                    {% for error in form.title.errors %}
+                                        <div class="invalid-feedback d-block nc-form-error">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Category
+                                            </label>
+
+                                            {{ form.category|add_class:"form-select" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Location
+                                            </label>
+
+                                            {{ form.location|add_class:"form-control" }}
+
+                                            {% for error in form.location.errors %}
+                                                <div class="invalid-feedback d-block nc-form-error">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Job Description -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Job Details
+                                </div>
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Description
+                                    </label>
+
+                                    {{ form.description|add_class:"form-control" }}
+
+                                    {% for error in form.description.errors %}
+                                        <div class="invalid-feedback d-block nc-form-error">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Responsibilities
+                                    </label>
+
+                                    {{ form.responsibilities|add_class:"form-control" }}
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Skills (comma-separated)
+                                    </label>
+
+                                    {{ form.skills|add_class:"form-control" }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Employment -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Employment Details
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Employment Type
+                                            </label>
+
+                                            {{ form.employment_type|add_class:"form-select" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Status
+                                            </label>
+
+                                            {{ form.status|add_class:"form-select" }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Experience and Salary -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Experience &amp; Salary
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-3">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Min Experience
+                                            </label>
+
+                                            {{ form.experience_min|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Max Experience
+                                            </label>
+
+                                            {{ form.experience_max|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Min Salary
+                                            </label>
+
+                                            {{ form.salary_min|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Max Salary
+                                            </label>
+
+                                            {{ form.salary_max|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Deadline -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Application Details
+                                </div>
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Application Deadline
+                                    </label>
+
+                                    {{ form.application_deadline|add_class:"form-control" }}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Submit -->
+                            <div class="nc-form-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary nc-submit-btn"
+                                >
+                                    <i class="bi bi-check2-circle me-1"></i>
+
+                                    {% if object %}
+                                        Save Changes
+                                    {% else %}
+                                        Post Job
+                                    {% endif %}
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

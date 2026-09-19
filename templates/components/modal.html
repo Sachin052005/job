@@ -1,0 +1,207 @@
+{% comment %}
+Reusable confirmation modal. Include with:
+{% include "components/modal.html" with modal_id="deleteModal" title="Delete Job" body="Are you sure?" confirm_url=job.get_absolute_url %}
+{% endcomment %}
+
+<style>
+    .nc-confirm-modal .modal-dialog {
+        max-width: 460px;
+    }
+
+    .nc-confirm-modal .modal-content {
+        overflow: hidden;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        background: var(--nc-white, #ffffff);
+        box-shadow: 0 25px 70px rgba(23, 34, 53, 0.18);
+    }
+
+    .nc-confirm-modal .modal-header {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+    }
+
+    .nc-confirm-modal .modal-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-confirm-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: #fff4f2;
+        color: #dc3545;
+        font-size: 1.1rem;
+    }
+
+    .nc-confirm-modal .modal-title {
+        color: var(--nc-heading, #172235);
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1.35;
+        margin: 0;
+    }
+
+    .nc-confirm-modal .btn-close {
+        margin-left: auto;
+        opacity: 0.55;
+    }
+
+    .nc-confirm-modal .btn-close:hover {
+        opacity: 0.85;
+    }
+
+    .nc-confirm-modal .modal-body {
+        padding: 24px;
+        color: var(--nc-text, #586678);
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+
+    .nc-confirm-modal .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 17px 24px 22px;
+        border-top: 0;
+    }
+
+    .nc-confirm-modal .modal-footer form {
+        margin: 0;
+    }
+
+    .nc-confirm-modal .modal-footer .btn {
+        min-width: 92px;
+        border-radius: 9px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 9px 15px;
+    }
+
+    .nc-confirm-cancel {
+        border-color: var(--nc-border, #e1e8e4);
+        color: var(--nc-text, #586678);
+        background: var(--nc-white, #ffffff);
+    }
+
+    .nc-confirm-cancel:hover {
+        border-color: #cbd5d0;
+        background: #f7faf8;
+        color: var(--nc-heading, #172235);
+    }
+
+    .nc-confirm-btn {
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.12);
+    }
+
+    .nc-confirm-btn:hover {
+        box-shadow: 0 8px 18px rgba(220, 53, 69, 0.18);
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-confirm-modal .modal-dialog {
+            margin: 12px;
+        }
+
+        .nc-confirm-modal .modal-header {
+            padding: 20px;
+        }
+
+        .nc-confirm-modal .modal-body {
+            padding: 20px;
+        }
+
+        .nc-confirm-modal .modal-footer {
+            padding: 14px 20px 20px;
+        }
+
+        .nc-confirm-modal .modal-footer .btn {
+            flex: 1;
+        }
+    }
+</style>
+
+
+<div
+    class="modal fade nc-confirm-modal"
+    id="{{ modal_id }}"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <span class="nc-confirm-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </span>
+
+                <h5 class="modal-title">
+                    {{ title }}
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+                {{ body }}
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary nc-confirm-cancel"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+
+                <form
+                    method="post"
+                    action="{{ confirm_url }}"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger nc-confirm-btn"
+                    >
+                        Confirm
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

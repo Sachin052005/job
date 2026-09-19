@@ -1,0 +1,910 @@
+{% extends "base.html" %}
+
+{% block title %}Applicants - {{ job.title }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-applicants-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-applicants-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .nc-applicants-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .nc-applicants-subtitle {
+        color: var(--nc-text, #586678);
+    }
+
+    .nc-back-btn {
+        border-radius: 10px;
+        padding: 9px 16px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    /* Section heading */
+
+    .nc-section-heading {
+        margin-bottom: 18px;
+    }
+
+    .nc-section-heading h5,
+    .nc-section-heading h6 {
+        color: var(--nc-heading, #172235);
+        font-weight: 750;
+    }
+
+    .nc-section-heading p {
+        max-width: 850px;
+        line-height: 1.6;
+    }
+
+    /* Quick Review */
+
+    .nc-quick-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 17px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-quick-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(21, 154, 120, 0.28);
+        box-shadow: 0 14px 32px rgba(23, 34, 53, 0.08);
+    }
+
+    .nc-candidate-name {
+        color: var(--nc-heading, #172235);
+        font-weight: 750;
+    }
+
+    .nc-match-label {
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-progress {
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e9efec;
+    }
+
+    .nc-progress .progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--nc-primary, #159a78);
+        transition: width 0.5s ease;
+    }
+
+    .nc-review-btn {
+        border-radius: 9px;
+        font-weight: 650;
+    }
+
+    /* Filter */
+
+    .nc-filter-card {
+        padding: 24px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-filter-card .form-label {
+        color: var(--nc-heading, #172235);
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .nc-filter-card .form-control,
+    .nc-filter-card .form-select {
+        min-height: 45px;
+        border-radius: 10px;
+        border-color: var(--nc-border, #e1e8e4);
+        background: #fbfdfc;
+    }
+
+    .nc-filter-card .form-control:focus,
+    .nc-filter-card .form-select:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 4px rgba(21, 154, 120, 0.10);
+        background: #ffffff;
+    }
+
+    .nc-filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .nc-filter-actions .btn {
+        min-height: 45px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .nc-reset-btn {
+        width: 45px;
+        flex: 0 0 45px;
+    }
+
+    .nc-filter-checks {
+        padding-top: 5px;
+    }
+
+    .nc-filter-checks .form-check {
+        margin-bottom: 0;
+    }
+
+    .nc-filter-checks .form-check-input {
+        cursor: pointer;
+    }
+
+    .nc-filter-checks .form-check-input:checked {
+        background-color: var(--nc-primary, #159a78);
+        border-color: var(--nc-primary, #159a78);
+    }
+
+    /* Applicants table */
+
+    .nc-applicants-table-wrapper {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-applicants-table {
+        margin-bottom: 0;
+    }
+
+    .nc-applicants-table thead th {
+        padding: 15px 18px;
+        background: #f7faf8;
+        color: var(--nc-muted, #8994a3);
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+        font-size: 0.73rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .nc-applicants-table tbody td {
+        padding: 18px;
+        border-bottom: 1px solid #edf2ef;
+        color: var(--nc-text, #586678);
+        vertical-align: middle;
+    }
+
+    .nc-applicants-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .nc-applicants-table tbody tr {
+        transition: background 0.18s ease;
+    }
+
+    .nc-applicants-table tbody tr:hover {
+        background: #fbfdfc;
+    }
+
+    .nc-table-candidate {
+        color: var(--nc-heading, #172235);
+        font-weight: 750;
+    }
+
+    .nc-match-cell {
+        min-width: 220px;
+    }
+
+    .nc-match-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .nc-match-row .nc-progress {
+        flex: 1;
+    }
+
+    .nc-match-percent {
+        min-width: 38px;
+        color: var(--nc-heading, #172235);
+        font-size: 0.8rem;
+        font-weight: 750;
+        text-align: right;
+    }
+
+    .nc-table-skill {
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 0.72rem;
+        font-weight: 650;
+    }
+
+    .nc-link-icons {
+        white-space: nowrap;
+    }
+
+    .nc-link-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: #f3f7f5;
+        color: var(--nc-text, #586678);
+        text-decoration: none;
+    }
+
+    .nc-link-icon:hover {
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-status {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .nc-review-table-btn {
+        border-radius: 9px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    /* Empty state */
+
+    .nc-empty-state {
+        padding: 70px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-empty-state i {
+        opacity: 0.55;
+    }
+
+    .nc-empty-state p {
+        color: var(--nc-text, #586678);
+        margin-bottom: 0;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 991.98px) {
+        .nc-applicants-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .nc-back-btn {
+            width: auto;
+        }
+
+        .nc-applicants-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .nc-applicants-table {
+            min-width: 900px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-applicants-page {
+            padding: 28px 0 50px;
+        }
+
+        .nc-applicants-title {
+            font-size: 1.5rem;
+        }
+
+        .nc-filter-card {
+            padding: 20px;
+        }
+
+        .nc-filter-actions {
+            width: 100%;
+        }
+
+        .nc-filter-actions .btn-primary {
+            flex: 1;
+        }
+
+        .nc-empty-state {
+            padding: 50px 20px;
+        }
+    }
+</style>
+
+
+<div class="nc-applicants-page">
+    <div class="container">
+
+        <!-- Page Header -->
+
+        <div class="nc-applicants-header">
+
+            <div>
+                <h2 class="nc-applicants-title mb-1">
+                    Applicants for {{ job.title }}
+                </h2>
+
+                <p class="nc-applicants-subtitle mb-0">
+                    {{ total_applicant_count }}
+                    application{{ total_applicant_count|pluralize }}
+                </p>
+            </div>
+
+            <a
+                href="{% url 'jobs:detail' job.pk %}"
+                class="btn btn-outline-secondary nc-back-btn"
+            >
+                Back to Job
+            </a>
+
+        </div>
+
+
+        <!-- Quick Review -->
+
+        {% if quick_review %}
+
+        <div class="nc-section-heading">
+
+            <h5 class="mb-1">
+                Quick Review
+            </h5>
+
+            <p class="text-muted small mb-0">
+                Candidates with the strongest documented, job-relevant matches. This is a starting point for review, not a ranking of candidate quality - view all applicants below to see everyone.
+            </p>
+
+        </div>
+
+
+        <div class="row g-3 mb-4 stagger-grid">
+
+            {% for application in quick_review %}
+
+            <div class="col-md-6 col-lg-4 col-xl-3">
+
+                <div class="nc-quick-card">
+
+                    <p class="nc-candidate-name mb-1">
+                        {{ application.applicant.get_full_name|default:application.applicant.username }}
+                    </p>
+
+                    <p class="nc-match-label small mb-2">
+                        {{ application.match_snapshot.overall_percent|default:0 }}% match signal
+                    </p>
+
+
+                    <!-- Fixed progress bar -->
+
+                    <div
+                        class="progress nc-progress mb-3"
+                        style="height: 7px;"
+                    >
+                        <div
+                            class="progress-bar"
+                            role="progressbar"
+                            data-progress="{{ application.match_snapshot.overall_percent|default:0 }}"
+                            aria-valuenow="{{ application.match_snapshot.overall_percent|default:0 }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        ></div>
+                    </div>
+
+
+                    <a
+                        href="{% url 'applications:detail' application.pk %}"
+                        class="btn btn-sm btn-outline-primary nc-review-btn w-100 mt-auto"
+                    >
+                        Review Candidate
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Filters -->
+
+        <div
+            class="nc-filter-card mb-4"
+            id="all-applicants"
+        >
+
+            <form
+                method="get"
+                class="row g-3 align-items-end"
+            >
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Search Candidate
+                    </label>
+
+                    <input
+                        type="text"
+                        name="keyword"
+                        value="{{ request.GET.keyword }}"
+                        class="form-control"
+                        placeholder="Name, email, skill"
+                    >
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Min. Experience
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        name="min_experience"
+                        value="{{ request.GET.min_experience }}"
+                        class="form-control"
+                        placeholder="Years"
+                    >
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Any Status
+                        </option>
+
+                        {% for value, label in status_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if request.GET.status == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Sort by
+                    </label>
+
+                    <select
+                        name="sort"
+                        class="form-select"
+                    >
+
+                        <option
+                            value="newest"
+                            {% if sort == "newest" %}selected{% endif %}
+                        >
+                            Newest application
+                        </option>
+
+                        <option
+                            value="oldest"
+                            {% if sort == "oldest" %}selected{% endif %}
+                        >
+                            Oldest application
+                        </option>
+
+                        <option
+                            value="match"
+                            {% if sort == "match" %}selected{% endif %}
+                        >
+                            Relevance of documented skills
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <div class="nc-filter-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary flex-grow-1"
+                        >
+                            <i class="bi bi-search me-1"></i>
+                            Apply
+                        </button>
+
+                        <a
+                            href="{% url 'applications:for_job' job.pk %}#all-applicants"
+                            class="btn btn-outline-secondary nc-reset-btn"
+                            title="Reset filters"
+                        >
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <div class="nc-filter-checks d-flex flex-wrap gap-3">
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="has_resume"
+                                value="1"
+                                id="hasResume"
+                                {% if request.GET.has_resume %}checked{% endif %}
+                            >
+
+                            <label
+                                class="form-check-label small"
+                                for="hasResume"
+                            >
+                                Resume available
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="has_linkedin"
+                                value="1"
+                                id="hasLinkedin"
+                                {% if request.GET.has_linkedin %}checked{% endif %}
+                            >
+
+                            <label
+                                class="form-check-label small"
+                                for="hasLinkedin"
+                            >
+                                LinkedIn available
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="has_github"
+                                value="1"
+                                id="hasGithub"
+                                {% if request.GET.has_github %}checked{% endif %}
+                            >
+
+                            <label
+                                class="form-check-label small"
+                                for="hasGithub"
+                            >
+                                GitHub available
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- All Applicants -->
+
+        <div class="nc-section-heading">
+
+            <h6 class="mb-0">
+                View All Applicants
+            </h6>
+
+        </div>
+
+
+        {% if applications %}
+
+        <div class="nc-applicants-table-wrapper reveal">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle nc-applicants-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Candidate
+                            </th>
+
+                            <th>
+                                ATS Match Signals
+                            </th>
+
+                            <th>
+                                Links
+                            </th>
+
+                            <th>
+                                Applied On
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for application in applications %}
+
+                        <tr>
+
+                            <!-- Candidate -->
+
+                            <td>
+
+                                <p class="nc-table-candidate mb-1">
+                                    {{ application.applicant.get_full_name|default:application.applicant.username }}
+                                </p>
+
+                                <p class="text-muted small mb-0">
+                                    {{ application.applicant.profile.experience_years }}
+                                    yr{{ application.applicant.profile.experience_years|pluralize }}
+                                    exp
+                                </p>
+
+                            </td>
+
+
+                            <!-- ATS Match -->
+
+                            <td class="nc-match-cell">
+
+                                {% with snapshot=application.match_snapshot %}
+
+                                {% if snapshot %}
+
+                                <div class="nc-match-row mb-2">
+
+                                    <div
+                                        class="progress nc-progress"
+                                        style="height: 6px;"
+                                    >
+                                        <div
+                                            class="progress-bar"
+                                            role="progressbar"
+                                            data-progress="{{ snapshot.overall_percent }}"
+                                            aria-valuenow="{{ snapshot.overall_percent }}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                        ></div>
+                                    </div>
+
+                                    <span class="nc-match-percent">
+                                        {{ snapshot.overall_percent }}%
+                                    </span>
+
+                                </div>
+
+
+                                {% for skill in snapshot.matched_skills|slice:":3" %}
+
+                                    <span class="badge bg-success nc-table-skill me-1 mb-1">
+                                        {{ skill }}
+                                    </span>
+
+                                {% endfor %}
+
+
+                                {% if snapshot.missing_skills %}
+
+                                    <span class="badge bg-warning nc-table-skill me-1 mb-1">
+                                        {{ snapshot.missing_skills|length }}
+                                        not detected
+                                    </span>
+
+                                {% endif %}
+
+
+                                {% else %}
+
+                                <span class="text-muted small">
+                                    Not yet analyzed
+                                </span>
+
+                                {% endif %}
+
+                                {% endwith %}
+
+                            </td>
+
+
+                            <!-- Links -->
+
+                            <td class="nc-link-icons">
+
+                                {% if application.applicant.profile.linkedin_url %}
+
+                                    <span
+                                        class="nc-link-icon"
+                                        title="LinkedIn available"
+                                    >
+                                        <i class="bi bi-linkedin text-primary"></i>
+                                    </span>
+
+                                {% endif %}
+
+
+                                {% if application.applicant.profile.github_url %}
+
+                                    <span
+                                        class="nc-link-icon ms-1"
+                                        title="GitHub available"
+                                    >
+                                        <i class="bi bi-github"></i>
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Applied Date -->
+
+                            <td>
+                                {{ application.applied_at|date:"M d, Y" }}
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+                                <span
+                                    class="badge badge-status bg-{{ application.badge_class }} nc-status"
+                                >
+                                    {{ application.get_status_display }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- Review -->
+
+                            <td>
+
+                                <a
+                                    href="{% url 'applications:detail' application.pk %}"
+                                    class="btn btn-sm btn-outline-primary nc-review-table-btn"
+                                >
+                                    Review
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+        <div class="nc-empty-state">
+
+            <i class="bi bi-people display-1 text-secondary"></i>
+
+            <p class="mt-3">
+                No applications match these filters.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-progress]").forEach(function (bar) {
+        var value = parseFloat(bar.getAttribute("data-progress")) || 0;
+
+        value = Math.max(0, Math.min(100, value));
+
+        bar.style.width = value + "%";
+    });
+});
+</script>
+
+{% endblock %}

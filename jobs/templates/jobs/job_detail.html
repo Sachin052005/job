@@ -1,0 +1,676 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ job.title }} - {{ job.company.name }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-job-detail-page {
+        padding: 42px 0 70px;
+    }
+
+    /* Main Job Card */
+    .nc-job-main-card {
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
+        overflow: hidden;
+    }
+
+    .nc-job-header {
+        position: relative;
+        padding: 34px 35px 30px;
+        background: linear-gradient(
+            135deg,
+            var(--nc-primary-soft, #e8f6f1),
+            #ffffff 70%
+        );
+        border-bottom: 1px solid var(--nc-border, #e1e8e4);
+    }
+
+    .nc-job-header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .nc-company-logo {
+        width: 68px;
+        height: 68px;
+        flex: 0 0 68px;
+        border-radius: 18px;
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: var(--nc-primary, #159a78);
+        font-size: 1.5rem;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(23, 34, 53, 0.06);
+    }
+
+    .nc-company-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-job-title {
+        color: var(--nc-heading, #172235);
+        font-size: clamp(1.65rem, 3vw, 2.15rem);
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 7px;
+    }
+
+    .nc-company-name {
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 1rem;
+    }
+
+    .nc-job-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    /* Job Meta */
+    .nc-job-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 24px 35px 0;
+    }
+
+    .nc-job-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 10px;
+        background: #fbfdfc;
+        color: var(--nc-text, #586678);
+        font-size: 0.84rem;
+    }
+
+    .nc-job-meta-item i {
+        color: var(--nc-primary, #159a78);
+        font-size: 0.95rem;
+    }
+
+    /* Skills */
+    .nc-job-skills {
+        padding: 22px 35px 28px;
+    }
+
+    .nc-skill-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        margin: 0 5px 7px 0;
+        border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        border: 1px solid rgba(21, 154, 120, 0.15);
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    /* Description */
+    .nc-job-body {
+        padding: 0 35px 35px;
+    }
+
+    .nc-job-body hr {
+        border-color: var(--nc-border, #e1e8e4);
+        opacity: 1;
+        margin-bottom: 28px;
+    }
+
+    .nc-job-section {
+        margin-top: 27px;
+    }
+
+    .nc-job-section:first-of-type {
+        margin-top: 0;
+    }
+
+    .nc-job-section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--nc-heading, #172235);
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin-bottom: 13px;
+    }
+
+    .nc-job-section-title::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        border-radius: 999px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-job-description {
+        color: var(--nc-text, #586678);
+        line-height: 1.8;
+        margin-bottom: 0;
+    }
+
+    .nc-job-footer {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding-top: 25px;
+        margin-top: 30px;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.78rem;
+    }
+
+    /* Sidebar */
+    .nc-job-sidebar-card {
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        padding: 25px;
+    }
+
+    .nc-action-card {
+        position: sticky;
+        top: 90px;
+    }
+
+    .nc-action-heading {
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+    }
+
+    .nc-owner-note {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 13px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        background: #f7faf8;
+        color: var(--nc-text, #586678);
+        font-size: 0.8rem;
+    }
+
+    .nc-owner-note i {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-action-card .btn {
+        min-height: 43px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .nc-action-card .btn + .btn {
+        margin-top: 0;
+    }
+
+    .nc-action-help {
+        color: var(--nc-muted, #8994a3);
+        line-height: 1.6;
+    }
+
+    /* Company Card */
+    .nc-company-card {
+        margin-top: 18px;
+    }
+
+    .nc-company-card-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        font-size: 0.98rem;
+        margin-bottom: 12px;
+    }
+
+    .nc-company-description {
+        color: var(--nc-text, #586678);
+        line-height: 1.65;
+    }
+
+    .nc-company-link {
+        color: var(--nc-primary-dark, #08785d);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.82rem;
+    }
+
+    .nc-company-link:hover {
+        color: var(--nc-primary, #159a78);
+    }
+
+    @media (max-width: 991.98px) {
+        .nc-action-card {
+            position: static;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-job-detail-page {
+            padding: 25px 0 50px;
+        }
+
+        .nc-job-header {
+            padding: 27px 22px 24px;
+        }
+
+        .nc-job-header-content {
+            gap: 13px;
+        }
+
+        .nc-company-logo {
+            width: 58px;
+            height: 58px;
+            flex-basis: 58px;
+            border-radius: 15px;
+            font-size: 1.25rem;
+        }
+
+        .nc-job-title {
+            font-size: 1.45rem;
+        }
+
+        .nc-job-meta {
+            padding: 20px 22px 0;
+            gap: 8px;
+        }
+
+        .nc-job-meta-item {
+            font-size: 0.78rem;
+        }
+
+        .nc-job-skills {
+            padding: 20px 22px 23px;
+        }
+
+        .nc-job-body {
+            padding: 0 22px 28px;
+        }
+
+        .nc-job-sidebar-card {
+            padding: 21px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .nc-job-header-content {
+            align-items: flex-start;
+        }
+
+        .nc-job-status {
+            margin-top: 4px;
+        }
+
+        .nc-job-meta-item {
+            width: 100%;
+        }
+
+        .nc-job-footer {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+
+<div class="nc-job-detail-page">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <!-- Main Job Details -->
+            <div class="col-lg-8">
+
+                <div class="nc-job-main-card reveal">
+
+                    <!-- Job Header -->
+                    <div class="nc-job-header">
+
+                        <div class="nc-job-header-content">
+
+                            <div class="nc-company-logo">
+
+                                {% if job.company.logo %}
+                                    <img
+                                        src="{{ job.company.logo.url }}"
+                                        alt="{{ job.company.name }}"
+                                    >
+                                {% else %}
+                                    {{ job.company.name|slice:":1" }}
+                                {% endif %}
+
+                            </div>
+
+                            <div class="flex-grow-1">
+
+                                <h1 class="nc-job-title">
+                                    {{ job.title }}
+                                </h1>
+
+                                <div>
+                                    <a
+                                        href="{% url 'companies:detail' job.company.slug %}"
+                                        class="nc-company-name text-decoration-none fw-semibold"
+                                    >
+                                        {{ job.company.name }}
+                                    </a>
+
+                                    <span class="badge badge-status bg-{% if job.status == 'published' %}success{% elif job.status == 'closed' %}dark{% else %}secondary{% endif %} nc-job-status ms-2">
+                                        {{ job.get_status_display }}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Job Meta -->
+                    <div class="nc-job-meta">
+
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-geo-alt"></i>
+                            {{ job.location }}
+                        </span>
+
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-briefcase"></i>
+                            {{ job.get_employment_type_display }}
+                        </span>
+
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-graph-up"></i>
+                            {{ job.experience_min }}-{{ job.experience_max }} yrs exp
+                        </span>
+
+                        {% if job.salary_min or job.salary_max %}
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-currency-rupee"></i>
+
+                            {% if job.salary_min %}
+                                {{ job.salary_min|intcomma }}
+                            {% endif %}
+
+                            {% if job.salary_min and job.salary_max %}
+                                -
+                            {% endif %}
+
+                            {% if job.salary_max %}
+                                {{ job.salary_max|intcomma }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+
+                        {% if job.application_deadline %}
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-calendar-event"></i>
+                            Apply by {{ job.application_deadline }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Skills -->
+                    <div class="nc-job-skills">
+
+                        {% for skill in job.skills_list %}
+
+                            <span class="nc-skill-badge">
+                                {{ skill }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- Job Content -->
+                    <div class="nc-job-body">
+
+                        <hr>
+
+                        <section class="nc-job-section">
+
+                            <h5 class="nc-job-section-title">
+                                Job Description
+                            </h5>
+
+                            <div class="nc-job-description">
+                                {{ job.description|linebreaks }}
+                            </div>
+
+                        </section>
+
+
+                        {% if job.responsibilities %}
+
+                        <section class="nc-job-section">
+
+                            <h5 class="nc-job-section-title">
+                                Responsibilities
+                            </h5>
+
+                            <div class="nc-job-description">
+                                {{ job.responsibilities|linebreaks }}
+                            </div>
+
+                        </section>
+
+                        {% endif %}
+
+
+                        <div class="nc-job-footer">
+
+                            <span>
+                                Posted {{ job.created_at|timesince }} ago
+                            </span>
+
+                            <span>&middot;</span>
+
+                            <span>
+                                {{ job.views_count }} views
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+
+                <div class="nc-job-sidebar-card nc-action-card reveal">
+
+                    {% if is_owner %}
+
+                        <div class="nc-owner-note">
+                            <i class="bi bi-person-check-fill"></i>
+                            <span>You posted this job.</span>
+                        </div>
+
+                        <a
+                            href="{% url 'jobs:edit' job.pk %}"
+                            class="btn btn-outline-primary w-100 mb-2"
+                        >
+                            <i class="bi bi-pencil me-1"></i>
+                            Edit Job
+                        </a>
+
+                        <a
+                            href="{% url 'applications:for_job' job.pk %}"
+                            class="btn btn-primary w-100 mb-2"
+                        >
+                            <i class="bi bi-people me-1"></i>
+                            View Applicants ({{ job.application_count }})
+                        </a>
+
+                        <form
+                            method="post"
+                            action="{% url 'jobs:delete' job.pk %}"
+                            data-confirm="Are you sure you want to delete this job posting?"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger w-100"
+                            >
+                                <i class="bi bi-trash me-1"></i>
+                                Delete Job
+                            </button>
+
+                        </form>
+
+
+                    {% elif user.is_authenticated and user.profile.role == "job_seeker" %}
+
+                        {% if has_applied %}
+
+                            <button
+                                class="btn btn-success w-100 mb-2"
+                                disabled
+                            >
+                                <i class="bi bi-check-circle me-1"></i>
+                                Already Applied
+                            </button>
+
+                        {% elif job.is_open %}
+
+                            {% if easy_apply_ready %}
+
+                                <a
+                                    href="{% url 'applications:easy_apply_review' job.pk %}"
+                                    class="btn btn-primary w-100 mb-2"
+                                >
+                                    <i class="bi bi-lightning-charge-fill me-1"></i>
+                                    Easy Apply
+                                </a>
+
+                                <p class="text-muted small text-center mb-2 nc-action-help">
+                                    Apply using your saved profile and resume.
+                                </p>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'accounts:profile_edit' %}?next={% url 'jobs:detail' job.pk %}"
+                                    class="btn btn-primary w-100 mb-2"
+                                >
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Complete your profile
+                                </a>
+
+                                <p class="text-muted small text-center mb-2 nc-action-help">
+                                    Complete your profile{% if missing_easy_apply_fields %} ({{ missing_easy_apply_fields|join:", " }}){% endif %} to use Easy Apply.
+                                </p>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <button
+                                class="btn btn-secondary w-100 mb-2"
+                                disabled
+                            >
+                                Applications Closed
+                            </button>
+
+                        {% endif %}
+
+
+                        <form
+                            method="post"
+                            action="{% url 'saved_jobs:toggle' job.pk %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-secondary w-100"
+                            >
+                                <i class="bi {% if is_saved %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1"></i>
+
+                                {% if is_saved %}
+                                    Saved
+                                {% else %}
+                                    Save Job
+                                {% endif %}
+
+                            </button>
+
+                        </form>
+
+
+                    {% elif not user.is_authenticated %}
+
+                        <a
+                            href="{% url 'accounts:login' %}?next={{ request.path }}"
+                            class="btn btn-primary w-100"
+                        >
+                            Login to Apply
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Company Information -->
+                <div class="nc-job-sidebar-card nc-company-card reveal">
+
+                    <h6 class="nc-company-card-title">
+                        About {{ job.company.name }}
+                    </h6>
+
+                    <p class="nc-company-description small mb-2">
+                        {{ job.company.description|truncatewords:30|default:"No description provided." }}
+                    </p>
+
+                    <a
+                        href="{% url 'companies:detail' job.company.slug %}"
+                        class="nc-company-link"
+                    >
+                        View company profile
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

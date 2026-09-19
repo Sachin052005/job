@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Jobs - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-jobs-page {
+        padding: 42px 0 70px;
+    }
+
+    /* Filter Card */
+    .nc-filter-card {
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        padding: 22px;
+    }
+
+    .nc-filter-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        color: var(--nc-heading, #172235);
+        font-size: 0.95rem;
+        font-weight: 800;
+    }
+
+    .nc-filter-header-icon {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-filter-label {
+        display: block;
+        color: var(--nc-heading, #172235);
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .nc-filter-card .form-control,
+    .nc-filter-card .form-select {
+        min-height: 43px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 9px;
+        color: var(--nc-heading, #172235);
+        background: #ffffff;
+        box-shadow: none;
+    }
+
+    .nc-filter-card .form-control:focus,
+    .nc-filter-card .form-select:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+    }
+
+    .nc-search-btn {
+        min-height: 43px;
+        border-radius: 9px;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(21, 154, 120, 0.13);
+    }
+
+    .nc-reset-btn {
+        width: 43px;
+        min-width: 43px;
+        min-height: 43px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+    }
+
+    /* Results Header */
+    .nc-results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin: 30px 0 20px;
+    }
+
+    .nc-results-count {
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .nc-results-count-number {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-post-job-btn {
+        border-radius: 9px;
+        font-weight: 700;
+    }
+
+    /* Job Grid */
+    .nc-job-grid {
+        margin-top: 0;
+    }
+
+    /* Empty State */
+    .nc-jobs-empty {
+        padding: 65px 25px;
+        margin-top: 10px;
+        text-align: center;
+        background: var(--nc-white, #ffffff);
+        border: 1px dashed var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+    }
+
+    .nc-empty-icon {
+        width: 74px;
+        height: 74px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 2rem;
+    }
+
+    .nc-empty-text {
+        color: var(--nc-text, #586678);
+        font-size: 0.9rem;
+    }
+
+    .nc-clear-btn {
+        border-radius: 9px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 991.98px) {
+        .nc-filter-card {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-jobs-page {
+            padding: 25px 0 50px;
+        }
+
+        .nc-results-header {
+            align-items: flex-start;
+            flex-direction: column;
+            margin-top: 25px;
+        }
+
+        .nc-post-job-btn {
+            width: 100%;
+        }
+
+        .nc-filter-card {
+            border-radius: 16px;
+            padding: 18px;
+        }
+    }
+</style>
+
+
+<div class="nc-jobs-page">
+
+    <div class="container">
+
+        <!-- Search & Filters -->
+        <div class="nc-filter-card">
+
+            <div class="nc-filter-header">
+                <span class="nc-filter-header-icon">
+                    <i class="bi bi-sliders"></i>
+                </span>
+                <span>Search Jobs</span>
+            </div>
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+
+                    <label class="nc-filter-label">
+                        Keyword
+                    </label>
+
+                    {{ form.keyword }}
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="nc-filter-label">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="nc-filter-label">
+                        Category
+                    </label>
+
+                    {{ form.category }}
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="nc-filter-label">
+                        Employment Type
+                    </label>
+
+                    {{ form.employment_type }}
+
+                </div>
+
+
+                <div class="col-md-1">
+
+                    <label class="nc-filter-label">
+                        Max Exp
+                    </label>
+
+                    {{ form.experience }}
+
+                </div>
+
+
+                <div class="col-md-2 d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary nc-search-btn flex-grow-1"
+                    >
+                        <i class="bi bi-search me-1"></i>
+                        Search
+                    </button>
+
+                    <a
+                        href="{% url 'jobs:list' %}"
+                        class="btn btn-outline-secondary nc-reset-btn"
+                        title="Reset filters"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Results Header -->
+        <div class="nc-results-header">
+
+            <h5 class="nc-results-count">
+
+                <span class="nc-results-count-number">
+                    {{ page_obj.paginator.count }}
+                </span>
+
+                job{{ page_obj.paginator.count|pluralize }} found
+
+            </h5>
+
+
+            {% if user.is_authenticated and user.profile.role == "employer" %}
+
+                <a
+                    href="{% url 'jobs:create' %}"
+                    class="btn btn-primary btn-sm nc-post-job-btn"
+                >
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Post a Job
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if jobs %}
+
+            <!-- Job Cards -->
+            <div class="row g-4 stagger-grid nc-job-grid">
+
+                {% for job in jobs %}
+
+                    <div class="col-md-6 col-lg-4">
+
+                        {% include "components/job_card.html" %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+            <!-- Empty State -->
+            <div class="nc-jobs-empty">
+
+                <div class="nc-empty-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </div>
+
+                <p class="mt-3 mb-3 nc-empty-text">
+                    No jobs match your search. Try different filters.
+                </p>
+
+                <a
+                    href="{% url 'jobs:list' %}"
+                    class="btn btn-outline-primary nc-clear-btn"
+                >
+                    Clear Filters
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

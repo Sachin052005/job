@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Login - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-auth-page {
+        min-height: 68vh;
+        display: flex;
+        align-items: center;
+        padding: 50px 0 70px;
+    }
+
+    .nc-login-card {
+        position: relative;
+        overflow: hidden;
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 14px 40px rgba(23, 34, 53, 0.07);
+    }
+
+    .nc-login-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-login-body {
+        padding: 42px 38px;
+    }
+
+    .nc-login-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 17px;
+        border-radius: 15px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.25rem;
+    }
+
+    .nc-login-title {
+        color: var(--nc-heading, #172235);
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 26px;
+    }
+
+    .nc-login-form .form-label {
+        color: var(--nc-heading, #172235);
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .nc-login-form .form-control {
+        min-height: 44px;
+        border-radius: 10px;
+        border-color: var(--nc-border, #e1e8e4);
+        color: var(--nc-heading, #172235);
+        font-size: 0.84rem;
+        padding: 10px 13px;
+        box-shadow: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-login-form .form-control:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+    }
+
+    .nc-password-group .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .nc-password-toggle {
+        min-width: 46px;
+        border-color: var(--nc-border, #e1e8e4);
+        color: var(--nc-muted, #8994a3);
+        background: #ffffff;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-password-toggle:hover {
+        color: var(--nc-primary, #159a78);
+        background: var(--nc-primary-soft, #e8f6f1);
+        border-color: rgba(21, 154, 120, 0.25);
+    }
+
+    .nc-form-error {
+        color: #dc3545;
+        font-size: 0.75rem;
+        margin-top: 6px;
+    }
+
+    .nc-login-submit {
+        min-height: 45px;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        font-weight: 700;
+        box-shadow: 0 7px 18px rgba(21, 154, 120, 0.13);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .nc-login-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(21, 154, 120, 0.18);
+    }
+
+    .nc-forgot-link {
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.76rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .nc-forgot-link:hover {
+        text-decoration: underline;
+    }
+
+    .nc-login-divider {
+        margin: 23px 0 20px;
+        border-color: var(--nc-border, #e1e8e4);
+        opacity: 1;
+    }
+
+    .nc-register-text {
+        color: var(--nc-text, #586678);
+        font-size: 0.78rem;
+    }
+
+    .nc-register-text a {
+        color: var(--nc-primary-dark, #08785d);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .nc-register-text a:hover {
+        text-decoration: underline;
+    }
+
+    .nc-login-alert {
+        border: 0;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        padding: 11px 13px;
+        margin-bottom: 18px;
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-auth-page {
+            min-height: 60vh;
+            padding: 30px 10px 50px;
+        }
+
+        .nc-login-body {
+            padding: 35px 22px;
+        }
+
+        .nc-login-title {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+
+<div class="nc-auth-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-6 col-lg-5">
+
+                <div class="nc-login-card reveal">
+
+                    <div class="nc-login-body">
+
+                        <div class="nc-login-icon">
+                            <i class="bi bi-person-lock"></i>
+                        </div>
+
+                        <h3 class="nc-login-title text-center">
+                            Welcome Back
+                        </h3>
+
+
+                        <form
+                            method="post"
+                            novalidate
+                            class="nc-login-form"
+                        >
+
+                            {% csrf_token %}
+
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger nc-login-alert">
+                                    {{ form.non_field_errors }}
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="mb-3">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.username.id_for_label }}"
+                                >
+                                    Username
+                                </label>
+
+                                {{ form.username|add_class:"form-control" }}
+
+                                {% for error in form.username.errors %}
+
+                                    <div class="invalid-feedback d-block nc-form-error">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="mb-4">
+
+                                <label
+                                    class="form-label"
+                                    for="{{ form.password.id_for_label }}"
+                                >
+                                    Password
+                                </label>
+
+                                <div class="input-group nc-password-group">
+
+                                    {{ form.password|add_class:"form-control" }}
+
+                                    <button
+                                        class="btn btn-outline-secondary nc-password-toggle"
+                                        type="button"
+                                        data-toggle-password="{{ form.password.id_for_label }}"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                </div>
+
+                                {% for error in form.password.errors %}
+
+                                    <div class="invalid-feedback d-block nc-form-error">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary w-100 nc-login-submit"
+                            >
+                                Login
+                            </button>
+
+                        </form>
+
+
+                        <div class="text-center mt-3">
+
+                            <a
+                                href="{% url 'accounts:password_reset' %}"
+                                class="nc-forgot-link"
+                            >
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+
+                        <hr class="nc-login-divider">
+
+
+                        <p class="text-center mb-0 nc-register-text">
+
+                            Don't have an account?
+
+                            <a href="{% url 'accounts:register' %}">
+                                Register
+                            </a>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

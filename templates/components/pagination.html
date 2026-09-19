@@ -1,0 +1,180 @@
+{% if page_obj.has_other_pages %}
+
+<style>
+    .nc-pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 28px;
+    }
+
+    .nc-pagination {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+    }
+
+    .nc-pagination .page-item {
+        margin: 0;
+    }
+
+    .nc-pagination .page-link {
+        min-width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 11px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 9px;
+        background: var(--nc-white, #ffffff);
+        color: var(--nc-text, #586678);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 3px 10px rgba(23, 34, 53, 0.035);
+        transition:
+            color 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .nc-pagination .page-link:hover {
+        color: var(--nc-primary-dark, #08785d);
+        background: var(--nc-primary-soft, #e8f6f1);
+        border-color: rgba(21, 154, 120, 0.25);
+        box-shadow: 0 5px 14px rgba(23, 34, 53, 0.06);
+        transform: translateY(-1px);
+    }
+
+    .nc-pagination .page-item.active .page-link {
+        border-color: var(--nc-primary, #159a78);
+        background: var(--nc-primary, #159a78);
+        color: #ffffff;
+        box-shadow: 0 6px 15px rgba(21, 154, 120, 0.18);
+    }
+
+    .nc-pagination .page-item.disabled .page-link {
+        background: #f7faf8;
+        border-color: var(--nc-border, #e1e8e4);
+        color: var(--nc-muted, #8994a3);
+        opacity: 0.7;
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-pagination-wrapper {
+            margin-top: 22px;
+        }
+
+        .nc-pagination {
+            gap: 4px;
+        }
+
+        .nc-pagination .page-link {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 8px;
+            font-size: 0.72rem;
+        }
+    }
+</style>
+
+
+<nav
+    aria-label="Page navigation"
+    class="nc-pagination-wrapper"
+>
+
+    <ul class="pagination nc-pagination">
+
+        {% if page_obj.has_previous %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                >
+                    Previous
+                </a>
+
+            </li>
+
+        {% else %}
+
+            <li class="page-item disabled">
+
+                <span class="page-link">
+                    Previous
+                </span>
+
+            </li>
+
+        {% endif %}
+
+
+        {% for num in page_obj.paginator.page_range %}
+
+            {% if num == page_obj.number %}
+
+                <li class="page-item active">
+
+                    <span class="page-link">
+                        {{ num }}
+                    </span>
+
+                </li>
+
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}"
+                    >
+                        {{ num }}
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+        {% endfor %}
+
+
+        {% if page_obj.has_next %}
+
+            <li class="page-item">
+
+                <a
+                    class="page-link"
+                    href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}"
+                >
+                    Next
+                </a>
+
+            </li>
+
+        {% else %}
+
+            <li class="page-item disabled">
+
+                <span class="page-link">
+                    Next
+                </span>
+
+            </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+{% endif %}

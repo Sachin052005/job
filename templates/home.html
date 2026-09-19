@@ -1,0 +1,1699 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}NammaCareer - Find Your Next Job{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   NAMMACAREER HOMEPAGE — UI ONLY
+   No content / functionality changes
+========================================================= */
+
+.nc-home {
+    --nc-green: #159a78;
+    --nc-green-dark: #08785d;
+    --nc-green-soft: #e8f6f1;
+    --nc-heading: #172235;
+    --nc-text: #586678;
+    --nc-muted: #8994a3;
+    --nc-bg: #f7faf8;
+    --nc-white: #ffffff;
+    --nc-border: #e3ebe7;
+    --nc-shadow: 0 12px 35px rgba(23, 34, 53, .07);
+    --nc-shadow-hover: 0 20px 45px rgba(23, 34, 53, .11);
+
+    color: var(--nc-text);
+    background: var(--nc-bg);
+    overflow: hidden;
+}
+
+.nc-home h1,
+.nc-home h2,
+.nc-home h3,
+.nc-home h4,
+.nc-home h5 {
+    color: var(--nc-heading);
+    font-family: "Manrope", sans-serif;
+}
+
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+
+.nc-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 70px 0 75px;
+
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(21, 154, 120, .10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(21, 154, 120, .08),
+            transparent 30%
+        ),
+        #ffffff;
+}
+
+.nc-hero::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    left: -220px;
+    top: -170px;
+    border-radius: 50%;
+    background: rgba(21, 154, 120, .045);
+    pointer-events: none;
+}
+
+.nc-hero::after {
+    content: "";
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    right: -170px;
+    bottom: -180px;
+    border-radius: 50%;
+    background: rgba(21, 154, 120, .055);
+    pointer-events: none;
+}
+
+.nc-hero-container {
+    position: relative;
+    z-index: 2;
+    width: min(1180px, calc(100% - 30px));
+    margin: 0 auto;
+}
+
+.nc-hero-grid {
+    display: grid;
+    grid-template-columns: .95fr 1.05fr;
+    align-items: center;
+    gap: 65px;
+}
+
+.nc-hero-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 430px;
+}
+
+.nc-image-circle {
+    position: absolute;
+    width: 390px;
+    height: 390px;
+    border-radius: 50%;
+    background: var(--nc-green-soft);
+    animation: circleFloat 5s ease-in-out infinite;
+}
+
+@keyframes circleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.nc-hero-image {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: min(100%, 470px);
+    max-height: 440px;
+    object-fit: contain;
+    animation: personFloat 4s ease-in-out infinite;
+}
+
+@keyframes personFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.nc-hero-content {
+    animation: contentEnter .7s ease both;
+}
+
+@keyframes contentEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   BRAND PILL
+========================================================= */
+
+.nc-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 8px 14px;
+    border: 1px solid rgba(21, 154, 120, .16);
+    border-radius: 999px;
+    background: var(--nc-green-soft);
+    color: var(--nc-green-dark);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.nc-brand-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 50%;
+    display: block;
+}
+
+.nc-brand-pill i {
+    color: var(--nc-green);
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.nc-hero-title {
+    margin: 0 0 18px;
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.045em;
+}
+
+/* IMPORTANT:
+   Each intended line stays together.
+*/
+.nc-hero-title .hero-line {
+    display: block;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+}
+
+.nc-hero-title .green-text {
+    display: block;
+    color: var(--nc-green);
+}
+
+.nc-hero-description {
+    max-width: 570px;
+    margin: 0 0 28px;
+    color: var(--nc-text);
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   SEARCH BOX
+========================================================= */
+
+.nc-search-box {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr auto;
+    align-items: stretch;
+    gap: 8px;
+    max-width: 720px;
+    padding: 8px;
+    border: 1px solid var(--nc-border);
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(23, 34, 53, .08);
+}
+
+.nc-search-field {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: #f8faf9;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease;
+}
+
+.nc-search-field.job {
+    border-right: 1px solid var(--nc-border);
+    border-radius: 10px;
+}
+
+.nc-search-field.location {
+    border-right: 1px solid var(--nc-border);
+    border-radius: 10px;
+}
+
+.nc-search-field:hover {
+    background: #f3f8f6;
+}
+
+.nc-search-field:focus-within {
+    border-color: rgba(21, 154, 120, .35);
+    background: #ffffff;
+}
+
+.nc-search-icon {
+    flex: 0 0 auto;
+    margin-right: 9px;
+    color: var(--nc-green);
+    font-size: 16px;
+}
+
+.nc-search-field input {
+    width: 100%;
+    min-width: 0;
+    padding: 13px 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--nc-heading);
+    font-size: 13px;
+}
+
+.nc-search-field input::placeholder {
+    color: var(--nc-muted);
+}
+
+
+/* =========================================================
+   SEARCH BUTTON
+========================================================= */
+
+.nc-search-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 125px;
+    padding: 13px 20px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 10px;
+    background: var(--nc-green);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(21, 154, 120, .20);
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.nc-search-button:hover {
+    background: var(--nc-green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 11px 24px rgba(21, 154, 120, .25);
+}
+
+.nc-search-button:active {
+    transform: translateY(0);
+}
+
+.nc-search-button i {
+    font-size: 15px;
+    transition: transform .2s ease;
+}
+
+.nc-search-button:hover i {
+    transform: translateX(3px);
+}
+
+.nc-search-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        110deg,
+        transparent 30%,
+        rgba(255,255,255,.16) 50%,
+        transparent 70%
+    );
+
+    transform: translateX(-120%);
+    transition: transform .5s ease;
+}
+
+.nc-search-button:hover::after {
+    transform: translateX(120%);
+}
+
+.nc-search-button.loading {
+    pointer-events: none;
+    opacity: .85;
+}
+
+.nc-search-button.loading i {
+    animation: searchSpin 1s linear infinite;
+}
+
+@keyframes searchSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   LETTER REVEAL
+========================================================= */
+
+.letter-reveal {
+    overflow: hidden;
+}
+
+.reveal-letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+
+    transition:
+        opacity .45s ease var(--letter-delay),
+        transform .45s ease var(--letter-delay);
+}
+
+.letter-reveal.is-visible .reveal-letter {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-space {
+    display: inline-block;
+    width: .25em;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.nc-home-content {
+    padding-bottom: 70px;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.nc-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.nc-section-header h4 {
+    position: relative;
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -.025em;
+}
+
+.nc-section-header h4::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 21px;
+    margin-right: 10px;
+    vertical-align: -3px;
+    border-radius: 5px;
+    background: var(--nc-green);
+}
+
+.nc-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--nc-green-dark) !important;
+    font-size: 13px;
+    font-weight: 700;
+    transition: gap .2s ease;
+}
+
+.nc-view-all:hover {
+    gap: 11px;
+}
+
+
+/* =========================================================
+   CATEGORY CARDS
+========================================================= */
+
+.nc-category-card {
+    position: relative;
+    height: 100%;
+    padding: 25px 18px;
+    overflow: hidden;
+    border: 1px solid var(--nc-border);
+    border-radius: 16px;
+    background: var(--nc-white);
+    box-shadow: 0 6px 22px rgba(23, 34, 53, .045);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.nc-category-card::before {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    right: -45px;
+    top: -45px;
+    border-radius: 50%;
+    background: var(--nc-green-soft);
+    transition: transform .3s ease;
+}
+
+.nc-category-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(21, 154, 120, .22);
+    box-shadow: var(--nc-shadow-hover);
+}
+
+.nc-category-card:hover::before {
+    transform: scale(1.5);
+}
+
+.nc-category-icon {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 13px;
+    border-radius: 13px;
+    background: var(--nc-green-soft);
+    color: var(--nc-green);
+    font-size: 20px;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.nc-category-card:hover .nc-category-icon {
+    background: var(--nc-green);
+    color: #ffffff;
+    transform: rotate(-4deg) scale(1.05);
+}
+
+.nc-category-card p {
+    position: relative;
+    z-index: 2;
+    color: var(--nc-heading) !important;
+    font-size: 13px;
+    font-weight: 700 !important;
+}
+
+
+/* =========================================================
+   FEATURED JOBS AREA
+========================================================= */
+
+.nc-featured-section {
+    margin-top: 55px;
+}
+
+.nc-featured-section .row {
+    --bs-gutter-y: 22px;
+}
+
+.nc-featured-section .card {
+    height: 100%;
+    border: 1px solid var(--nc-border);
+    border-radius: 17px;
+    box-shadow: 0 7px 25px rgba(23, 34, 53, .055);
+    overflow: hidden;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.nc-featured-section .card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(21, 154, 120, .2);
+    box-shadow: var(--nc-shadow-hover);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.nc-empty-state {
+    padding: 65px 25px;
+    border: 1px dashed #cfdcd6;
+    border-radius: 18px;
+    background: rgba(255,255,255,.6);
+    text-align: center;
+}
+
+.nc-empty-state i {
+    font-size: 52px !important;
+    opacity: .5;
+}
+
+.nc-empty-state p {
+    color: var(--nc-muted);
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   HOW IT WORKS
+========================================================= */
+
+.nc-steps-section {
+    margin-top: 60px;
+}
+
+.nc-step-card {
+    position: relative;
+    height: 100%;
+    padding: 30px 25px;
+    border: 1px solid var(--nc-border);
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 7px 25px rgba(23, 34, 53, .045);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.nc-step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--nc-shadow-hover);
+}
+
+.nc-step-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 17px;
+    border-radius: 15px;
+    background: var(--nc-green-soft);
+    color: var(--nc-green);
+    font-size: 22px;
+}
+
+.nc-step-card h5 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.nc-step-card p {
+    margin: 0;
+    color: var(--nc-muted) !important;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.nc-cta {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px !important;
+    padding: 55px 30px !important;
+    border: 1px solid rgba(21, 154, 120, .12);
+    border-radius: 22px !important;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(21,154,120,.1),
+            transparent 35%
+        ),
+        #ffffff;
+
+    box-shadow: var(--nc-shadow);
+}
+
+.nc-cta::before {
+    content: "";
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    left: -80px;
+    bottom: -100px;
+    border-radius: 50%;
+    background: var(--nc-green-soft);
+}
+
+.nc-cta h3 {
+    position: relative;
+    margin-bottom: 10px;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.nc-cta p {
+    position: relative;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.nc-cta .btn {
+    position: relative;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--nc-green);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(21, 154, 120, .18);
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
+
+.nc-cta .btn:hover {
+    background: var(--nc-green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(21, 154, 120, .23);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .nc-hero-grid {
+        grid-template-columns: .9fr 1.1fr;
+        gap: 35px;
+    }
+
+    .nc-image-circle {
+        width: 330px;
+        height: 330px;
+    }
+
+    .nc-hero-title {
+        font-size: clamp(38px, 5vw, 56px);
+    }
+}
+
+
+@media (max-width: 800px) {
+
+    .nc-hero {
+        padding: 50px 0 60px;
+    }
+
+    .nc-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .nc-hero-visual {
+        min-height: 330px;
+        order: 1;
+    }
+
+    .nc-hero-content {
+        order: 2;
+        text-align: center;
+    }
+
+    .nc-hero-description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .nc-search-box {
+        margin: 0 auto;
+    }
+
+    .nc-image-circle {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+
+@media (max-width: 767px) {
+
+    .nc-section-header {
+        align-items: flex-start;
+    }
+
+    .nc-section-header h4 {
+        font-size: 19px;
+    }
+
+    .nc-view-all {
+        font-size: 12px;
+    }
+
+    .nc-category-card {
+        padding: 21px 13px;
+    }
+
+    .nc-step-card {
+        padding: 25px 20px;
+    }
+
+    .nc-cta {
+        padding: 40px 22px !important;
+    }
+
+    .nc-cta h3 {
+        font-size: 23px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE — 600px
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .nc-hero {
+        padding: 35px 0 45px;
+    }
+
+    .nc-hero-visual {
+        min-height: 260px;
+    }
+
+    .nc-image-circle {
+        width: 245px;
+        height: 245px;
+    }
+
+    .nc-hero-image {
+        max-height: 290px;
+    }
+
+    .nc-hero-title {
+        font-size: 39px;
+        line-height: 1.15;
+        text-align: center;
+    }
+
+    /*
+       Prevent words from breaking.
+       The JavaScript below also preserves
+       these two separate lines.
+    */
+    .nc-hero-title .hero-line {
+        display: block;
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
+    }
+
+    .nc-hero-description {
+        font-size: 14px;
+    }
+
+    .nc-search-box {
+        grid-template-columns: 1fr;
+        gap: 7px;
+    }
+
+    .nc-search-field.job,
+    .nc-search-field.location {
+        border-right: 0;
+    }
+
+    .nc-search-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   MOBILE — 575px
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .nc-featured-section,
+    .nc-steps-section {
+        margin-top: 45px;
+    }
+
+    .nc-section-header {
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .nc-view-all {
+        align-self: flex-end;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE — 400px
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .nc-hero-title {
+        font-size: 34px;
+    }
+
+    .nc-image-circle {
+        width: 215px;
+        height: 215px;
+    }
+
+    .nc-hero-image {
+        max-height: 255px;
+    }
+
+    .nc-brand-pill {
+        margin-bottom: 14px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nc-category-card,
+    .nc-category-icon,
+    .nc-featured-section .card,
+    .nc-step-card,
+    .nc-cta .btn,
+    .nc-view-all,
+    .nc-image-circle,
+    .nc-hero-image,
+    .nc-hero-content,
+    .reveal-letter {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .reveal-letter {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+</style>
+
+
+<div class="nc-home">
+
+    <!-- =====================================================
+         HERO SECTION
+    ===================================================== -->
+
+    <section class="nc-hero">
+
+        <div class="nc-hero-container">
+
+            <div class="nc-hero-grid">
+
+                <div class="nc-hero-visual">
+
+                    <div class="nc-image-circle"></div>
+
+                    <img
+                        src="{% static 'images/job-hero.png' %}"
+                        alt="Find your next career opportunity"
+                        class="nc-hero-image"
+                    >
+
+                </div>
+
+
+                <div class="nc-hero-content">
+
+                    <div class="nc-brand-pill">
+
+                        <img
+                            src="{% static 'images/logo.png' %}"
+                            alt="NammaCareer"
+                            class="nc-brand-logo"
+                        >
+
+                        NammaCareer
+
+                    </div>
+
+
+                    <!-- =================================================
+                         HERO TITLE
+                         Two fixed lines — animation preserved
+                    ================================================== -->
+
+                    <h1 class="nc-hero-title letter-reveal">
+
+                        <span class="hero-line">
+                            Find the job that
+                        </span>
+
+                        <span class="hero-line green-text">
+                            fits your life
+                        </span>
+
+                    </h1>
+
+
+                    <p class="nc-hero-description">
+
+                        Discover meaningful career opportunities
+                        and take the next step toward your future.
+
+                    </p>
+
+
+                    <form
+                        class="nc-search-box"
+                        method="GET"
+                        action="{% url 'jobs:list' %}#job-results"
+                        id="jobSearchForm"
+                    >
+
+                        <div class="nc-search-field job">
+
+                            <i class="bi bi-search nc-search-icon"></i>
+
+                            <input
+                                type="text"
+                                name="keyword"
+                                id="jobSearchInput"
+                                placeholder="Job title, skills, or company"
+                                autocomplete="off"
+                                value="{{ request.GET.keyword|default:'' }}"
+                            >
+
+                        </div>
+
+
+                        <div class="nc-search-field location">
+
+                            <i class="bi bi-geo-alt nc-search-icon"></i>
+
+                            <input
+                                type="text"
+                                name="location"
+                                id="locationSearchInput"
+                                placeholder="Location"
+                                autocomplete="off"
+                                value="{{ request.GET.location|default:'' }}"
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="nc-search-button"
+                            id="jobSearchButton"
+                        >
+
+                            <span>
+                                Search
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         EXISTING CONTENT
+         CONTENT + FUNCTIONALITY UNCHANGED
+    ===================================================== -->
+
+    <div class="container nc-home-content">
+
+        {% if categories %}
+
+        <div class="section-header reveal nc-section-header">
+
+            <h4 class="mb-0">
+                Popular Categories
+            </h4>
+
+        </div>
+
+
+        <div class="row g-3 mb-5 stagger-grid">
+
+            {% for category in categories %}
+
+            <div class="col-6 col-md-3">
+
+                <a
+                    href="{% url 'jobs:list' %}?category={{ category.slug }}"
+                    class="text-decoration-none"
+                >
+
+                    <div class="stat-card nc-category-card text-center d-block">
+
+                        <span class="nc-category-icon">
+
+                            <i class="bi bi-grid-fill"></i>
+
+                        </span>
+
+                        <p class="mb-0 mt-2 text-dark fw-semibold">
+                            {{ category.name }}
+                        </p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FEATURED JOBS
+        ====================================================== -->
+
+        <div class="section-header reveal nc-section-header nc-featured-section">
+
+            <h4 class="mb-0">
+                Featured Jobs
+            </h4>
+
+            <a
+                href="{% url 'jobs:list' %}"
+                class="link-primary text-decoration-none fw-semibold nc-view-all"
+            >
+
+                View all jobs
+
+                <span class="icon-move-right">
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </span>
+
+            </a>
+
+        </div>
+
+
+        {% if featured_jobs %}
+
+        <div class="row g-4 mb-5 stagger-grid">
+
+            {% for job in featured_jobs %}
+
+            <div class="col-md-6 col-lg-4">
+
+                {% include "components/job_card.html" %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state nc-empty-state mb-5">
+
+            <i class="bi bi-briefcase display-1 text-secondary"></i>
+
+            <p class="mt-3">
+                No jobs have been posted yet. Check back soon!
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             HOW IT WORKS
+        ====================================================== -->
+
+        <div class="row g-4 mb-5 text-center reveal nc-steps-section">
+
+            <div class="col-md-4">
+
+                <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
+
+                    <span class="stat-icon nc-step-icon mb-2">
+
+                        <i class="bi bi-person-plus"></i>
+
+                    </span>
+
+                    <h5 class="mt-1">
+                        1. Create an account
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Sign up as a job seeker or employer in seconds.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
+
+                    <span class="stat-icon nc-step-icon mb-2">
+
+                        <i class="bi bi-search"></i>
+
+                    </span>
+
+                    <h5 class="mt-1">
+                        2. Search or post jobs
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Find roles that match your skills, or list your openings.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
+
+                    <span class="stat-icon nc-step-icon mb-2">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </span>
+
+                    <h5 class="mt-1">
+                        3. Connect and hire
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Track applications and manage hiring from your dashboard.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CTA
+        ====================================================== -->
+
+        {% if not user.is_authenticated %}
+
+        <div class="text-center bg-white rounded-4 p-5 shadow-sm mb-5 reveal nc-cta">
+
+            <h3>
+                Ready to get started?
+            </h3>
+
+            <p class="text-muted">
+                Join NammaCareer today and take the next step in your career.
+            </p>
+
+            <a
+                href="{% url 'accounts:register' %}"
+                class="btn btn-primary btn-lg"
+            >
+                Create your free account
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const reducedMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches;
+
+
+        /* =====================================================
+           LETTER REVEAL
+
+           IMPORTANT FIX:
+           The animation is still exactly the same,
+           but each .hero-line is processed separately.
+
+           This prevents:
+           "Find the job that fi"
+           "ts your life"
+
+           and keeps:
+           "Find the job that"
+           "fits your life"
+        ===================================================== */
+
+        function prepareLetters(element) {
+
+            if (
+                element.dataset.lettersReady === "true"
+            ) {
+                return;
+            }
+
+
+            const heroLines =
+                element.querySelectorAll(".hero-line");
+
+
+            /* -------------------------------------------------
+               HERO TITLE WITH FIXED LINES
+            ------------------------------------------------- */
+
+            if (heroLines.length > 0) {
+
+                heroLines.forEach(
+                    function (line) {
+
+                        const text =
+                            line.textContent
+                                .replace(/\s+/g, " ")
+                                .trim();
+
+
+                        line.textContent = "";
+
+
+                        [...text].forEach(
+                            function (character, index) {
+
+                                const span =
+                                    document.createElement("span");
+
+
+                                if (character === " ") {
+
+                                    span.className =
+                                        "reveal-space";
+
+                                    span.innerHTML =
+                                        "&nbsp;";
+
+                                } else {
+
+                                    span.className =
+                                        "reveal-letter";
+
+                                    span.textContent =
+                                        character;
+                                }
+
+
+                                span.style.setProperty(
+                                    "--letter-delay",
+                                    `${index * 18}ms`
+                                );
+
+
+                                line.appendChild(span);
+
+                            }
+                        );
+
+                    }
+                );
+
+            } else {
+
+                /* -------------------------------------------------
+                   ORIGINAL BEHAVIOUR FOR OTHER LETTER-REVEAL
+                   ELEMENTS
+                ------------------------------------------------- */
+
+                const text =
+                    element.textContent
+                        .replace(/\s+/g, " ")
+                        .trim();
+
+
+                element.textContent = "";
+
+
+                [...text].forEach(
+                    function (character, index) {
+
+                        const span =
+                            document.createElement("span");
+
+
+                        if (character === " ") {
+
+                            span.className =
+                                "reveal-space";
+
+                            span.innerHTML =
+                                "&nbsp;";
+
+                        } else {
+
+                            span.className =
+                                "reveal-letter";
+
+                            span.textContent =
+                                character;
+                        }
+
+
+                        span.style.setProperty(
+                            "--letter-delay",
+                            `${index * 18}ms`
+                        );
+
+
+                        element.appendChild(span);
+
+                    }
+                );
+
+            }
+
+
+            element.dataset.lettersReady =
+                "true";
+        }
+
+
+        document
+            .querySelectorAll(".letter-reveal")
+            .forEach(
+                function (element) {
+                    prepareLetters(element);
+                }
+            );
+
+
+        /* =====================================================
+           INTERSECTION OBSERVER
+           ANIMATION UNCHANGED
+        ===================================================== */
+
+        if (!reducedMotion) {
+
+            const observer =
+                new IntersectionObserver(
+
+                    function (entries) {
+
+                        entries.forEach(
+                            function (entry) {
+
+                                if (
+                                    entry.isIntersecting
+                                ) {
+
+                                    entry.target.classList.add(
+                                        "is-visible"
+                                    );
+
+                                } else {
+
+                                    entry.target.classList.remove(
+                                        "is-visible"
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    },
+
+                    {
+                        threshold: 0.15,
+                        rootMargin:
+                            "0px 0px -40px 0px"
+                    }
+
+                );
+
+
+            document
+                .querySelectorAll(
+                    ".letter-reveal, .scroll-reveal"
+                )
+                .forEach(
+                    function (element) {
+                        observer.observe(element);
+                    }
+                );
+
+
+        } else {
+
+            document
+                .querySelectorAll(
+                    ".letter-reveal, .scroll-reveal"
+                )
+                .forEach(
+                    function (element) {
+
+                        element.classList.add(
+                            "is-visible"
+                        );
+
+                    }
+                );
+
+        }
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        const searchForm =
+            document.getElementById(
+                "jobSearchForm"
+            );
+
+
+        const searchButton =
+            document.getElementById(
+                "jobSearchButton"
+            );
+
+
+        const jobInput =
+            document.getElementById(
+                "jobSearchInput"
+            );
+
+
+        const locationInput =
+            document.getElementById(
+                "locationSearchInput"
+            );
+
+
+        if (searchForm && searchButton) {
+
+            searchForm.addEventListener(
+                "submit",
+                function () {
+
+                    searchButton.classList.add(
+                        "loading"
+                    );
+
+
+                    const icon =
+                        searchButton.querySelector(
+                            "i"
+                        );
+
+
+                    if (icon) {
+
+                        icon.className =
+                            "bi bi-arrow-repeat";
+
+                    }
+
+
+                    const text =
+                        searchButton.querySelector(
+                            "span"
+                        );
+
+
+                    if (text) {
+
+                        text.textContent =
+                            "Searching...";
+
+                    }
+
+                }
+            );
+
+
+            [jobInput, locationInput].forEach(
+                function (input) {
+
+                    if (!input) {
+                        return;
+                    }
+
+
+                    input.addEventListener(
+                        "keydown",
+                        function (event) {
+
+                            if (
+                                event.key ===
+                                "Enter"
+                            ) {
+
+                                event.preventDefault();
+
+                                searchForm.requestSubmit();
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           HERO IMAGE ERROR
+        ===================================================== */
+
+        const heroImage =
+            document.querySelector(
+                ".nc-hero-image"
+            );
+
+
+        if (heroImage) {
+
+            heroImage.addEventListener(
+                "error",
+                function () {
+
+                    this.style.display =
+                        "none";
+
+                }
+            );
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}
+
+
+
+
+                                      
+
+
+
+
+
+

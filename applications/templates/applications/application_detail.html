@@ -1,0 +1,1245 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Application - {{ application.job.title }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       NAMMACAREER APPLICATION DETAILS — UI ONLY
+       CONTENT + FUNCTIONALITY UNCHANGED
+    ========================================================= */
+
+    .nc-application-page {
+        --app-green: #159a78;
+        --app-green-dark: #08785d;
+        --app-green-soft: #e8f6f1;
+        --app-heading: #172235;
+        --app-text: #586678;
+        --app-muted: #8994a3;
+        --app-border: #e1e8e4;
+        --app-bg: #f7faf8;
+        --app-white: #ffffff;
+
+        padding: 35px 0 75px;
+        background: var(--app-bg);
+        color: var(--app-text);
+    }
+
+    /* =========================================================
+       COMMON CARD
+    ========================================================= */
+
+    .nc-application-page .nc-app-card {
+        border: 1px solid var(--app-border);
+        border-radius: 18px;
+        background: var(--app-white);
+        box-shadow: 0 10px 30px rgba(23, 34, 53, .055);
+        overflow: hidden;
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease,
+            border-color .25s ease;
+    }
+
+    .nc-application-page .nc-app-card:hover {
+        border-color: rgba(21, 154, 120, .18);
+        box-shadow: 0 16px 38px rgba(23, 34, 53, .08);
+    }
+
+    /* =========================================================
+       SUCCESS CARD
+    ========================================================= */
+
+    .nc-submitted-card {
+        position: relative;
+        padding: 34px 28px !important;
+        border: 1px solid rgba(21, 154, 120, .15) !important;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(21, 154, 120, .08),
+                transparent 38%
+            ),
+            linear-gradient(
+                135deg,
+                var(--app-green-soft),
+                var(--app-white)
+            ) !important;
+    }
+
+    .nc-submitted-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 15px;
+        border-radius: 50%;
+        background: var(--app-green-soft);
+        color: var(--app-green);
+        font-size: 35px;
+    }
+
+    .nc-submitted-card h3 {
+        color: var(--app-heading);
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -.025em;
+    }
+
+    .nc-submitted-card > p {
+        max-width: 650px;
+        margin-right: auto;
+        margin-left: auto;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .nc-submitted-stats {
+        margin-top: 24px;
+    }
+
+    .nc-submitted-stat {
+        min-width: 130px;
+        padding: 14px 18px;
+        border: 1px solid var(--app-border);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .75);
+    }
+
+    .nc-submitted-stat .text-muted {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .nc-submitted-stat .h4 {
+        color: var(--app-heading);
+        font-weight: 800;
+    }
+
+    .nc-submitted-actions {
+        margin-top: 25px;
+    }
+
+    .nc-submitted-actions .btn {
+        min-height: 42px;
+        padding: 9px 17px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       JOB HEADER
+    ========================================================= */
+
+    .nc-job-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .nc-job-title {
+        margin-bottom: 5px !important;
+        color: var(--app-heading);
+        font-size: 23px;
+        font-weight: 800;
+        letter-spacing: -.025em;
+        line-height: 1.3;
+    }
+
+    .nc-job-meta {
+        color: var(--app-muted) !important;
+        font-size: 12px;
+    }
+
+    .nc-status-badge {
+        flex: 0 0 auto;
+        padding: 7px 11px;
+        border-radius: 999px;
+        font-size: 10px !important;
+        font-weight: 800;
+        letter-spacing: .02em;
+    }
+
+    .nc-application-divider {
+        margin: 24px 0;
+        border-color: var(--app-border);
+        opacity: 1;
+    }
+
+    /* =========================================================
+       SECTION HEADINGS
+    ========================================================= */
+
+    .nc-app-section-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+        color: var(--app-heading);
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .nc-app-section-title::before {
+        content: "";
+        width: 4px;
+        height: 17px;
+        border-radius: 999px;
+        background: var(--app-green);
+    }
+
+    /* =========================================================
+       CANDIDATE OVERVIEW
+    ========================================================= */
+
+    .nc-candidate-name {
+        margin-bottom: 5px !important;
+        color: var(--app-heading);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .nc-candidate-meta {
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .nc-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+
+    .nc-skills .skill-badge {
+        margin: 0 !important;
+        padding: 6px 10px;
+        border: 1px solid rgba(21, 154, 120, .14);
+        border-radius: 999px;
+        background: var(--app-green-soft);
+        color: var(--app-green-dark);
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       COVER LETTER
+    ========================================================= */
+
+    .nc-cover-letter {
+        color: var(--app-text);
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .nc-cover-letter p {
+        margin-bottom: 10px;
+    }
+
+    /* =========================================================
+       RESUME BUTTONS
+    ========================================================= */
+
+    .nc-resume-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 20px;
+    }
+
+    .nc-resume-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 37px;
+        padding: 7px 12px;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .nc-applied-date {
+        color: var(--app-muted) !important;
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       MATCH ANALYSIS
+    ========================================================= */
+
+    .nc-match-card {
+        padding: 28px !important;
+    }
+
+    .nc-match-intro {
+        color: var(--app-muted) !important;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    .nc-match-score {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 130px;
+        min-height: 110px;
+        margin: 5px auto 25px;
+        padding: 15px 25px;
+        border: 1px solid rgba(21, 154, 120, .15);
+        border-radius: 18px;
+        background: var(--app-green-soft);
+    }
+
+    .nc-match-score h2 {
+        color: var(--app-green-dark);
+        font-size: 35px;
+        letter-spacing: -.04em;
+    }
+
+    .nc-match-score p {
+        color: var(--app-muted) !important;
+        font-size: 10px;
+    }
+
+    .nc-component {
+        padding: 15px;
+        border: 1px solid var(--app-border);
+        border-radius: 12px;
+        background: #fbfdfc;
+    }
+
+    .nc-component-header {
+        color: var(--app-heading);
+        font-size: 11px;
+    }
+
+    .nc-component-percent {
+        color: var(--app-green-dark);
+        font-weight: 800;
+    }
+
+    .nc-component .progress {
+        height: 7px !important;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf2ef;
+    }
+
+    .nc-component .progress-bar {
+        border-radius: 999px;
+        background: linear-gradient(
+            90deg,
+            var(--app-green),
+            #32b993
+        );
+    }
+
+    .nc-component-reason {
+        font-size: 10px !important;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       MATCH SKILLS
+    ========================================================= */
+
+    .nc-match-skills {
+        padding: 17px;
+        border: 1px solid var(--app-border);
+        border-radius: 12px;
+        background: #fbfdfc;
+    }
+
+    .nc-match-skills-title {
+        color: var(--app-muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .04em;
+    }
+
+    .nc-match-skill {
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .nc-match-skill.bg-success {
+        background: var(--app-green-soft) !important;
+        color: var(--app-green-dark) !important;
+    }
+
+    .nc-match-skill.bg-warning {
+        background: #fff3d6 !important;
+        color: #996600 !important;
+    }
+
+    .nc-match-disclaimer {
+        font-size: 10px !important;
+        line-height: 1.7;
+    }
+
+    /* =========================================================
+       SOCIAL ANALYSIS CARDS
+    ========================================================= */
+
+    .nc-social-card {
+        height: 100%;
+        padding: 22px !important;
+    }
+
+    .nc-social-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 16px !important;
+        color: var(--app-heading);
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .nc-social-title i {
+        color: var(--app-green);
+        font-size: 17px;
+    }
+
+    .nc-social-text {
+        color: var(--app-text);
+        font-size: 11px !important;
+        line-height: 1.7;
+    }
+
+    .nc-social-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 6px 11px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .nc-tech-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .nc-tech-list .badge {
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .nc-repository-list {
+        padding-left: 18px;
+    }
+
+    .nc-repository-list li {
+        margin-bottom: 4px;
+        color: var(--app-text);
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       EMPLOYER SIDEBAR
+    ========================================================= */
+
+    .nc-status-card {
+        position: sticky;
+        top: 90px;
+        padding: 23px !important;
+    }
+
+    .nc-status-title {
+        margin-bottom: 16px !important;
+        color: var(--app-heading);
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .nc-status-form select {
+        min-height: 42px;
+        border: 1px solid var(--app-border);
+        border-radius: 10px;
+        color: var(--app-heading);
+        font-size: 12px;
+    }
+
+    .nc-status-form .btn {
+        min-height: 42px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .nc-status-note {
+        font-size: 10px !important;
+        line-height: 1.7;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 991px) {
+
+        .nc-status-card {
+            position: static;
+        }
+    }
+
+    @media (max-width: 767px) {
+
+        .nc-application-page {
+            padding: 22px 0 55px;
+        }
+
+        .nc-job-header {
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .nc-status-badge {
+            align-self: flex-start;
+        }
+
+        .nc-job-title {
+            font-size: 20px;
+        }
+
+        .nc-submitted-card {
+            padding: 28px 20px !important;
+        }
+
+        .nc-submitted-stats {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 10px !important;
+        }
+
+        .nc-submitted-stat {
+            width: 100%;
+        }
+
+        .nc-submitted-actions {
+            flex-direction: column;
+        }
+
+        .nc-submitted-actions .btn {
+            width: 100%;
+        }
+
+        .nc-match-card,
+        .nc-social-card,
+        .nc-status-card {
+            padding: 21px !important;
+        }
+    }
+
+    @media (max-width: 575px) {
+
+        .nc-application-page .nc-app-card {
+            border-radius: 15px;
+        }
+
+        .nc-resume-actions {
+            flex-direction: column;
+        }
+
+        .nc-resume-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .nc-match-score {
+            min-height: 100px;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+    ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .nc-application-page .nc-app-card {
+            transition: none !important;
+        }
+    }
+</style>
+
+
+<div class="nc-application-page">
+
+    <div class="container">
+
+        {% if just_submitted %}
+
+        <!-- =================================================
+             APPLICATION SUBMITTED
+        ================================================== -->
+
+        <div
+            class="card nc-app-card nc-submitted-card mb-4 reveal text-center border-0"
+        >
+
+            <span class="nc-submitted-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </span>
+
+            <h3 class="mb-1">
+                Application Submitted!
+            </h3>
+
+            <p class="text-muted mb-3">
+                Your application for
+                <strong>{{ application.job.title }}</strong>
+                has been submitted successfully.
+            </p>
+
+
+            <div class="row justify-content-center g-3 nc-submitted-stats">
+
+                {% if application.match_snapshot %}
+
+                <div class="col-auto">
+
+                    <div class="nc-submitted-stat">
+
+                        <p class="text-muted small mb-0">
+                            Match Signals
+                        </p>
+
+                        <p class="h4 mb-0">
+                            {{ application.match_snapshot.overall_percent }}%
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="col-auto">
+
+                    <div class="nc-submitted-stat">
+
+                        <p class="text-muted small mb-0">
+                            Resume
+                        </p>
+
+                        <p class="fw-semibold mb-0">
+                            {{ application.resume.name|default:"—" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-auto">
+
+                    <div class="nc-submitted-stat">
+
+                        <p class="text-muted small mb-0">
+                            Applied
+                        </p>
+
+                        <p class="fw-semibold mb-0">
+                            {{ application.applied_at|date:"d M Y" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="d-flex gap-2 justify-content-center nc-submitted-actions">
+
+                <a
+                    href="{% url 'jobs:list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Browse More Jobs
+                </a>
+
+                <a
+                    href="#application-detail"
+                    class="btn btn-primary"
+                >
+                    View Application
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             APPLICATION DETAILS
+        ================================================== -->
+
+        <div class="row g-4" id="application-detail">
+
+            <div class="col-lg-8">
+
+                <!-- =================================================
+                     APPLICATION MAIN CARD
+                ================================================== -->
+
+                <div class="card nc-app-card p-4 p-md-5 reveal">
+
+                    <div class="nc-job-header">
+
+                        <div>
+
+                            <h4 class="nc-job-title">
+                                {{ application.job.title }}
+                            </h4>
+
+                            <p class="text-muted nc-job-meta mb-0">
+                                {{ application.job.company.name }}
+                                &middot;
+                                {{ application.job.location }}
+                            </p>
+
+                        </div>
+
+
+                        <span class="badge badge-status nc-status-badge bg-{{ application.badge_class }} fs-6">
+                            {{ application.get_status_display }}
+                        </span>
+
+                    </div>
+
+
+                    <hr class="nc-application-divider">
+
+
+                    {% if is_employer_view %}
+
+                    <!-- =================================================
+                         CANDIDATE OVERVIEW
+                    ================================================== -->
+
+                    <div class="mb-4">
+
+                        <h6 class="nc-app-section-title">
+                            Candidate Overview
+                        </h6>
+
+                        <p class="nc-candidate-name">
+                            {{ application.applicant.get_full_name|default:application.applicant.username }}
+                        </p>
+
+                        <p class="text-muted nc-candidate-meta mb-3">
+                            {{ application.applicant.email }}
+
+                            {% if application.applicant.profile.phone %}
+                                &middot; {{ application.applicant.profile.phone }}
+                            {% endif %}
+
+                            {% if application.applicant.profile.location %}
+                                &middot; {{ application.applicant.profile.location }}
+                            {% endif %}
+
+                            &middot;
+                            {{ application.applicant.profile.experience_years }}
+                            yr{{ application.applicant.profile.experience_years|pluralize }}
+                            experience
+                        </p>
+
+
+                        {% if application.applicant.profile.skills %}
+
+                        <div class="nc-skills">
+
+                            {% for skill in application.applicant.profile.skills_list %}
+
+                            <span class="badge skill-badge nc-skill-badge">
+                                {{ skill }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- =================================================
+                         COVER LETTER
+                    ================================================== -->
+
+                    <div class="mb-4">
+
+                        <h6 class="nc-app-section-title">
+                            Cover Letter
+                        </h6>
+
+                        <div class="nc-cover-letter">
+                            <p>
+                                {{ application.cover_letter|linebreaks|default:"No cover letter provided." }}
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         RESUME ACTIONS
+                    ================================================== -->
+
+                    <div class="nc-resume-actions">
+
+                        <a
+                            href="{{ application.resume.url }}"
+                            target="_blank"
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            <i class="bi bi-file-earmark-text"></i>
+                            View Resume
+                        </a>
+
+                        <a
+                            href="{{ application.resume.url }}"
+                            download
+                            class="btn btn-outline-secondary btn-sm"
+                        >
+                            <i class="bi bi-download"></i>
+                            Download
+                        </a>
+
+                    </div>
+
+
+                    <p class="text-muted small nc-applied-date mt-3 mb-0">
+                        Applied on
+                        {{ application.applied_at|date:"F d, Y" }}
+                        &middot;
+                        {{ application.get_applied_via_display }}
+                    </p>
+
+                </div>
+
+
+                {% if is_employer_view and match %}
+
+                <!-- =================================================
+                     CANDIDATE MATCH ANALYSIS
+                ================================================== -->
+
+                <div class="card nc-app-card nc-match-card mt-4 reveal">
+
+                    <h5 class="nc-app-section-title mb-1">
+                        Candidate Match Analysis
+                    </h5>
+
+                    <p class="text-muted nc-match-intro mb-4">
+                        ATS Match Signals - an informational aid for human review, not a hiring decision.
+                    </p>
+
+
+                    <div class="text-center">
+
+                        <div class="nc-match-score">
+
+                            <h2 class="fw-bold mb-0">
+                                {{ match.overall_percent }}%
+                            </h2>
+
+                            <p class="text-muted small mb-0">
+                                Overall match signal
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row g-3 mb-4">
+
+                        {% for key, component in match.components.items %}
+
+                        <div class="col-sm-6">
+
+                            <div class="nc-component">
+
+                                <div class="d-flex justify-content-between small mb-1 nc-component-header">
+
+                                    <span class="fw-semibold">
+                                        {{ component.label }}
+                                    </span>
+
+                                    <span class="nc-component-percent">
+                                        {{ component.percent }}%
+                                    </span>
+
+                                </div>
+
+
+                                <div class="progress mb-2">
+
+                                    <div
+                                        class="progress-bar"
+                                        role="progressbar"
+                                        data-progress="{{ component.percent }}"
+                                        aria-valuenow="{{ component.percent }}"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                    ></div>
+
+                                </div>
+
+
+                                <p class="text-muted small nc-component-reason mb-0">
+                                    {{ component.reason }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="nc-match-skills h-100">
+
+                                <h6 class="small text-uppercase nc-match-skills-title mb-2">
+                                    Matched Skills
+                                </h6>
+
+                                {% for skill in match.matched_skills %}
+
+                                <span class="badge bg-success nc-match-skill me-1 mb-1">
+                                    {{ skill }}
+                                </span>
+
+                                {% empty %}
+
+                                <p class="text-muted small mb-0">
+                                    None detected.
+                                </p>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="nc-match-skills h-100">
+
+                                <h6 class="small text-uppercase nc-match-skills-title mb-2">
+                                    Missing / Not Detected
+                                </h6>
+
+                                {% for skill in match.missing_skills %}
+
+                                <span class="badge bg-warning nc-match-skill me-1 mb-1">
+                                    {{ skill }}
+                                </span>
+
+                                {% empty %}
+
+                                <p class="text-muted small mb-0">
+                                    None detected.
+                                </p>
+
+                                {% endfor %}
+
+                                <p class="text-muted small mt-2 mb-0">
+                                    "Not detected" means the skill wasn't found in submitted information - not proof the candidate lacks it.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="text-muted small nc-match-disclaimer mt-4 mb-0 fst-italic">
+                        {{ match.disclaimer }}
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     LINK ANALYSIS
+                ================================================== -->
+
+                <div class="row g-4 mt-1">
+
+                    <!-- LINKEDIN -->
+
+                    <div class="col-md-6">
+
+                        <div class="card nc-app-card nc-social-card reveal">
+
+                            <h6 class="nc-social-title">
+                                <i class="bi bi-linkedin"></i>
+                                LinkedIn
+                            </h6>
+
+
+                            {% if linkedin_analysis.status == "manual_review" %}
+
+                                <p class="small text-muted nc-social-text mb-2">
+                                    <i class="bi bi-check-circle text-success me-1"></i>
+                                    Valid profile URL
+                                </p>
+
+                                <p class="small text-muted nc-social-text mb-2">
+                                    Automatic public-data analysis unavailable.
+                                </p>
+
+                                <a
+                                    href="{{ linkedin_analysis.url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open LinkedIn
+                                </a>
+
+                            {% elif linkedin_analysis.status == "invalid_url" %}
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    The provided URL does not look like a LinkedIn profile.
+                                </p>
+
+                            {% else %}
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    Not provided by candidate.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GITHUB -->
+
+                    <div class="col-md-6">
+
+                        <div class="card nc-app-card nc-social-card reveal">
+
+                            <h6 class="nc-social-title">
+                                <i class="bi bi-github"></i>
+                                GitHub
+                            </h6>
+
+
+                            {% if github_analysis.status == "available" %}
+
+                                <p class="small text-muted nc-social-text mb-1">
+                                    Repositories: {{ github_analysis.repository_count }}
+                                </p>
+
+
+                                {% if github_analysis.detected_technologies %}
+
+                                <p class="small text-muted nc-social-text mb-1">
+                                    Detected technologies:
+                                </p>
+
+                                <div class="nc-tech-list mb-2">
+
+                                    {% for tech in github_analysis.detected_technologies %}
+
+                                    <span class="badge bg-light text-dark border">
+                                        {{ tech }}
+                                    </span>
+
+                                    {% endfor %}
+
+                                </div>
+
+                                {% endif %}
+
+
+                                {% if github_analysis.relevant_repositories %}
+
+                                <p class="small text-muted nc-social-text mb-1">
+                                    Job-relevant repositories:
+                                </p>
+
+                                <ul class="small nc-repository-list mb-2">
+
+                                    {% for repo in github_analysis.relevant_repositories %}
+
+                                    <li>
+                                        {{ repo }}
+                                    </li>
+
+                                    {% endfor %}
+
+                                </ul>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{{ github_analysis.url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open GitHub
+                                </a>
+
+
+                            {% elif github_analysis.status == "not_found" or github_analysis.status == "invalid_url" %}
+
+                                <p class="small text-muted nc-social-text mb-2">
+                                    GitHub profile could not be verified automatically.
+                                </p>
+
+                                {% if github_analysis.url %}
+
+                                <a
+                                    href="{{ github_analysis.url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open GitHub
+                                </a>
+
+                                {% endif %}
+
+
+                            {% elif github_analysis.status == "rate_limited" or github_analysis.status == "unavailable" %}
+
+                                <p class="small text-muted nc-social-text mb-2">
+                                    Automatic analysis is currently unavailable.
+                                </p>
+
+                                <a
+                                    href="{{ github_analysis.url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open GitHub
+                                </a>
+
+
+                            {% else %}
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    Not provided by candidate.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if is_employer_view %}
+
+            <!-- =================================================
+                 EMPLOYER SIDEBAR
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <div class="card nc-app-card nc-status-card reveal">
+
+                    <h6 class="nc-status-title">
+                        Update Status
+                    </h6>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'applications:update_status' application.pk %}"
+                        class="nc-status-form"
+                    >
+
+                        {% csrf_token %}
+
+                        {{ status_form.status|add_class:"form-select mb-3" }}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Update Status
+                        </button>
+
+                    </form>
+
+
+                    <p class="text-muted small nc-status-note mt-3 mb-0">
+                        ATS match signals are decision-support only. The final hiring decision remains with you.
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    document.querySelectorAll("[data-progress]").forEach(function (element) {
+        const value = element.dataset.progress;
+
+        if (value !== undefined && value !== null) {
+            element.style.width = value + "%";
+        }
+    });
+</script>
+
+{% endblock %}

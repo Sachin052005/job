@@ -1,0 +1,194 @@
+<style>
+    .nc-company-card {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.055);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-company-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--nc-primary, #159a78);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s ease;
+    }
+
+    .nc-company-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(21, 154, 120, 0.25);
+        box-shadow: 0 16px 35px rgba(23, 34, 53, 0.09);
+    }
+
+    .nc-company-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .nc-company-card-body {
+        position: relative;
+        height: 100%;
+        padding: 25px 20px 21px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nc-company-logo {
+        width: 68px;
+        height: 68px;
+        flex: 0 0 68px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 17px;
+        border-radius: 17px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        border: 1px solid rgba(21, 154, 120, 0.12);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.45rem;
+        font-weight: 800;
+        box-shadow: 0 6px 16px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-company-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-company-name {
+        position: relative;
+        z-index: 2;
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.4;
+        margin-bottom: 6px;
+    }
+
+    .nc-company-name a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .nc-company-name a:hover {
+        color: var(--nc-primary-dark, #08785d);
+    }
+
+    .nc-company-industry {
+        min-height: 21px;
+        color: var(--nc-text, #586678);
+        font-size: 0.78rem;
+        margin-bottom: 6px;
+    }
+
+    .nc-company-location {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.77rem;
+        line-height: 1.5;
+        margin-bottom: 17px;
+    }
+
+    .nc-company-location i {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-open-jobs {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 31px;
+        padding: 6px 11px;
+        border-radius: 999px;
+        background: #f5f8f7;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-company-card-body {
+            padding: 23px 18px 19px;
+        }
+    }
+</style>
+
+
+<div class="nc-company-card">
+
+    <div class="nc-company-card-body">
+
+        <div class="nc-company-logo">
+
+            {% if company.logo %}
+
+                <img
+                    src="{{ company.logo.url }}"
+                    alt="{{ company.name }}"
+                >
+
+            {% else %}
+
+                {{ company.name|slice:":1" }}
+
+            {% endif %}
+
+        </div>
+
+
+        <h5 class="nc-company-name">
+
+            <a
+                href="{% url 'companies:detail' company.slug %}"
+                class="stretched-link"
+            >
+                {{ company.name }}
+            </a>
+
+        </h5>
+
+
+        <p class="nc-company-industry mb-0">
+            {{ company.industry|default:"" }}
+        </p>
+
+
+        <p class="nc-company-location">
+
+            <i class="bi bi-geo-alt"></i>
+
+            <span>
+                {{ company.location|default:"Location not specified" }}
+            </span>
+
+        </p>
+
+
+        <span class="nc-open-jobs mt-auto">
+
+            {{ company.active_job_count }}
+            open job{{ company.active_job_count|pluralize }}
+
+        </span>
+
+    </div>
+
+</div>

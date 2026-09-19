@@ -1,0 +1,1334 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg app-navbar sticky-top">
+
+    <div class="container">
+
+        <!-- BRAND -->
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img
+                src="{% static 'images/logo.png' %}"
+                alt="NammaCareer"
+                class="brand-logo"
+            >
+            <span class="brand-name">NammaCareer</span>
+        </a>
+
+
+        <!-- NAVBAR CONTENT -->
+        <div class="navbar-collapse" id="mainNav">
+
+            <!-- LEFT NAVIGATION -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <!-- JOBS -->
+                <li class="nav-item">
+                    <a
+                        class="nav-link{% if request.resolver_match.app_name == 'jobs' %} active{% endif %}"
+                        href="{% url 'jobs:list' %}"
+                    >
+                        <span class="nav-text">Jobs</span>
+                    </a>
+                </li>
+
+
+                <!-- COMPANIES -->
+                <li class="nav-item">
+                    <a
+                        class="nav-link{% if request.resolver_match.app_name == 'companies' %} active{% endif %}"
+                        href="{% url 'companies:list' %}"
+                    >
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+
+
+                {% if user.is_authenticated %}
+
+                    {% if user.profile.role == "job_seeker" %}
+
+                        <!-- MY APPLICATIONS -->
+                        <li class="nav-item">
+                            <a
+                                class="nav-link{% if request.resolver_match.app_name == 'applications' %} active{% endif %}"
+                                href="{% url 'applications:mine' %}"
+                            >
+                                <span class="nav-text">My Applications</span>
+                            </a>
+                        </li>
+
+
+                        <!-- SAVED JOBS -->
+                        <li class="nav-item">
+                            <a
+                                class="nav-link{% if request.resolver_match.app_name == 'saved_jobs' %} active{% endif %}"
+                                href="{% url 'saved_jobs:list' %}"
+                            >
+                                <span class="nav-text">Saved Jobs</span>
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <!-- POST A JOB -->
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{% url 'jobs:create' %}"
+                            >
+                                <span class="nav-text">Post a Job</span>
+                            </a>
+                        </li>
+
+                    {% endif %}
+
+
+                    <!-- DASHBOARD -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link{% if request.resolver_match.app_name == 'dashboard' %} active{% endif %}"
+                            href="{% url 'dashboard:home' %}"
+                        >
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+
+            <!-- RIGHT NAVIGATION -->
+            <ul class="navbar-nav align-items-lg-center">
+
+                {% if user.is_authenticated %}
+
+                    <!-- USER PROFILE DROPDOWN -->
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link user-nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+
+                            <!-- PROFILE IMAGE -->
+                            {% if user.profile.photo %}
+
+                                <span class="avatar-circle avatar-image">
+                                    <img
+                                        src="{{ user.profile.photo.url }}"
+                                        alt="{{ user.first_name|default:user.username }}"
+                                    >
+                                </span>
+
+                            {% else %}
+
+                                <!-- FALLBACK INITIAL -->
+                                <span class="avatar-circle">
+                                    {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <!-- PROFILE NAME -->
+                            <span class="user-name">
+                                {{ user.first_name|default:user.username }}
+                            </span>
+
+                        </a>
+
+
+                        <!-- DROPDOWN MENU -->
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <!-- PROFILE -->
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="{% url 'accounts:profile' %}"
+                                >
+                                    <span class="dropdown-icon">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+
+                                    <span>Profile</span>
+                                </a>
+                            </li>
+
+
+                            <!-- CHANGE PASSWORD -->
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="{% url 'accounts:password_change' %}"
+                                >
+                                    <span class="dropdown-icon">
+                                        <i class="bi bi-shield-lock"></i>
+                                    </span>
+
+                                    <span>Change Password</span>
+                                </a>
+                            </li>
+
+
+                            <!-- DIVIDER -->
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            <!-- LOGOUT -->
+                            <li>
+                                <form
+                                    method="post"
+                                    action="{% url 'accounts:logout' %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="dropdown-item"
+                                    >
+                                        <span class="dropdown-icon logout-icon">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                        </span>
+
+                                        <span>Logout</span>
+                                    </button>
+
+                                </form>
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                {% else %}
+
+                    <!-- LOGIN -->
+                    <li class="nav-item">
+                        <a
+                            class="nav-link login-link"
+                            href="{% url 'accounts:login' %}"
+                        >
+                            <span class="nav-text">Login</span>
+                        </a>
+                    </li>
+
+
+                    <!-- REGISTER -->
+                    <li class="nav-item">
+                        <a
+                            class="btn btn-primary btn-sm btn-nav-cta"
+                            href="{% url 'accounts:register' %}"
+                        >
+                            Register
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<style>
+
+/* =========================================================
+   NAMMACAREER NAVBAR
+   DARK FOOTER MATCHING DESIGN
+========================================================= */
+
+.app-navbar {
+    min-height: 72px;
+
+    background: #172235 !important;
+
+    color: #ffffff;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+
+    box-shadow:
+        0 5px 24px rgba(0, 0, 0, 0.14);
+
+    z-index: 1030;
+}
+
+
+/* CONTAINER */
+
+.app-navbar .container {
+    min-height: 72px;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.app-navbar .navbar-brand {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    gap: 11px;
+
+    margin-right: 38px;
+
+    padding-top: 0;
+    padding-bottom: 0;
+
+    color: #ffffff !important;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 1.12rem;
+
+    font-weight: 800 !important;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.025em;
+
+    text-decoration: none !important;
+
+    white-space: nowrap;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform: none !important;
+}
+
+
+/* =========================================================
+   BRAND NAME
+   ALWAYS VISIBLE
+========================================================= */
+
+.app-navbar .brand-name {
+    display: inline-block !important;
+
+    color: #ffffff !important;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 1.12rem;
+
+    font-weight: 800 !important;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform: none !important;
+}
+
+
+/* BRAND HOVER */
+
+.app-navbar .navbar-brand:hover .brand-name {
+    color: #20b88f !important;
+}
+
+
+/* =========================================================
+   BRAND LOGO
+========================================================= */
+
+.app-navbar .brand-logo {
+    width: 48px;
+
+    height: 48px;
+
+    min-width: 48px;
+
+    min-height: 48px;
+
+    display: block !important;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 50%;
+
+    background: transparent !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+
+    flex: 0 0 48px;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+
+.app-navbar .navbar-brand:hover .brand-logo {
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   NAVBAR COLLAPSE
+========================================================= */
+
+.app-navbar .navbar-collapse {
+    display: flex !important;
+
+    align-items: center;
+
+    flex-grow: 1;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+
+/* NAV LIST */
+
+.app-navbar .navbar-nav {
+    gap: 5px;
+}
+
+
+/* =========================================================
+   NAV ITEM
+========================================================= */
+
+.app-navbar .nav-item {
+    position: relative;
+}
+
+
+/* =========================================================
+   NAV LINK
+========================================================= */
+
+.app-navbar .nav-link {
+    position: relative;
+
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 8px 13px !important;
+
+    margin: 0;
+
+    border-radius: 8px;
+
+    color: #aeb8c5 !important;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 0.89rem;
+
+    font-weight: 700 !important;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+
+    text-decoration: none !important;
+
+    background: transparent !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform: none !important;
+
+    transition:
+        color 0.22s ease;
+}
+
+
+/* =========================================================
+   NAV TEXT
+   ALWAYS VISIBLE
+========================================================= */
+
+.app-navbar .nav-text {
+    display: inline-block !important;
+
+    color: inherit !important;
+
+    font-size: inherit;
+
+    font-weight: 700 !important;
+
+    line-height: inherit;
+
+    white-space: nowrap;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform: none !important;
+}
+
+
+/* =========================================================
+   NAV HOVER
+   NO BACKGROUND CHANGE
+========================================================= */
+
+.app-navbar .nav-link:hover {
+    color: #ffffff !important;
+
+    background: transparent !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+
+/* =========================================================
+   HOVER ANIMATED LINE
+   LEFT → RIGHT
+========================================================= */
+
+.app-navbar .nav-link::after {
+    content: "";
+
+    position: absolute;
+
+    left: 13px;
+
+    right: 13px;
+
+    bottom: 3px;
+
+    height: 2px;
+
+    border-radius: 50px;
+
+    background: #20b88f;
+
+    transform: scaleX(0);
+
+    transform-origin: left center;
+
+    transition:
+        transform 0.30s ease;
+
+    pointer-events: none;
+}
+
+
+/* MOUSE HOVER */
+
+.app-navbar .nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+
+/* =========================================================
+   ACTIVE NAV LINK
+========================================================= */
+
+.app-navbar .nav-link.active {
+    color: #ffffff !important;
+
+    font-weight: 800 !important;
+
+    background: transparent !important;
+}
+
+
+/* ACTIVE TEXT */
+
+.app-navbar .nav-link.active .nav-text {
+    color: #ffffff !important;
+
+    font-weight: 800 !important;
+}
+
+
+/* ACTIVE LINE */
+
+.app-navbar .nav-link.active::after {
+    transform: scaleX(1);
+
+    background: #20b88f;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.app-navbar .login-link {
+    color: #aeb8c5 !important;
+
+    font-weight: 700 !important;
+}
+
+.app-navbar .login-link:hover {
+    color: #ffffff !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   PROFILE NAV LINK
+========================================================= */
+
+.app-navbar .user-nav-link {
+    display: inline-flex !important;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 9px;
+
+    min-height: 42px;
+
+    padding: 3px 9px !important;
+
+    color: #ffffff !important;
+
+    font-weight: 800 !important;
+
+    background: transparent !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+
+/* =========================================================
+   PROFILE NAME
+   ALWAYS VISIBLE
+========================================================= */
+
+.app-navbar .user-name {
+    display: inline-block !important;
+
+    max-width: 180px;
+
+    overflow: visible !important;
+
+    text-overflow: clip !important;
+
+    white-space: nowrap;
+
+    color: #ffffff !important;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 0.89rem;
+
+    font-weight: 800 !important;
+
+    line-height: 1.4;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform: none !important;
+}
+
+
+/* PROFILE NAME HOVER */
+
+.app-navbar .user-nav-link:hover .user-name {
+    color: #ffffff !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+
+/* =========================================================
+   DROPDOWN ARROW
+========================================================= */
+
+/*
+   IMPORTANT:
+   Bootstrap uses ::after for the dropdown arrow.
+   The normal navbar underline is NOT applied here.
+*/
+
+.app-navbar .user-nav-link.dropdown-toggle::after {
+    content: "";
+
+    position: static;
+
+    display: inline-block !important;
+
+    width: 0;
+
+    height: 0;
+
+    margin-left: 3px;
+
+    margin-top: 2px;
+
+    border-top: 0.30em solid #aeb8c5;
+
+    border-right: 0.30em solid transparent;
+
+    border-left: 0.30em solid transparent;
+
+    border-bottom: 0;
+
+    background: transparent;
+
+    transform: none !important;
+
+    transform-origin: center;
+
+    transition:
+        transform 0.20s ease;
+
+    pointer-events: auto;
+}
+
+
+/* OPEN DROPDOWN */
+
+.app-navbar .user-nav-link.dropdown-toggle.show::after {
+    transform: rotate(180deg) !important;
+}
+
+
+/* =========================================================
+   PROFILE AVATAR
+========================================================= */
+
+.app-navbar .avatar-circle {
+    width: 38px;
+
+    height: 38px;
+
+    min-width: 38px;
+
+    min-height: 38px;
+
+    flex: 0 0 38px;
+
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #159a78,
+            #08785d
+        );
+
+    color: #ffffff;
+
+    font-family: "Manrope", sans-serif;
+
+    font-size: 0.82rem;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    border: 2px solid rgba(255, 255, 255, 0.20);
+
+    box-shadow:
+        0 4px 12px rgba(21, 154, 120, 0.20);
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+
+/* =========================================================
+   REAL PROFILE PHOTO
+========================================================= */
+
+.app-navbar .avatar-circle.avatar-image {
+    background: #ffffff;
+
+    border-color: rgba(255, 255, 255, 0.25);
+
+    padding: 0 !important;
+}
+
+
+/* PROFILE IMAGE */
+
+.app-navbar .avatar-circle img {
+    width: 100% !important;
+
+    height: 100% !important;
+
+    min-width: 100%;
+
+    min-height: 100%;
+
+    display: block !important;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 50%;
+
+    margin: 0;
+
+    padding: 0;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   DROPDOWN
+========================================================= */
+
+.app-navbar .dropdown-menu {
+    min-width: 225px;
+
+    margin-top: 10px;
+
+    padding: 8px;
+
+    border: 1px solid #e1e8e4;
+
+    border-radius: 14px;
+
+    background: #ffffff !important;
+
+    box-shadow:
+        0 15px 40px rgba(23, 34, 53, 0.18);
+
+    animation:
+        ncDropdown 0.18s ease-out;
+}
+
+
+@keyframes ncDropdown {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   DROPDOWN ITEM
+========================================================= */
+
+.app-navbar .dropdown-item {
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 10px 11px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    color: #586678 !important;
+
+    background: transparent;
+
+    font-size: 0.87rem;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.20s ease,
+        background 0.20s ease,
+        transform 0.20s ease;
+}
+
+
+.app-navbar .dropdown-item:hover {
+    color: #08785d !important;
+
+    background: #e8f6f1 !important;
+
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   DROPDOWN ICON
+========================================================= */
+
+.app-navbar .dropdown-icon {
+    width: 31px;
+
+    height: 31px;
+
+    min-width: 31px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 31px;
+
+    border-radius: 8px;
+
+    background: #f1faf7;
+
+    color: #159a78;
+
+    font-size: 0.82rem;
+}
+
+
+.app-navbar .dropdown-item:hover .dropdown-icon {
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.app-navbar .logout-icon {
+    color: #b85c5c;
+
+    background: #fff4f4;
+}
+
+
+.app-navbar .dropdown-item:hover .logout-icon {
+    color: #a94444;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   DROPDOWN DIVIDER
+========================================================= */
+
+.app-navbar .dropdown-divider {
+    margin: 7px 4px;
+
+    border-color: #e8eeeb;
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   REGISTER BUTTON
+========================================================= */
+
+.app-navbar .btn-nav-cta {
+    min-width: 92px;
+
+    padding: 9px 18px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: #159a78 !important;
+
+    color: #ffffff !important;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 0.85rem;
+
+    font-weight: 800 !important;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+
+    text-decoration: none;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    box-shadow:
+        0 5px 14px rgba(21, 154, 120, 0.16);
+
+    transition:
+        background 0.22s ease,
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+
+.app-navbar .btn-nav-cta:hover,
+.app-navbar .btn-nav-cta:focus {
+    background: #08785d !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 18px rgba(21, 154, 120, 0.22);
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+   NO HAMBURGER
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .app-navbar {
+        padding: 10px 0;
+    }
+
+
+    .app-navbar .container {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        min-height: auto;
+    }
+
+
+    /* BRAND */
+
+    .app-navbar .navbar-brand {
+        align-self: flex-start;
+
+        margin-right: 0;
+
+        display: inline-flex !important;
+    }
+
+
+    /* NAV CONTENT */
+
+    .app-navbar .navbar-collapse {
+        display: flex !important;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        width: 100%;
+
+        margin-top: 12px;
+
+        padding: 12px;
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        border-radius: 15px;
+
+        background: #172235 !important;
+
+        box-shadow:
+            0 12px 30px rgba(0, 0, 0, 0.16);
+    }
+
+
+    /* NAV LIST */
+
+    .app-navbar .navbar-nav {
+        width: 100%;
+
+        gap: 3px;
+    }
+
+
+    .app-navbar .navbar-nav.me-auto {
+        margin-right: 0 !important;
+    }
+
+
+    /* NAV LINKS */
+
+    .app-navbar .nav-link {
+        width: 100%;
+
+        min-height: 44px;
+
+        padding: 10px 12px !important;
+
+        justify-content: flex-start;
+
+        font-weight: 700 !important;
+    }
+
+
+    /* MOBILE HOVER LINE */
+
+    .app-navbar .nav-link::after {
+        left: 12px;
+
+        right: auto;
+
+        bottom: 6px;
+
+        width: 0;
+
+        height: 2px;
+
+        transform: none;
+
+        transition:
+            width 0.30s ease;
+    }
+
+
+    .app-navbar .nav-link:hover::after {
+        width: calc(100% - 24px);
+
+        transform: none;
+    }
+
+
+    /* MOBILE ACTIVE */
+
+    .app-navbar .nav-link.active::after {
+        left: 12px;
+
+        right: auto;
+
+        bottom: 6px;
+
+        width: calc(100% - 24px);
+
+        height: 2px;
+
+        transform: none;
+    }
+
+
+    /* RIGHT NAV */
+
+    .app-navbar .navbar-nav.align-items-lg-center {
+        align-items: stretch !important;
+
+        margin-top: 8px;
+
+        padding-top: 8px;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+
+    /* PROFILE */
+
+    .app-navbar .user-nav-link {
+        width: 100%;
+
+        justify-content: flex-start;
+
+        padding: 5px 10px !important;
+    }
+
+
+    .app-navbar .user-name {
+        max-width: none;
+
+        overflow: visible !important;
+
+        text-overflow: clip !important;
+    }
+
+
+    /* REGISTER */
+
+    .app-navbar .btn-nav-cta {
+        width: 100%;
+
+        margin-top: 5px;
+
+        padding: 10px 18px;
+    }
+
+
+    /* DROPDOWN */
+
+    .app-navbar .dropdown-menu {
+        margin-top: 4px;
+
+        box-shadow: none;
+
+        border-color: #edf1ef;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .app-navbar {
+        min-height: auto;
+
+        padding: 9px 0;
+    }
+
+
+    .app-navbar .container {
+        min-height: auto;
+    }
+
+
+    /* MOBILE BRAND */
+
+    .app-navbar .navbar-brand {
+        font-size: 1rem;
+    }
+
+
+    .app-navbar .brand-name {
+        font-size: 1rem;
+
+        font-weight: 800 !important;
+    }
+
+
+    /* MOBILE LOGO */
+
+    .app-navbar .brand-logo {
+        width: 42px;
+
+        height: 42px;
+
+        min-width: 42px;
+
+        min-height: 42px;
+
+        flex-basis: 42px;
+    }
+
+
+    /* MOBILE NAV */
+
+    .app-navbar .navbar-collapse {
+        margin-top: 10px;
+
+        padding: 9px;
+    }
+
+
+    .app-navbar .nav-link {
+        font-size: 0.86rem;
+
+        font-weight: 700 !important;
+    }
+
+
+    .app-navbar .nav-text {
+        font-weight: 700 !important;
+    }
+
+
+    /* MOBILE PROFILE */
+
+    .app-navbar .avatar-circle {
+        width: 35px;
+
+        height: 35px;
+
+        min-width: 35px;
+
+        min-height: 35px;
+
+        flex-basis: 35px;
+    }
+
+
+    .app-navbar .user-name {
+        font-size: 0.86rem;
+
+        font-weight: 800 !important;
+
+        max-width: none;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .app-navbar *,
+    .app-navbar *::before,
+    .app-navbar *::after {
+        animation: none !important;
+
+        transition: none !important;
+    }
+}
+
+</style>

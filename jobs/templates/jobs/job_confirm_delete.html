@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Job - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-delete-page {
+        min-height: 65vh;
+        display: flex;
+        align-items: center;
+        padding: 50px 0 70px;
+    }
+
+    .nc-delete-card {
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 14px 40px rgba(23, 34, 53, 0.08);
+        padding: 42px 35px;
+        text-align: center;
+    }
+
+    .nc-delete-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #dc3545;
+    }
+
+    .nc-delete-icon {
+        width: 72px;
+        height: 72px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-radius: 20px;
+        background: #fff1f2;
+        color: #dc3545;
+        font-size: 1.75rem;
+    }
+
+    .nc-delete-title {
+        color: var(--nc-heading, #172235);
+        font-size: 1.45rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+    }
+
+    .nc-delete-description {
+        max-width: 470px;
+        margin: 0 auto 27px;
+        color: var(--nc-text, #586678);
+        line-height: 1.7;
+    }
+
+    .nc-delete-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nc-delete-actions .btn {
+        min-height: 43px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .nc-delete-confirm {
+        box-shadow: 0 7px 18px rgba(220, 53, 69, 0.14);
+    }
+
+    .nc-delete-confirm:hover {
+        box-shadow: 0 10px 22px rgba(220, 53, 69, 0.18);
+    }
+
+    @media (max-width: 575.98px) {
+        .nc-delete-page {
+            min-height: 60vh;
+            padding: 30px 0 50px;
+        }
+
+        .nc-delete-card {
+            padding: 35px 22px;
+            border-radius: 18px;
+        }
+
+        .nc-delete-title {
+            font-size: 1.3rem;
+        }
+
+        .nc-delete-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .nc-delete-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="nc-delete-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-md-7 col-lg-6">
+
+                <div class="nc-delete-card reveal">
+
+                    <div class="nc-delete-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+
+                    <h4 class="nc-delete-title">
+                        Delete "{{ object.title }}"?
+                    </h4>
+
+                    <p class="nc-delete-description">
+                        This action cannot be undone. All applications for this job will also be removed.
+                    </p>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="nc-delete-actions">
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger nc-delete-confirm"
+                            >
+                                <i class="bi bi-trash3 me-1"></i>
+                                Yes, Delete Job
+                            </button>
+
+                            <a
+                                href="{% url 'jobs:detail' object.pk %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

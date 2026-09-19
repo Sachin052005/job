@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Jobs - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-saved-jobs-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-saved-jobs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .nc-saved-jobs-title {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--nc-heading, #172235);
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .nc-saved-title-icon {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.15rem;
+    }
+
+    /* Job Card */
+    .nc-saved-job-card {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.055);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .nc-saved-job-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--nc-primary, #159a78);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s ease;
+    }
+
+    .nc-saved-job-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(21, 154, 120, 0.25);
+        box-shadow: 0 15px 35px rgba(23, 34, 53, 0.09);
+    }
+
+    .nc-saved-job-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .nc-saved-job-body {
+        min-height: 190px;
+        padding: 23px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nc-saved-job-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        border-radius: 11px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1rem;
+    }
+
+    .nc-saved-job-title {
+        position: relative;
+        z-index: 2;
+        color: var(--nc-heading, #172235);
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .nc-saved-job-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .nc-saved-job-title a:hover {
+        color: var(--nc-primary-dark, #08785d);
+    }
+
+    .nc-saved-job-meta {
+        color: var(--nc-text, #586678);
+        line-height: 1.5;
+    }
+
+    .nc-saved-job-meta i {
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-saved-date {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding-top: 13px;
+        margin-top: auto;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+        color: var(--nc-muted, #8994a3);
+    }
+
+    .nc-saved-date i {
+        color: var(--nc-primary, #159a78);
+    }
+
+    /* Empty State */
+    .nc-saved-empty {
+        padding: 70px 25px;
+        text-align: center;
+        background: var(--nc-white, #ffffff);
+        border: 1px dashed var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+    }
+
+    .nc-saved-empty-icon {
+        width: 76px;
+        height: 76px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 21px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 2rem;
+    }
+
+    .nc-saved-empty-text {
+        color: var(--nc-text, #586678);
+        font-size: 0.9rem;
+    }
+
+    .nc-browse-btn {
+        border-radius: 10px;
+        font-weight: 700;
+        padding: 10px 18px;
+    }
+
+    @media (max-width: 767.98px) {
+        .nc-saved-jobs-page {
+            padding: 27px 0 50px;
+        }
+
+        .nc-saved-jobs-title {
+            font-size: 1.4rem;
+        }
+
+        .nc-saved-title-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+        .nc-saved-job-body {
+            min-height: 175px;
+            padding: 20px;
+        }
+
+        .nc-saved-empty {
+            padding: 55px 20px;
+        }
+    }
+</style>
+
+
+<div class="nc-saved-jobs-page">
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="nc-saved-jobs-header">
+
+            <h2 class="nc-saved-jobs-title">
+                <span class="nc-saved-title-icon">
+                    <i class="bi bi-bookmark-heart"></i>
+                </span>
+                Saved Jobs
+            </h2>
+
+        </div>
+
+
+        {% if saved_jobs %}
+
+            <!-- Saved Jobs -->
+            <div class="row g-4 stagger-grid">
+
+                {% for saved in saved_jobs %}
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <div class="nc-saved-job-card">
+
+                            <div class="nc-saved-job-body">
+
+                                <div class="nc-saved-job-icon">
+                                    <i class="bi bi-briefcase-fill"></i>
+                                </div>
+
+                                <h5 class="nc-saved-job-title">
+
+                                    <a
+                                        href="{% url 'jobs:detail' saved.job.pk %}"
+                                        class="stretched-link"
+                                    >
+                                        {{ saved.job.title }}
+                                    </a>
+
+                                </h5>
+
+                                <p class="text-muted small mb-0 nc-saved-job-meta">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ saved.job.company.name }}
+                                    &middot;
+                                    {{ saved.job.location }}
+                                </p>
+
+                                <p class="small mb-0 nc-saved-date">
+                                    <i class="bi bi-bookmark-check"></i>
+                                    Saved {{ saved.saved_at|timesince }} ago
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% include "components/pagination.html" %}
+
+
+        {% else %}
+
+            <!-- Empty State -->
+            <div class="nc-saved-empty">
+
+                <div class="nc-saved-empty-icon">
+                    <i class="bi bi-bookmark"></i>
+                </div>
+
+                <p class="mt-3 mb-3 nc-saved-empty-text">
+                    You haven't saved any jobs yet.
+                </p>
+
+                <a
+                    href="{% url 'jobs:list' %}"
+                    class="btn btn-primary nc-browse-btn"
+                >
+                    Browse Jobs
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
