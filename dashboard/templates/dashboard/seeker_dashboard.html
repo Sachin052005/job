@@ -231,21 +231,6 @@
         font-weight: 800;
     }
 
-    .nc-progress {
-        height: 7px;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #eaf0ed;
-    }
-
-    .nc-progress .progress-bar {
-        border-radius: 999px;
-        background: linear-gradient(
-            90deg,
-            var(--nc-primary, #159a78),
-            var(--nc-primary-dark, #08785d)
-        );
-    }
 
     /* Application / Recommendation Lists */
 
@@ -814,18 +799,5 @@
     </div>
 
 </div>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll("[data-progress]").forEach(function (bar) {
-            var value = parseFloat(bar.getAttribute("data-progress")) || 0;
-
-            value = Math.max(0, Math.min(100, value));
-
-            bar.style.width = value + "%";
-        });
-    });
-</script>
 
 {% endblock %}

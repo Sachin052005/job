@@ -10,15 +10,15 @@
     ========================================================= */
 
     .nc-profile-page {
-        --profile-green: #159a78;
-        --profile-green-dark: #08785d;
-        --profile-green-soft: #e8f6f1;
-        --profile-heading: #172235;
-        --profile-text: #586678;
-        --profile-muted: #8994a3;
-        --profile-border: #e1e8e4;
-        --profile-bg: #f7faf8;
-        --profile-white: #ffffff;
+        --profile-green: var(--nc-primary);
+        --profile-green-dark: var(--nc-primary-dark);
+        --profile-green-soft: var(--nc-primary-soft);
+        --profile-heading: var(--nc-heading);
+        --profile-text: var(--nc-text);
+        --profile-muted: var(--nc-muted);
+        --profile-border: var(--nc-border);
+        --profile-bg: var(--nc-background);
+        --profile-white: var(--nc-white);
         --profile-shadow: 0 10px 30px rgba(23, 34, 53, .06);
         --profile-shadow-hover: 0 16px 38px rgba(23, 34, 53, .09);
 
@@ -122,23 +122,6 @@
         font-weight: 800;
     }
 
-    .nc-completeness-progress {
-        height: 9px !important;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #edf2ef;
-    }
-
-    .nc-completeness-progress .progress-bar {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(
-            90deg,
-            var(--profile-green),
-            #32b993
-        );
-        transition: width .5s ease;
-    }
 
     .nc-completion-percent {
         margin: 9px 0 20px;
@@ -491,8 +474,7 @@
         .nc-profile-card,
         .nc-profile-edit-btn,
         .nc-link-item,
-        .nc-link-open,
-        .nc-completeness-progress .progress-bar {
+        .nc-link-open {
             transition: none !important;
         }
     }
@@ -541,14 +523,13 @@
                         <!-- FIXED PROGRESS BAR -->
 
                         <div
-                            class="progress nc-completeness-progress mb-2"
+                            class="progress progress-lg mb-2"
                             role="progressbar"
                             aria-valuenow="{{ profile.completion_percent }}"
                             aria-valuemin="0"
                             aria-valuemax="100"
-                            data-progress="{{ profile.completion_percent }}"
                         >
-                            <div class="progress-bar"></div>
+                            <div class="progress-bar" data-progress="{{ profile.completion_percent }}"></div>
                         </div>
 
 
@@ -1001,17 +982,5 @@
 
     </div>
 </div>
-
-
-<script>
-    document.querySelectorAll(".nc-completeness-progress").forEach(function (progress) {
-        const bar = progress.querySelector(".progress-bar");
-
-        if (bar) {
-            const value = progress.dataset.progress || "0";
-            bar.style.width = value + "%";
-        }
-    });
-</script>
 
 {% endblock %}

@@ -83,19 +83,6 @@
         color: var(--nc-muted, #8994a3);
     }
 
-    .nc-progress {
-        height: 7px;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #e9efec;
-    }
-
-    .nc-progress .progress-bar {
-        height: 100%;
-        border-radius: 999px;
-        background: var(--nc-primary, #159a78);
-        transition: width 0.5s ease;
-    }
 
     .nc-review-btn {
         border-radius: 9px;
@@ -415,7 +402,6 @@
 
                     <div
                         class="progress nc-progress mb-3"
-                        style="height: 7px;"
                     >
                         <div
                             class="progress-bar"
@@ -893,18 +879,5 @@
 
     </div>
 </div>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-progress]").forEach(function (bar) {
-        var value = parseFloat(bar.getAttribute("data-progress")) || 0;
-
-        value = Math.max(0, Math.min(100, value));
-
-        bar.style.width = value + "%";
-    });
-});
-</script>
 
 {% endblock %}

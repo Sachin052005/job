@@ -80,6 +80,12 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
 
     # ========================================================
+    # Third-party applications
+    # ========================================================
+    "django_htmx",
+    "django_filters",
+
+    # ========================================================
     # Project applications
     # ========================================================
     "core",
@@ -110,6 +116,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 

@@ -179,19 +179,6 @@
         font-weight: 700;
     }
 
-    .nc-progress {
-        height: 7px;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #e8eeeb;
-    }
-
-    .nc-progress .progress-bar {
-        height: 100%;
-        border-radius: 999px;
-        background: var(--nc-primary, #159a78);
-        transition: width 0.6s ease;
-    }
 
     .nc-disclaimer {
         padding-top: 18px;
@@ -552,7 +539,6 @@
                             <!-- Progress bar -->
                             <div
                                 class="progress nc-progress mb-2"
-                                style="height: 7px;"
                             >
 
                                 <div
@@ -703,18 +689,5 @@
         </div>
     </div>
 </div>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-progress]").forEach(function (bar) {
-        var value = parseFloat(bar.getAttribute("data-progress")) || 0;
-
-        value = Math.max(0, Math.min(100, value));
-
-        bar.style.width = value + "%";
-    });
-});
-</script>
 
 {% endblock %}

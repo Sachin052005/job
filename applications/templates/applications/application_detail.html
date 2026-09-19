@@ -12,15 +12,15 @@
     ========================================================= */
 
     .nc-application-page {
-        --app-green: #159a78;
-        --app-green-dark: #08785d;
-        --app-green-soft: #e8f6f1;
-        --app-heading: #172235;
-        --app-text: #586678;
-        --app-muted: #8994a3;
-        --app-border: #e1e8e4;
-        --app-bg: #f7faf8;
-        --app-white: #ffffff;
+        --app-green: var(--nc-primary);
+        --app-green-dark: var(--nc-primary-dark);
+        --app-green-soft: var(--nc-primary-soft);
+        --app-heading: var(--nc-heading);
+        --app-text: var(--nc-text);
+        --app-muted: var(--nc-muted);
+        --app-border: var(--nc-border);
+        --app-bg: var(--nc-background);
+        --app-white: var(--nc-white);
 
         padding: 35px 0 75px;
         background: var(--app-bg);
@@ -327,21 +327,6 @@
         font-weight: 800;
     }
 
-    .nc-component .progress {
-        height: 7px !important;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #edf2ef;
-    }
-
-    .nc-component .progress-bar {
-        border-radius: 999px;
-        background: linear-gradient(
-            90deg,
-            var(--app-green),
-            #32b993
-        );
-    }
 
     .nc-component-reason {
         font-size: 10px !important;
@@ -1230,16 +1215,5 @@
     </div>
 
 </div>
-
-
-<script>
-    document.querySelectorAll("[data-progress]").forEach(function (element) {
-        const value = element.dataset.progress;
-
-        if (value !== undefined && value !== null) {
-            element.style.width = value + "%";
-        }
-    });
-</script>
 
 {% endblock %}

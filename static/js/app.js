@@ -61,6 +61,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    document.querySelectorAll(".progress-bar[data-progress]").forEach(function (bar) {
+        const value = Math.max(0, Math.min(100, parseFloat(bar.getAttribute("data-progress")) || 0));
+        bar.style.width = value + "%";
+    });
+
     const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.querySelectorAll("[data-count-to]").forEach(function (el) {
         const target = parseInt(el.getAttribute("data-count-to"), 10) || 0;

@@ -1,0 +1,26 @@
+{% if user.is_authenticated and user.profile.role == "job_seeker" %}
+
+    <form
+        method="post"
+        action="{% url 'saved_jobs:toggle' job.pk %}"
+        class="nc-bookmark-form"
+        hx-post="{% url 'saved_jobs:toggle' job.pk %}"
+        hx-target="this"
+        hx-swap="outerHTML"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn btn-sm btn-outline-secondary nc-bookmark-btn"
+            title="{% if job.pk in saved_job_ids %}Remove from saved jobs{% else %}Save job{% endif %}"
+        >
+
+            <i class="bi {% if job.pk in saved_job_ids %}bi-bookmark-fill text-primary{% else %}bi-bookmark{% endif %}"></i>
+
+        </button>
+
+    </form>
+
+{% endif %}

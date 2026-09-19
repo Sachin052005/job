@@ -67,19 +67,7 @@
     }
 
     .nc-profile-progress {
-        height: 7px;
-        overflow: hidden;
         margin-bottom: 9px;
-        border-radius: 999px;
-        background: #edf3f0;
-    }
-
-    .nc-profile-progress .progress-bar {
-        width: 0;
-        height: 100%;
-        border-radius: 999px;
-        background: var(--nc-primary, #159a78);
-        transition: width 0.7s ease;
     }
 
     .nc-profile-completion {
@@ -156,16 +144,3 @@
     </div>
 
 </div>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".nc-profile-progress .progress-bar[data-progress]").forEach(function (bar) {
-            var value = parseFloat(bar.getAttribute("data-progress")) || 0;
-
-            value = Math.max(0, Math.min(100, value));
-
-            bar.style.width = value + "%";
-        });
-    });
-</script>
