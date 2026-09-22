@@ -235,6 +235,75 @@
                         </div>
                         {% endif %}
 
+                        <h6 class="nc-form-label mb-3">Personal Information</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">First Name</label>
+                                {{ form.first_name|add_class:"form-control" }}
+                                {% for error in form.first_name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Last Name</label>
+                                {{ form.last_name|add_class:"form-control" }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Email</label>
+                                {{ form.email|add_class:"form-control" }}
+                                {% for error in form.email.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Phone</label>
+                                {{ form.phone|add_class:"form-control" }}
+                            </div>
+                            <div class="col-12">
+                                <label class="nc-form-label">Location</label>
+                                {{ form.location|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <h6 class="nc-form-label mb-3">Education &amp; Experience</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Qualification</label>
+                                {{ form.education_summary|add_class:"form-control" }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Experience (years)</label>
+                                {{ form.experience_years|add_class:"form-control" }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Current Company</label>
+                                {{ form.current_company|add_class:"form-control" }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="nc-form-label">Current Title</label>
+                                {{ form.current_title|add_class:"form-control" }}
+                            </div>
+                            <div class="col-12">
+                                <label class="nc-form-label">Skills</label>
+                                {{ form.skills|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+                        <h6 class="nc-form-label mb-3">Professional Links</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-4">
+                                <label class="nc-form-label">LinkedIn</label>
+                                {{ form.linkedin_url|add_class:"form-control" }}
+                                {% for error in form.linkedin_url.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="nc-form-label">GitHub</label>
+                                {{ form.github_url|add_class:"form-control" }}
+                                {% for error in form.github_url.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="nc-form-label">Portfolio</label>
+                                {{ form.portfolio_url|add_class:"form-control" }}
+                                {% for error in form.portfolio_url.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+
                         <div class="nc-form-group">
                             <label class="nc-form-label">
                                 Cover Letter
@@ -263,6 +332,19 @@
                                 </div>
                             </div>
                         </div>
+
+                        {% if screening_form.questions %}
+                        <div class="nc-form-group">
+                            <h6 class="nc-form-label mb-3">Screening Questions</h6>
+                            {% for field in screening_form %}
+                                <div class="mb-3">
+                                    <label class="nc-form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                                    {{ field|add_class:"form-control" }}
+                                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
 
                         <div class="nc-apply-actions">
                             <button

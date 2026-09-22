@@ -679,7 +679,7 @@
                                         </span>
 
 
-                                        {% if link_status.linkedin == "available" %}
+                                        {% if profile.linkedin_url %}
 
                                         <span class="badge bg-success nc-link-status">
                                             Available
@@ -729,22 +729,16 @@
                                         </span>
 
 
-                                        {% if link_status.github == "available" %}
+                                        {% if profile.github_url %}
 
                                         <span class="badge bg-success nc-link-status">
                                             Available
                                         </span>
 
-                                        {% elif link_status.github == "not_provided" %}
+                                        {% else %}
 
                                         <span class="badge bg-secondary nc-link-status">
                                             Not Provided
-                                        </span>
-
-                                        {% else %}
-
-                                        <span class="badge bg-warning nc-link-status">
-                                            Could Not Verify
                                         </span>
 
                                         {% endif %}
@@ -785,7 +779,7 @@
                                         </span>
 
 
-                                        {% if link_status.portfolio == "available" %}
+                                        {% if profile.portfolio_url %}
 
                                         <span class="badge bg-success nc-link-status">
                                             Available
@@ -820,55 +814,6 @@
 
                             </div>
 
-
-                            <!-- WEBSITE -->
-
-                            <div class="col-sm-6">
-
-                                <div class="nc-link-item">
-
-                                    <div class="nc-link-top">
-
-                                        <span class="nc-link-name">
-                                            <i class="bi bi-link-45deg me-2"></i>
-                                            Website
-                                        </span>
-
-
-                                        {% if link_status.website == "available" %}
-
-                                        <span class="badge bg-success nc-link-status">
-                                            Available
-                                        </span>
-
-                                        {% else %}
-
-                                        <span class="badge bg-secondary nc-link-status">
-                                            Not Provided
-                                        </span>
-
-                                        {% endif %}
-
-                                    </div>
-
-
-                                    {% if profile.website_url %}
-
-                                    <a
-                                        href="{{ profile.website_url }}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="small nc-link-open"
-                                    >
-                                        Open Website
-                                        <i class="bi bi-arrow-up-right"></i>
-                                    </a>
-
-                                    {% endif %}
-
-                                </div>
-
-                            </div>
 
                         </div>
 
@@ -972,6 +917,270 @@
                     </div>
 
                     {% endif %}
+
+
+                    <!-- =========================================
+                         CAREER PREFERENCES
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">
+                                Career Preferences
+                            </h5>
+                            <a href="{% url 'accounts:profile_career_preferences_edit' %}" class="small nc-link-open">
+                                <i class="bi bi-pencil"></i> {% if profile.career_preference %}Edit{% else %}Add{% endif %}
+                            </a>
+                        </div>
+
+                        {% with cp=profile.career_preference %}
+                        {% if cp %}
+                        <dl class="row mb-0 nc-contact-list mt-3">
+                            {% if cp.get_job_search_status_display %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Job search status</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.get_job_search_status_display }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if cp.preferred_job_title %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Preferred title</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.preferred_job_title }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if cp.preferred_location %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Preferred location</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.preferred_location }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if cp.get_work_mode_display %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Work mode</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.get_work_mode_display }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if cp.expected_salary %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Expected salary</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.expected_salary }}</dd>
+                            </div>
+                            {% endif %}
+                            {% if cp.get_notice_period_display %}
+                            <div class="row nc-contact-row">
+                                <dt class="col-sm-4 nc-contact-label">Notice period</dt>
+                                <dd class="col-sm-8 nc-contact-value mb-0">{{ cp.get_notice_period_display }}</dd>
+                            </div>
+                            {% endif %}
+                        </dl>
+                        {% else %}
+                        <p class="text-muted small mb-0 mt-2">Add your career preferences to improve job matches.</p>
+                        {% endif %}
+                        {% endwith %}
+
+                    </div>
+
+
+                    <!-- =========================================
+                         SKILLS (STRUCTURED)
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Key Skills</h5>
+                            <a href="{% url 'accounts:profile_skills_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% if profile.structured_skills.all %}
+                        <div class="nc-skills-wrapper mt-3">
+                            {% for skill in profile.structured_skills.all %}
+                            <span class="badge skill-badge nc-skill-badge">
+                                {{ skill.name }}{% if skill.is_primary %} ★{% endif %}
+                                <a href="{% url 'accounts:profile_skills_edit' skill.pk %}" class="text-reset ms-1"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_skills_delete' skill.pk %}" class="text-reset ms-1"><i class="bi bi-x"></i></a>
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted small mb-0 mt-2">Add structured skills with proficiency and years of experience.</p>
+                        {% endif %}
+                    </div>
+
+
+                    <!-- =========================================
+                         EDUCATION
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Education</h5>
+                            <a href="{% url 'accounts:profile_education_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% for edu in profile.education_records.all %}
+                        <div class="nc-contact-row row">
+                            <div class="col-9">
+                                <p class="nc-contact-value mb-0">{{ edu.degree }}{% if edu.specialization %} in {{ edu.specialization }}{% endif %}</p>
+                                <p class="nc-contact-label mb-0">{{ edu.institution }} &middot; {{ edu.start_year }}&ndash;{{ edu.end_year|default:"Present" }}</p>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'accounts:profile_education_edit' edu.pk %}" class="small nc-link-open"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_education_delete' edu.pk %}" class="small nc-link-open ms-2"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0 mt-2">No education added yet.</p>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- =========================================
+                         EXPERIENCE
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Experience</h5>
+                            <a href="{% url 'accounts:profile_experience_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% for exp in profile.experience_records.all %}
+                        <div class="nc-contact-row row">
+                            <div class="col-9">
+                                <p class="nc-contact-value mb-0">{{ exp.designation }} at {{ exp.company }}</p>
+                                <p class="nc-contact-label mb-0">{{ exp.start_date }}&ndash;{% if exp.is_current %}Present{% else %}{{ exp.end_date }}{% endif %}</p>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'accounts:profile_experience_edit' exp.pk %}" class="small nc-link-open"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_experience_delete' exp.pk %}" class="small nc-link-open ms-2"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0 mt-2">No experience added yet.</p>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- =========================================
+                         PROJECTS
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Projects</h5>
+                            <a href="{% url 'accounts:profile_projects_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% for project in profile.projects.all %}
+                        <div class="nc-contact-row row">
+                            <div class="col-9">
+                                <p class="nc-contact-value mb-0">{{ project.title }}</p>
+                                {% if project.technologies %}<p class="nc-contact-label mb-0">{{ project.technologies }}</p>{% endif %}
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'accounts:profile_projects_edit' project.pk %}" class="small nc-link-open"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_projects_delete' project.pk %}" class="small nc-link-open ms-2"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0 mt-2">No projects added yet.</p>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- =========================================
+                         INTERNSHIPS
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Internships</h5>
+                            <a href="{% url 'accounts:profile_internships_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% for internship in profile.internships.all %}
+                        <div class="nc-contact-row row">
+                            <div class="col-9">
+                                <p class="nc-contact-value mb-0">{{ internship.role }} at {{ internship.company }}</p>
+                                <p class="nc-contact-label mb-0">{{ internship.start_date }}&ndash;{{ internship.end_date|default:"Present" }}</p>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'accounts:profile_internships_edit' internship.pk %}" class="small nc-link-open"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_internships_delete' internship.pk %}" class="small nc-link-open ms-2"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0 mt-2">No internships added yet.</p>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- =========================================
+                         ACCOMPLISHMENTS
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Accomplishments</h5>
+                            <a href="{% url 'accounts:profile_accomplishments_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% for accomplishment in profile.accomplishments.all %}
+                        <div class="nc-contact-row row">
+                            <div class="col-9">
+                                <p class="nc-contact-value mb-0">{{ accomplishment.title }}</p>
+                                <p class="nc-contact-label mb-0">{{ accomplishment.get_category_display }}{% if accomplishment.issuer %} &middot; {{ accomplishment.issuer }}{% endif %}</p>
+                            </div>
+                            <div class="col-3 text-end">
+                                <a href="{% url 'accounts:profile_accomplishments_edit' accomplishment.pk %}" class="small nc-link-open"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_accomplishments_delete' accomplishment.pk %}" class="small nc-link-open ms-2"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted small mb-0 mt-2">No accomplishments added yet.</p>
+                        {% endfor %}
+                    </div>
+
+
+                    <!-- =========================================
+                         LANGUAGES
+                    ========================================== -->
+
+                    <div class="card nc-profile-card nc-profile-section-card p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="nc-profile-section-title mb-0">Languages</h5>
+                            <a href="{% url 'accounts:profile_languages_add' %}" class="small nc-link-open">
+                                <i class="bi bi-plus-lg"></i> Add
+                            </a>
+                        </div>
+
+                        {% if profile.languages.all %}
+                        <div class="nc-skills-wrapper mt-3">
+                            {% for language in profile.languages.all %}
+                            <span class="badge skill-badge nc-skill-badge">
+                                {{ language.name }} &middot; {{ language.get_proficiency_display }}
+                                <a href="{% url 'accounts:profile_languages_edit' language.pk %}" class="text-reset ms-1"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'accounts:profile_languages_delete' language.pk %}" class="text-reset ms-1"><i class="bi bi-x"></i></a>
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted small mb-0 mt-2">No languages added yet.</p>
+                        {% endif %}
+                    </div>
 
 
                 </div>

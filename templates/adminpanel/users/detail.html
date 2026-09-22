@@ -1,0 +1,88 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}User — {{ user_obj.username }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin / Users</div>
+        <h1 class="h4 mb-0">{{ user_obj.username }}</h1>
+    </div>
+    <div>
+        <a href="{% url edit_url_name user_obj.pk %}" class="btn btn-sm btn-np-primary">Edit</a>
+        <a href="{% url 'adminpanel:user_reset_password' user_obj.pk %}" class="btn btn-sm btn-outline-secondary">Reset Password</a>
+        <a href="{% url delete_url_name user_obj.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url list_url_name %}" class="btn btn-sm btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<div class="np-card">
+    <dl class="np-detail-grid">
+        {% for label, path in detail_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ user_obj|resolve:path|default:"—" }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+
+{% if profile %}
+<div class="np-section-title">Profile</div>
+<div class="np-card">
+    <dl class="np-detail-grid">
+        <dt>Role</dt><dd>{{ profile.get_role_display }}</dd>
+        <dt>Location</dt><dd>{{ profile.location|default:"—" }}</dd>
+        <dt>Headline</dt><dd>{{ profile.headline|default:"—" }}</dd>
+        <dt>Completion</dt><dd>{{ profile.completion_percent }}%</dd>
+    </dl>
+    <a href="{% url 'adminpanel:profile_detail' profile.pk %}" class="btn btn-sm btn-outline-secondary mt-2">View full profile</a>
+</div>
+{% endif %}
+
+{% if recruiter_profile %}
+<div class="np-section-title">Recruiter Profile</div>
+<div class="np-card">
+    <dl class="np-detail-grid">
+        <dt>Company</dt><dd>{{ recruiter_profile.company.name|default:"—" }}</dd>
+        <dt>Designation</dt><dd>{{ recruiter_profile.designation|default:"—" }}</dd>
+        <dt>Verification</dt><dd>{{ recruiter_profile.get_verification_status_display }}</dd>
+    </dl>
+    <a href="{% url 'adminpanel:recruiter_detail' recruiter_profile.pk %}" class="btn btn-sm btn-outline-secondary mt-2">View recruiter profile</a>
+</div>
+{% endif %}
+
+{% if company %}
+<div class="np-section-title">Owned Company</div>
+<div class="np-card">
+    <a href="{% url 'adminpanel:company_detail' company.pk %}">{{ company.name }}</a>
+</div>
+{% endif %}
+
+<div class="np-section-title">Recent Applications</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Job</th><th>Status</th><th>Applied</th></tr></thead>
+        <tbody>
+            {% for application in recent_applications %}
+                <tr><td><a href="{% url 'adminpanel:application_detail' application.pk %}">{{ application.job.title }}</a></td><td>{{ application.get_status_display }}</td><td>{{ application.applied_at }}</td></tr>
+            {% empty %}
+                <tr><td colspan="3"><div class="np-empty">No applications.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if jobs_posted %}
+<div class="np-section-title">Jobs Posted</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Title</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+            {% for job in jobs_posted %}
+                <tr><td><a href="{% url 'adminpanel:job_detail' job.pk %}">{{ job.title }}</a></td><td>{{ job.get_status_display }}</td><td>{{ job.created_at }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

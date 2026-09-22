@@ -317,13 +317,23 @@
 
             {% if company %}
 
-                <a
-                    href="{% url 'jobs:create' %}"
-                    class="btn btn-primary nc-post-job-btn"
-                >
-                    <i class="bi bi-plus-lg me-1"></i>
-                    Post a Job
-                </a>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a
+                        href="{% url 'companies:manage' %}"
+                        class="btn btn-outline-primary nc-post-job-btn"
+                    >
+                        <i class="bi bi-building-gear me-1"></i>
+                        Manage Company Profile
+                    </a>
+
+                    <a
+                        href="{% url 'jobs:create' %}"
+                        class="btn btn-primary nc-post-job-btn"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Post a Job
+                    </a>
+                </div>
 
             {% else %}
 

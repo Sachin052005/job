@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - NammaCareer{% endblock %}
+
+{% block content %}
+<style>
+    .nc-settings-wrap { padding: 42px 0 70px; }
+    .nc-settings-nav { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 16px; overflow: hidden; background: var(--nc-white,#fff); }
+    .nc-settings-nav a { display: block; padding: 13px 18px; color: var(--nc-text,#586678); text-decoration: none; font-weight: 600; font-size: .9rem; border-bottom: 1px solid var(--nc-border, #e1e8e4); }
+    .nc-settings-nav a:last-child { border-bottom: 0; }
+    .nc-settings-nav a.active { background: var(--nc-primary-soft,#e8f6f1); color: var(--nc-primary-dark,#08785d); font-weight: 800; }
+    .nc-settings-panel { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 16px; background: var(--nc-white,#fff); padding: 28px; }
+</style>
+
+<div class="container nc-settings-wrap">
+    <h2 class="mb-4" style="color: var(--nc-heading, #172235); font-weight: 800;">
+        <i class="bi bi-gear me-2"></i> Settings
+    </h2>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <nav class="nc-settings-nav">
+                <a href="{% url 'settings:account' %}" class="{% if active == 'account' %}active{% endif %}">Account</a>
+                <a href="{% url 'settings:security_password' %}" class="{% if active == 'security' %}active{% endif %}">Security</a>
+                <a href="{% url 'settings:appearance' %}" class="{% if active == 'appearance' %}active{% endif %}">Appearance</a>
+                <a href="{% url 'settings:notifications' %}" class="{% if active == 'notifications' %}active{% endif %}">Notifications</a>
+                <a href="{% url 'settings:privacy' %}" class="{% if active == 'privacy' %}active{% endif %}">Privacy</a>
+                {% if user.profile.role == "job_seeker" %}
+                <a href="{% url 'settings:application_preferences' %}" class="{% if active == 'application_preferences' %}active{% endif %}">Application Preferences</a>
+                {% endif %}
+            </nav>
+        </div>
+
+        <div class="col-md-9">
+            <div class="nc-settings-panel">
+                {% block settings_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

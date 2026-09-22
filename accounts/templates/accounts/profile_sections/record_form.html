@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load form_tags %}
+{% block title %}{{ title }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .record-form-page {
+        padding: 45px 0 70px;
+        background: #f7faf8;
+        min-height: calc(100vh - 72px);
+    }
+
+    .record-form-card {
+        border: 1px solid #e1e8e4;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
+        overflow: hidden;
+    }
+
+    .record-form-header {
+        padding: 30px 35px;
+        border-bottom: 1px solid #e8eeeb;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+    }
+
+    .record-form-header h3 {
+        margin: 0;
+        color: #172235;
+        font-family: "Manrope", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .record-form-body {
+        padding: 35px;
+    }
+
+    .record-form-body .form-label {
+        margin-bottom: 7px;
+        color: #344054;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .record-form-body .form-control,
+    .record-form-body .form-select {
+        min-height: 45px;
+        padding: 10px 13px;
+        border: 1px solid #dfe7e3;
+        border-radius: 10px;
+        color: #172235;
+        font-size: 0.88rem;
+    }
+
+    .record-form-body textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .record-form-body .form-control:focus,
+    .record-form-body .form-select:focus {
+        border-color: #159a78;
+        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+        outline: none;
+    }
+
+    .record-form-body .invalid-feedback {
+        display: block;
+        margin-top: 6px;
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .record-form-body .is-invalid {
+        border-color: #dc6b6b;
+    }
+
+    .record-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        padding-top: 25px;
+        border-top: 1px solid #edf1ef;
+    }
+
+    .record-form-actions .btn {
+        min-height: 44px;
+        padding: 9px 22px;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+
+    .record-form-actions .btn-primary {
+        border: 0;
+        background: #159a78;
+    }
+
+    .record-form-actions .btn-primary:hover {
+        background: #08785d;
+    }
+
+    .record-form-actions .btn-outline-secondary {
+        border-color: #d9e2de;
+        color: #586678;
+        background: #ffffff;
+    }
+
+    .record-form-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+</style>
+
+<div class="record-form-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="record-form-card">
+
+                    <div class="record-form-header">
+                        <h3>{{ title }}</h3>
+                    </div>
+
+                    <div class="record-form-body">
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+
+                            {% for field in form %}
+                                {% if field.field.widget.input_type == "checkbox" %}
+                                <div class="record-form-check">
+                                    {{ field|add_class:"form-check-input" }}
+                                    <label class="form-label mb-0" for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                    </label>
+                                </div>
+                                {% else %}
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                    </label>
+                                    {% if field.field.widget.input_type == "select" %}
+                                        {{ field|add_class:"form-select" }}
+                                    {% else %}
+                                        {{ field|add_class:"form-control" }}
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="record-form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

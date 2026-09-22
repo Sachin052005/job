@@ -44,6 +44,21 @@ def filter_jobs(queryset, params):
         except (TypeError, ValueError):
             pass
 
+    def _truthy(value):
+        return str(value).strip().lower() in TRUTHY_PARAM_VALUES
+
+    if _truthy(params.get("freshers_only")):
+        queryset = queryset.filter(Q(badges__icontains="freshers_can_apply") | Q(experience_min=0))
+    if _truthy(params.get("remote_only")):
+        queryset = queryset.filter(Q(work_mode="remote") | Q(badges__icontains="remote"))
+    if _truthy(params.get("urgent_only")):
+        queryset = queryset.filter(badges__icontains="urgent_hiring")
+    if _truthy(params.get("walkin_only")):
+        queryset = queryset.filter(badges__icontains="walkin_interview")
+    work_mode = (params.get("work_mode") or "").strip()
+    if work_mode:
+        queryset = queryset.filter(work_mode=work_mode)
+
     return queryset.select_related("company", "category").distinct()
 
 

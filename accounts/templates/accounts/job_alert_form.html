@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}{% if object %}Edit Job Alert{% else %}Create Job Alert{% endif %} - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 640px; padding: 42px 0 70px;">
+
+    <h2 class="mb-4" style="color: var(--nc-heading, #172235); font-weight: 800;">
+        {% if object %}Edit Job Alert{% else %}Create Job Alert{% endif %}
+    </h2>
+
+    <form method="post" class="card p-4" style="border-radius: 16px; border-color: var(--nc-border, #e1e8e4);">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+        <div class="mb-3">
+            <label class="fw-bold mb-1">Alert Name</label>
+            {{ form.name|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label class="fw-bold mb-1">Keywords</label>
+            {{ form.keywords|add_class:"form-control" }}
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Domain</label>
+                {{ form.domain|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Location</label>
+                {{ form.location|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Max Experience</label>
+                {{ form.experience_max|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Minimum Salary</label>
+                {{ form.salary_min|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Employment Type</label>
+                {{ form.employment_type|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Work Mode</label>
+                {{ form.work_mode|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                <label class="fw-bold mb-1">Frequency</label>
+                {{ form.frequency|add_class:"form-select" }}
+            </div>
+        </div>
+
+        <div class="form-check form-switch mb-4">
+            {{ form.is_active }}
+            <label class="form-check-label">Active</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'job_alerts:list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

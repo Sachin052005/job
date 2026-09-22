@@ -1,0 +1,70 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}Application — {{ object.full_name }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin / Applications</div>
+        <h1 class="h4 mb-0">{{ object.full_name }} → {{ object.job.title }}</h1>
+    </div>
+    <div>
+        <a href="{{ status_update_url }}" class="btn btn-sm btn-np-primary">Change Status</a>
+        <a href="{% url delete_url_name object.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url list_url_name %}" class="btn btn-sm btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<div class="np-card">
+    <dl class="np-detail-grid">
+        {% for label, path in detail_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ object|resolve:path|default:"—" }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+
+{% if object.cover_letter %}
+<div class="np-section-title">Cover Letter</div>
+<div class="np-card" style="white-space:pre-wrap;">{{ object.cover_letter }}</div>
+{% endif %}
+
+{% if match_snapshot.percentage != None %}
+<div class="np-section-title">Skill Match — {{ match_snapshot.percentage }}%</div>
+<div class="np-card">
+    <p class="small text-muted mb-1">Matched skills</p>
+    {% for skill in match_snapshot.matched_skills %}<span class="badge text-bg-success me-1">{{ skill }}</span>{% empty %}<span class="text-muted small">None</span>{% endfor %}
+    <p class="small text-muted mb-1 mt-2">Missing skills</p>
+    {% for skill in match_snapshot.unmatched_skills %}<span class="badge text-bg-secondary me-1">{{ skill }}</span>{% empty %}<span class="text-muted small">None</span>{% endfor %}
+</div>
+{% endif %}
+
+<div class="np-section-title">Screening Answers</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+        <tbody>
+            {% for answer in screening_answers %}
+                <tr><td>{{ answer.question.question }}</td><td>{{ answer.answer_text }}</td></tr>
+            {% empty %}
+                <tr><td colspan="2"><div class="np-empty">No screening answers.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title">Status History</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>From</th><th>To</th><th>Changed By</th><th>When</th></tr></thead>
+        <tbody>
+            {% for entry in status_history %}
+                <tr><td>{{ entry.get_old_status_display|default:"—" }}</td><td>{{ entry.get_new_status_display }}</td><td>{{ entry.changed_by.username|default:"System" }}</td><td>{{ entry.changed_at }}</td></tr>
+            {% empty %}
+                <tr><td colspan="4"><div class="np-empty">No status changes recorded.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

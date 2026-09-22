@@ -332,7 +332,30 @@
 
             {% endif %}
 
+            <span class="nc-job-meta-item">
+                <i class="bi bi-graph-up"></i>
+                {{ job.experience_min }}-{{ job.experience_max }} yrs
+            </span>
+
+            {% if job.work_mode %}
+                <span class="nc-job-meta-item">
+                    <i class="bi bi-laptop"></i>
+                    {{ job.get_work_mode_display }}
+                </span>
+            {% endif %}
+
         </div>
+
+
+        {% if job.badge_labels %}
+        <div class="nc-job-skills">
+            {% for label in job.badge_labels|slice:":3" %}
+                <span class="nc-job-skill" style="background: var(--warning-light, #FFFBEB); border-color: rgba(245,158,11,.25); color: #92660b;">
+                    {{ label }}
+                </span>
+            {% endfor %}
+        </div>
+        {% endif %}
 
 
         <!-- Skills -->

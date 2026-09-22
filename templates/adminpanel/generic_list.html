@@ -1,0 +1,98 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin</div>
+        <h1 class="h4 mb-0">{{ page_title }}</h1>
+    </div>
+    {% if add_url %}
+        <a href="{{ add_url }}" class="btn btn-np-primary btn-sm"><i class="bi bi-plus-lg"></i> Add {{ page_title }}</a>
+    {% endif %}
+</div>
+
+{% if search_enabled or filter_specs %}
+<form method="get" class="np-filters np-card">
+    {% if search_enabled %}
+        <input type="search" name="q" class="form-control form-control-sm" style="max-width:260px;" placeholder="Search…" value="{{ search_query }}">
+    {% endif %}
+    {% for spec in filter_specs %}
+        <select name="{{ spec.param }}" class="form-select form-select-sm" style="max-width:200px;" onchange="this.form.submit()">
+            <option value="">{{ spec.label }}: All</option>
+            {% for value, label in spec.choices %}
+                <option value="{{ value }}" {% if active_filters|get_item:spec.param == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    {% endfor %}
+    <button type="submit" class="btn btn-sm btn-outline-secondary">Apply</button>
+    {% if search_query or active_filters %}
+        <a href="?" class="btn btn-sm btn-link text-muted">Clear</a>
+    {% endif %}
+</form>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="np-table-wrap">
+        <table class="table np-table mb-0">
+            <thead>
+                <tr>
+                    {% if bulk_actions %}<th style="width:34px;"><input type="checkbox" class="np-select-all form-check-input"></th>{% endif %}
+                    {% for label, path in columns %}<th>{{ label }}</th>{% endfor %}
+                    {% if row_view_url_name or row_edit_url_name or row_delete_url_name %}<th>Actions</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                <tr>
+                    {% if bulk_actions %}
+                        <td><input type="checkbox" name="selected" value="{{ object.pk }}" class="np-row-select form-check-input"></td>
+                    {% endif %}
+                    {% for label, path in columns %}
+                        <td>{{ object|resolve:path|default:"—" }}</td>
+                    {% endfor %}
+                    {% if row_view_url_name or row_edit_url_name or row_delete_url_name %}
+                        <td class="np-row-actions">
+                            {% if row_view_url_name %}<a href="{% url row_view_url_name object.pk %}">View</a>{% endif %}
+                            {% if row_edit_url_name %}<a href="{% url row_edit_url_name object.pk %}">Edit</a>{% endif %}
+                            {% if row_delete_url_name %}<a href="{% url row_delete_url_name object.pk %}" class="text-danger">Delete</a>{% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr><td colspan="10"><div class="np-empty">No records found.</div></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if bulk_actions %}
+    <div class="d-flex align-items-center gap-2 mt-3">
+        <select name="bulk_action" class="form-select form-select-sm" style="max-width:240px;">
+            <option value="">Bulk action…</option>
+            {% for action in bulk_actions %}
+                <option value="{{ action.key }}">{{ action.label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Apply this bulk action to the selected rows?');">Apply</button>
+    </div>
+    {% endif %}
+</form>
+
+{% if is_paginated %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if preserved_querystring %}&{{ preserved_querystring }}{% endif %}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if preserved_querystring %}&{{ preserved_querystring }}{% endif %}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

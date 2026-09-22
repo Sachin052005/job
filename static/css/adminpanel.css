@@ -1,0 +1,301 @@
+/* NammaCareer manual admin panel - its own theme (spec sections 28-29).
+   Always light mode; does not read the public site's theme cookie/attr. */
+
+:root {
+    --np-primary: #159a78;
+    --np-primary-dark: #08785d;
+    --np-primary-soft: #e8f6f1;
+    --np-heading: #172235;
+    --np-text: #47536b;
+    --np-muted: #8994a3;
+    --np-bg: #f4f7f6;
+    --np-surface: #ffffff;
+    --np-border: #e1e8e4;
+    --np-sidebar-bg: #12241e;
+    --np-sidebar-text: #cfe3db;
+    --np-sidebar-active: #159a78;
+    --np-danger: #EF4444;
+    --np-warning: #F59E0B;
+    --np-info: #6366F1;
+    --np-success: #10B981;
+    --np-radius: 10px;
+    --np-sidebar-width: 260px;
+    --np-topbar-height: 64px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--np-bg);
+    color: var(--np-text);
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, .np-heading-font {
+    font-family: "Manrope", "DM Sans", sans-serif;
+    color: var(--np-heading);
+}
+
+a { text-decoration: none; }
+
+.np-shell { display: flex; min-height: 100vh; }
+
+/* ---------------------------------------------------------- Sidebar --- */
+
+.np-sidebar {
+    width: var(--np-sidebar-width);
+    background: var(--np-sidebar-bg);
+    color: var(--np-sidebar-text);
+    flex-shrink: 0;
+    padding: 0 0 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.np-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    font-family: "Manrope", sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.np-sidebar-brand:hover { color: #fff; }
+
+/* Existing site hero illustration (static/images/job-hero.png), scaled down
+   to brand-icon size for the admin sidebar's top-left corner. It's a busy
+   multi-element illustration rather than a clean logomark, so it sits on a
+   small white chip and uses object-fit: contain (never crop/stretch it -
+   spec: "do not distort the image"). */
+.nc-admin-logo {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 9px;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.np-nav-group {
+    padding: 14px 20px 6px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(207, 227, 219, 0.55);
+    font-weight: 700;
+}
+
+.np-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    color: var(--np-sidebar-text);
+    font-size: 0.92rem;
+    border-left: 3px solid transparent;
+}
+
+.np-nav-link i { width: 18px; text-align: center; opacity: 0.85; }
+
+.np-nav-link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.np-nav-link.active {
+    background: rgba(21, 154, 120, 0.18);
+    border-left-color: var(--np-sidebar-active);
+    color: #fff;
+    font-weight: 600;
+}
+
+.np-logout-form { margin: 0; }
+.np-logout-form button.np-nav-link {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------- Main ------ */
+
+.np-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.np-topbar {
+    height: var(--np-topbar-height);
+    background: var(--np-surface);
+    border-bottom: 1px solid var(--np-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.np-topbar form { flex: 1; max-width: 420px; }
+
+.np-topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.np-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--np-primary-soft);
+    color: var(--np-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.np-content { padding: 24px; flex: 1; }
+
+/* ---------------------------------------------------------- Cards ----- */
+
+.np-card {
+    background: var(--np-surface);
+    border: 1px solid var(--np-border);
+    border-radius: var(--np-radius);
+    padding: 20px;
+}
+
+.np-stat-card {
+    background: var(--np-surface);
+    border: 1px solid var(--np-border);
+    border-radius: var(--np-radius);
+    padding: 18px;
+    height: 100%;
+}
+
+.np-stat-card .np-stat-value {
+    font-family: "Manrope", sans-serif;
+    font-weight: 800;
+    font-size: 1.7rem;
+    color: var(--np-heading);
+}
+
+.np-stat-card .np-stat-label {
+    color: var(--np-muted);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.np-stat-card .bi { color: var(--np-primary); font-size: 1.3rem; }
+
+/* ---------------------------------------------------------- Page head - */
+
+.np-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.np-breadcrumb {
+    font-size: 0.82rem;
+    color: var(--np-muted);
+    margin-bottom: 4px;
+}
+
+/* ---------------------------------------------------------- Buttons --- */
+
+.btn-np-primary {
+    background: var(--np-primary);
+    border-color: var(--np-primary);
+    color: #fff;
+}
+
+.btn-np-primary:hover {
+    background: var(--np-primary-dark);
+    border-color: var(--np-primary-dark);
+    color: #fff;
+}
+
+/* ---------------------------------------------------------- Table ----- */
+
+.np-table-wrap {
+    background: var(--np-surface);
+    border: 1px solid var(--np-border);
+    border-radius: var(--np-radius);
+    overflow-x: auto;
+}
+
+.np-table { width: 100%; margin: 0; font-size: 0.9rem; }
+
+.np-table thead th {
+    background: #fafcfb;
+    color: var(--np-muted);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--np-border);
+    white-space: nowrap;
+}
+
+.np-table td { vertical-align: middle; }
+
+.np-row-actions a, .np-row-actions button {
+    font-size: 0.82rem;
+    margin-right: 8px;
+}
+
+.np-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.np-empty {
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--np-muted);
+}
+
+/* ---------------------------------------------------------- Detail ---- */
+
+.np-detail-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 8px 16px;
+}
+
+.np-detail-grid dt { color: var(--np-muted); font-size: 0.85rem; }
+.np-detail-grid dd { margin: 0; }
+
+.np-section-title {
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 24px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--np-border);
+}
+
+@media (max-width: 900px) {
+    .np-sidebar { position: fixed; left: -100%; z-index: 40; transition: left .2s; }
+    .np-sidebar.open { left: 0; }
+    .np-detail-grid { grid-template-columns: 1fr; }
+}

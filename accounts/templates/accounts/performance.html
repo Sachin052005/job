@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Your Profile Performance - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 42px 0 70px;">
+    <h2 class="mb-1" style="color: var(--nc-heading, #172235); font-weight: 800;">Your Profile Performance</h2>
+    <p class="text-muted mb-4">Last 90 days</p>
+
+    <div class="row g-4">
+        <div class="col-6 col-md-3">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Profile Views</p>
+                <p class="h3 mb-0">{{ profile_views }}</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Search Appearances</p>
+                <p class="h3 mb-0">{{ search_appearances }}</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Recruiter Actions</p>
+                <p class="h3 mb-0">{{ recruiter_actions }}</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Applications</p>
+                <p class="h3 mb-0">{{ applications_count }}</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-muted small mt-4">Profile Views and Search Appearances require dedicated event tracking not yet implemented - shown as 0 rather than an invented number.</p>
+</div>
+{% endblock %}

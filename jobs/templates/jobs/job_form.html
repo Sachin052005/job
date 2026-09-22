@@ -320,6 +320,24 @@
 
                                 </div>
 
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="nc-field">
+                                            <label class="nc-form-label">Work Mode</label>
+                                            {{ form.work_mode|add_class:"form-select" }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="nc-field">
+                                            <label class="nc-form-label">Education Required</label>
+                                            {{ form.education_required|add_class:"form-select" }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
 
 
@@ -482,6 +500,81 @@
 
                                     </div>
 
+                                </div>
+
+                            </div>
+
+
+                            <!-- Benefits & Highlights -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Benefits &amp; Highlights
+                                </div>
+
+                                <div class="nc-field">
+                                    <label class="nc-form-label">Benefits</label>
+                                    {{ form.benefits|add_class:"form-control" }}
+                                </div>
+
+                                <div class="nc-field">
+                                    <label class="nc-form-label">Job Highlights</label>
+                                    {{ form.highlights|add_class:"form-control" }}
+                                </div>
+
+                            </div>
+
+
+                            <!-- Badges -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Job Badges
+                                </div>
+
+                                <p class="text-muted small mb-2">Only the badges you select will appear on this job's card and detail page.</p>
+
+                                <div class="d-flex flex-wrap gap-3">
+                                    {% for checkbox in form.badges %}
+                                        <div class="form-check">
+                                            {{ checkbox.tag }}
+                                            <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+
+                            <!-- Screening Questions -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Screening Questions
+                                </div>
+
+                                <div class="nc-field">
+                                    {{ form.screening_questions|add_class:"form-control" }}
+                                    <div class="form-text">{{ form.screening_questions.help_text }}</div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- Application Method -->
+                            <div class="nc-form-section">
+
+                                <div class="nc-form-section-title">
+                                    Application Method
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-3">
+                                    {% for radio in form.application_method %}
+                                        <div class="form-check">
+                                            {{ radio.tag }}
+                                            <label class="form-check-label small" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                        </div>
+                                    {% endfor %}
                                 </div>
 
                             </div>

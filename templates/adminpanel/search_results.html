@@ -1,0 +1,37 @@
+{% extends "adminpanel/base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin</div>
+        <h1 class="h4 mb-0">Search results for "{{ query }}"</h1>
+    </div>
+</div>
+
+<div class="np-section-title">Users ({{ users|length }})</div>
+<div class="np-table-wrap mb-3"><table class="table np-table mb-0"><tbody>
+    {% for u in users %}<tr><td><a href="{% url 'adminpanel:user_detail' u.pk %}">{{ u.username }}</a></td><td>{{ u.email }}</td></tr>{% empty %}<tr><td><div class="np-empty">No matches.</div></td></tr>{% endfor %}
+</tbody></table></div>
+
+<div class="np-section-title">Companies ({{ companies|length }})</div>
+<div class="np-table-wrap mb-3"><table class="table np-table mb-0"><tbody>
+    {% for c in companies %}<tr><td><a href="{% url 'adminpanel:company_detail' c.pk %}">{{ c.name }}</a></td><td>{{ c.industry }}</td></tr>{% empty %}<tr><td><div class="np-empty">No matches.</div></td></tr>{% endfor %}
+</tbody></table></div>
+
+<div class="np-section-title">Jobs ({{ jobs|length }})</div>
+<div class="np-table-wrap mb-3"><table class="table np-table mb-0"><tbody>
+    {% for j in jobs %}<tr><td><a href="{% url 'adminpanel:job_detail' j.pk %}">{{ j.title }}</a></td><td>{{ j.company.name }}</td></tr>{% empty %}<tr><td><div class="np-empty">No matches.</div></td></tr>{% endfor %}
+</tbody></table></div>
+
+<div class="np-section-title">Applications ({{ applications|length }})</div>
+<div class="np-table-wrap mb-3"><table class="table np-table mb-0"><tbody>
+    {% for a in applications %}<tr><td><a href="{% url 'adminpanel:application_detail' a.pk %}">{{ a.full_name }}</a></td><td>{{ a.job.title }}</td></tr>{% empty %}<tr><td><div class="np-empty">No matches.</div></td></tr>{% endfor %}
+</tbody></table></div>
+
+<div class="np-section-title">Reviews ({{ reviews|length }})</div>
+<div class="np-table-wrap mb-3"><table class="table np-table mb-0"><tbody>
+    {% for r in reviews %}<tr><td><a href="{% url 'adminpanel:review_detail' r.pk %}">{{ r.company.name }} — {{ r.reviewer_display_name }}</a></td></tr>{% empty %}<tr><td><div class="np-empty">No matches.</div></td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

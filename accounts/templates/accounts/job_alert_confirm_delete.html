@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Job Alert - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 520px; padding: 42px 0 70px;">
+    <div class="card p-4" style="border-radius: 16px; border-color: var(--nc-border, #e1e8e4);">
+        <h4 class="mb-3">Delete "{{ object.name }}"?</h4>
+        <p class="text-muted mb-4">This cannot be undone.</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'job_alerts:list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

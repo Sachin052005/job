@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-notif-page { padding: 42px 0 70px; }
+
+    .nc-notif-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .nc-notif-title {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--nc-heading, #172235);
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .nc-notif-title-icon {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.15rem;
+    }
+
+    .nc-notif-tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .nc-notif-tab {
+        padding: 7px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        background: var(--nc-white, #fff);
+        color: var(--nc-text, #586678);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .nc-notif-tab.active {
+        background: var(--nc-primary, #159a78);
+        border-color: var(--nc-primary, #159a78);
+        color: #fff;
+    }
+
+    .nc-notif-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 16px 18px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 14px;
+        background: var(--nc-white, #fff);
+        margin-bottom: 12px;
+        text-decoration: none;
+        transition: box-shadow .2s ease, transform .2s ease;
+    }
+
+    .nc-notif-item:hover {
+        box-shadow: var(--shadow-md, 0 8px 24px rgba(15,23,42,.08));
+        transform: translateY(-1px);
+    }
+
+    .nc-notif-item.unread {
+        background: var(--nc-primary-soft, #e8f6f1);
+        border-color: rgba(21, 154, 120, 0.3);
+    }
+
+    .nc-notif-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+    }
+
+    .nc-notif-body { flex: 1; min-width: 0; }
+
+    .nc-notif-title-text {
+        color: var(--nc-heading, #172235);
+        font-weight: 700;
+        font-size: 0.94rem;
+        margin: 0 0 3px;
+    }
+
+    .nc-notif-message {
+        color: var(--nc-text, #586678);
+        font-size: 0.85rem;
+        margin: 0 0 4px;
+    }
+
+    .nc-notif-time {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.76rem;
+    }
+
+    .nc-notif-actions form { display: inline; }
+
+    .nc-notif-empty {
+        padding: 70px 25px;
+        text-align: center;
+        background: var(--nc-white, #ffffff);
+        border: 1px dashed var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+    }
+</style>
+
+<div class="nc-notif-page">
+    <div class="container">
+
+        <div class="nc-notif-header">
+            <h2 class="nc-notif-title">
+                <span class="nc-notif-title-icon"><i class="bi bi-bell"></i></span>
+                Notifications
+            </h2>
+
+            {% if notifications %}
+                <form method="post" action="{% url 'notifications:mark_all_read' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Mark all as read</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="nc-notif-tabs">
+            {% for key, label in tabs %}
+                <a
+                    class="nc-notif-tab{% if tab == key %} active{% endif %}"
+                    href="?tab={{ key }}"
+                >{{ label }}</a>
+            {% endfor %}
+        </div>
+
+        {% if notifications %}
+            {% for notification in notifications %}
+                <div class="nc-notif-item {% if not notification.is_read %}unread{% endif %}">
+                    <span class="nc-notif-icon">
+                        {% if notification.notification_type == "job" %}<i class="bi bi-briefcase"></i>
+                        {% elif notification.notification_type == "application" %}<i class="bi bi-file-earmark-text"></i>
+                        {% elif notification.notification_type == "recruiter" %}<i class="bi bi-person-badge"></i>
+                        {% elif notification.notification_type == "company" %}<i class="bi bi-building"></i>
+                        {% else %}<i class="bi bi-info-circle"></i>{% endif %}
+                    </span>
+
+                    <div class="nc-notif-body">
+                        <form method="post" action="{% url 'notifications:open' notification.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0 text-start" style="text-decoration:none;">
+                                <p class="nc-notif-title-text">{{ notification.title }}</p>
+                            </button>
+                        </form>
+                        {% if notification.message %}
+                            <p class="nc-notif-message">{{ notification.message }}</p>
+                        {% endif %}
+                        <span class="nc-notif-time">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+
+                    <div class="nc-notif-actions">
+                        <form method="post" action="{% url 'notifications:delete' notification.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete notification">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% include "components/pagination.html" %}
+        {% else %}
+            <div class="nc-notif-empty">
+                <div class="nc-notif-title-icon mb-3" style="margin: 0 auto 16px;"><i class="bi bi-bell-slash"></i></div>
+                <p class="mb-0 text-muted">No notifications yet.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

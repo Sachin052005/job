@@ -1,0 +1,64 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}Job — {{ object.title }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin / Jobs</div>
+        <h1 class="h4 mb-0">{{ object.title }}</h1>
+    </div>
+    <div>
+        <a href="{% url edit_url_name object.pk %}" class="btn btn-sm btn-np-primary">Edit</a>
+        <a href="{% url delete_url_name object.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url list_url_name %}" class="btn btn-sm btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<div class="np-card">
+    <dl class="np-detail-grid">
+        {% for label, path in detail_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ object|resolve:path|default:"—" }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+
+<div class="np-section-title">Description</div>
+<div class="np-card" style="white-space:pre-wrap;">{{ object.description }}</div>
+
+{% if object.skills %}
+<div class="np-section-title">Skills</div>
+<div class="np-card">{% for skill in object.skills_list %}<span class="badge text-bg-light border me-1">{{ skill }}</span>{% endfor %}</div>
+{% endif %}
+
+<div class="np-section-title">Screening Questions</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Question</th><th>Required</th></tr></thead>
+        <tbody>
+            {% for question in screening_questions %}
+                <tr><td>{{ question.question }}</td><td>{{ question.is_required|yesno:"Yes,No" }}</td></tr>
+            {% empty %}
+                <tr><td colspan="2"><div class="np-empty">No screening questions.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title">Applications ({{ application_count }})</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Candidate</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for application in applications %}
+                <tr><td>{{ application.full_name }}</td><td>{{ application.get_status_display }}</td><td>{{ application.applied_at }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:application_detail' application.pk %}">View</a></td></tr>
+            {% empty %}
+                <tr><td colspan="4"><div class="np-empty">No applications yet.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

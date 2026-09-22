@@ -1,4 +1,26 @@
+function ncApplyTheme(preference) {
+    var root = document.documentElement;
+    var resolved = preference;
+    if (preference === "system" || !preference) {
+        resolved = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    root.setAttribute("data-theme", resolved);
+    root.setAttribute("data-theme-preference", preference);
+    try {
+        localStorage.setItem("nc_theme", preference);
+    } catch (e) { /* private browsing / storage blocked - ignore */ }
+    document.cookie = "nc_theme=" + preference + ";path=/;max-age=31536000;samesite=lax";
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".js-theme-radio").forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            if (radio.checked) {
+                ncApplyTheme(radio.value);
+            }
+        });
+    });
+
     document.querySelectorAll("[data-confirm]").forEach(function (el) {
         el.addEventListener("submit", function (event) {
             const message = el.getAttribute("data-confirm");

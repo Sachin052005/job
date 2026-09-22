@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Recruiter Profile - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 780px; padding: 42px 0 70px;">
+
+    <h2 class="mb-4" style="color: var(--nc-heading, #172235); font-weight: 800;">
+        <i class="bi bi-person-badge me-2"></i> Recruiter Profile
+    </h2>
+
+    <form method="post" enctype="multipart/form-data" class="card p-4" style="border-radius: 16px; border-color: var(--nc-border, #e1e8e4);">
+        {% csrf_token %}
+
+        <h6 class="fw-bold mb-3">Professional</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="mb-1">Job Title</label>{{ form.job_title|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Department</label>{{ form.department|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Professional Experience (years)</label>{{ form.professional_experience_years|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Recruitment Experience (years)</label>{{ form.recruitment_experience_years|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Specialization</label>{{ form.specialization|add_class:"form-select" }}</div>
+        </div>
+
+        <h6 class="fw-bold mb-3">Hiring Preferences</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="mb-1">Roles Hiring For</label>{{ form.roles_hiring_for|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Domains</label>{{ form.hiring_domains|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Candidate Experience</label>{{ form.candidate_experience_pref|add_class:"form-select" }}</div>
+            <div class="col-md-6"><label class="mb-1">Hiring Locations</label>{{ form.hiring_locations|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Salary Range Min</label>{{ form.salary_range_min|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Salary Range Max</label>{{ form.salary_range_max|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Employment Types Hiring</label>{{ form.employment_types_hiring|add_class:"form-control" }}</div>
+            <div class="col-12 d-flex gap-4">
+                <div class="form-check">{{ form.remote_hiring }}<label class="form-check-label">Remote hiring</label></div>
+                <div class="form-check">{{ form.freshers_hiring }}<label class="form-check-label">Freshers hiring</label></div>
+                <div class="form-check">{{ form.urgent_hiring }}<label class="form-check-label">Urgent hiring</label></div>
+            </div>
+        </div>
+
+        <h6 class="fw-bold mb-3">Company Relationship</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6"><label class="mb-1">Designation</label>{{ form.designation|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Official Company Email</label>{{ form.official_company_email|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Employee ID</label>{{ form.employee_id|add_class:"form-control" }}</div>
+            <div class="col-md-6"><label class="mb-1">Recruiter Role</label>{{ form.recruiter_role|add_class:"form-control" }}</div>
+        </div>
+
+        <h6 class="fw-bold mb-3">Verification</h6>
+        <p class="small text-muted">Status: <span class="badge bg-secondary">{{ object.get_verification_status_display }}</span></p>
+        <div class="mb-4">
+            <label class="mb-1">Verification Document</label>
+            {{ form.verification_document|add_class:"form-control" }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Recruiter Profile</button>
+    </form>
+</div>
+{% endblock %}

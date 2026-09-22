@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Feedback - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 640px; padding: 42px 0 70px;">
+
+    <h2 class="mb-4" style="color: var(--nc-heading, #172235); font-weight: 800;">
+        <i class="bi bi-chat-heart me-2"></i> Feedback
+    </h2>
+
+    <form method="post" class="card p-4" style="border-radius: 16px; border-color: var(--nc-border, #e1e8e4);">
+        {% csrf_token %}
+
+        <label class="fw-bold mb-2">Rating</label>
+        <div class="d-flex gap-3 mb-3">
+            {% for radio in form.rating %}
+                <label class="d-flex align-items-center gap-1">
+                    {{ radio.tag }} {{ radio.choice_label }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <label class="fw-bold mb-2">Category</label>
+        {{ form.category|add_class:"form-select mb-3" }}
+
+        <label class="fw-bold mb-2">Message</label>
+        {{ form.message|add_class:"form-control mb-3" }}
+
+        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+    </form>
+
+</div>
+{% endblock %}

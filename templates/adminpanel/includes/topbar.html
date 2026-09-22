@@ -1,0 +1,24 @@
+<header class="np-topbar">
+    <button id="npSidebarToggle" class="btn btn-sm btn-outline-secondary d-md-none" type="button">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <form method="get" action="{% url 'adminpanel:global_search' %}" class="d-none d-md-block">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="search" name="q" class="form-control" placeholder="Search users, companies, jobs, applications, reviews…" value="{{ request.GET.q }}">
+        </div>
+    </form>
+
+    <div class="np-topbar-user">
+        <span class="text-muted small d-none d-sm-inline">{{ request.user.username }}</span>
+        <div class="np-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+        <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'accounts:login' %}">
+            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+</header>

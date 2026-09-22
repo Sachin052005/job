@@ -364,74 +364,6 @@
         </div>
 
 
-        <!-- Quick Review -->
-
-        {% if quick_review %}
-
-        <div class="nc-section-heading">
-
-            <h5 class="mb-1">
-                Quick Review
-            </h5>
-
-            <p class="text-muted small mb-0">
-                Candidates with the strongest documented, job-relevant matches. This is a starting point for review, not a ranking of candidate quality - view all applicants below to see everyone.
-            </p>
-
-        </div>
-
-
-        <div class="row g-3 mb-4 stagger-grid">
-
-            {% for application in quick_review %}
-
-            <div class="col-md-6 col-lg-4 col-xl-3">
-
-                <div class="nc-quick-card">
-
-                    <p class="nc-candidate-name mb-1">
-                        {{ application.applicant.get_full_name|default:application.applicant.username }}
-                    </p>
-
-                    <p class="nc-match-label small mb-2">
-                        {{ application.match_snapshot.overall_percent|default:0 }}% match signal
-                    </p>
-
-
-                    <!-- Fixed progress bar -->
-
-                    <div
-                        class="progress nc-progress mb-3"
-                    >
-                        <div
-                            class="progress-bar"
-                            role="progressbar"
-                            data-progress="{{ application.match_snapshot.overall_percent|default:0 }}"
-                            aria-valuenow="{{ application.match_snapshot.overall_percent|default:0 }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                        ></div>
-                    </div>
-
-
-                    <a
-                        href="{% url 'applications:detail' application.pk %}"
-                        class="btn btn-sm btn-outline-primary nc-review-btn w-100 mt-auto"
-                    >
-                        Review Candidate
-                    </a>
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-        {% endif %}
-
-
         <!-- Filters -->
 
         <div
@@ -533,13 +465,6 @@
                             {% if sort == "oldest" %}selected{% endif %}
                         >
                             Oldest application
-                        </option>
-
-                        <option
-                            value="match"
-                            {% if sort == "match" %}selected{% endif %}
-                        >
-                            Relevance of documented skills
                         </option>
 
                     </select>
@@ -675,7 +600,7 @@
                             </th>
 
                             <th>
-                                ATS Match Signals
+                                Skill Match
                             </th>
 
                             <th>
@@ -709,77 +634,44 @@
                             <td>
 
                                 <p class="nc-table-candidate mb-1">
-                                    {{ application.applicant.get_full_name|default:application.applicant.username }}
+                                    {{ application.full_name }}
                                 </p>
 
                                 <p class="text-muted small mb-0">
-                                    {{ application.applicant.profile.experience_years }}
-                                    yr{{ application.applicant.profile.experience_years|pluralize }}
+                                    {{ application.current_title|default:"" }}
+                                    {{ application.experience_years }}
+                                    yr{{ application.experience_years|pluralize }}
                                     exp
                                 </p>
 
                             </td>
 
 
-                            <!-- ATS Match -->
+                            <!-- Skill Match - stored at application time, never recalculated from the
+                                 candidate's current profile (spec section 14) -->
 
                             <td class="nc-match-cell">
 
-                                {% with snapshot=application.match_snapshot %}
+                                {% if application.match_percentage is not None %}
 
-                                {% if snapshot %}
-
-                                <div class="nc-match-row mb-2">
-
-                                    <div
-                                        class="progress nc-progress"
-                                        style="height: 6px;"
-                                    >
-                                        <div
-                                            class="progress-bar"
-                                            role="progressbar"
-                                            data-progress="{{ snapshot.overall_percent }}"
-                                            aria-valuenow="{{ snapshot.overall_percent }}"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"
-                                        ></div>
+                                    <div class="nc-match-row mb-1">
+                                        <div class="nc-progress">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" style="width: {{ application.match_percentage }}%;"></div>
+                                            </div>
+                                        </div>
+                                        <span class="nc-match-percent">{{ application.match_percentage }}%</span>
                                     </div>
 
-                                    <span class="nc-match-percent">
-                                        {{ snapshot.overall_percent }}%
-                                    </span>
-
-                                </div>
-
-
-                                {% for skill in snapshot.matched_skills|slice:":3" %}
-
-                                    <span class="badge bg-success nc-table-skill me-1 mb-1">
-                                        {{ skill }}
-                                    </span>
-
-                                {% endfor %}
-
-
-                                {% if snapshot.missing_skills %}
-
-                                    <span class="badge bg-warning nc-table-skill me-1 mb-1">
-                                        {{ snapshot.missing_skills|length }}
-                                        not detected
-                                    </span>
-
-                                {% endif %}
-
+                                    {% for skill in application.matched_skills|slice:":3" %}
+                                        <span class="badge bg-light text-dark border nc-table-skill me-1 mb-1">
+                                            {{ skill }}
+                                        </span>
+                                    {% endfor %}
 
                                 {% else %}
-
-                                <span class="text-muted small">
-                                    Not yet analyzed
-                                </span>
-
+                                    <span class="text-muted small">Skill match unavailable</span>
                                 {% endif %}
-
-                                {% endwith %}
 
                             </td>
 
@@ -788,7 +680,7 @@
 
                             <td class="nc-link-icons">
 
-                                {% if application.applicant.profile.linkedin_url %}
+                                {% if application.linkedin_url %}
 
                                     <span
                                         class="nc-link-icon"
@@ -800,7 +692,7 @@
                                 {% endif %}
 
 
-                                {% if application.applicant.profile.github_url %}
+                                {% if application.github_url %}
 
                                     <span
                                         class="nc-link-icon ms-1"

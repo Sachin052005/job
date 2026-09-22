@@ -1,688 +1,182 @@
 {% extends "base.html" %}
+{% load form_tags %}
 
 {% block title %}Easy Apply - {{ job.title }} - NammaCareer{% endblock %}
 
 {% block content %}
 
 <style>
-    .nc-easy-apply-page {
-        padding: 45px 0 70px;
-    }
+    .nc-easy-apply-page { padding: 45px 0 70px; }
+    .nc-easy-apply-wrapper { max-width: 820px; margin: 0 auto; }
 
-    .nc-easy-apply-wrapper {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    /* Header */
-    .nc-easy-apply-header {
-        margin-bottom: 28px;
-    }
-
-    .nc-easy-apply-header h2 {
-        color: var(--nc-heading, #172235);
-        font-weight: 800;
-        letter-spacing: -0.025em;
-    }
-
-    .nc-easy-apply-header p {
-        color: var(--nc-text, #586678);
-    }
+    .nc-easy-apply-header { margin-bottom: 24px; }
+    .nc-easy-apply-header h2 { color: var(--nc-heading, #172235); font-weight: 800; letter-spacing: -0.025em; }
+    .nc-easy-apply-header p { color: var(--nc-text, #586678); }
 
     .nc-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 7px 12px;
-        margin-bottom: 12px;
-        border-radius: 999px;
-        background: var(--nc-primary-soft, #e8f6f1);
-        color: var(--nc-primary, #159a78);
-        font-size: 0.76rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 7px 12px; margin-bottom: 12px; border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1); color: var(--nc-primary, #159a78);
+        font-size: 0.76rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
     }
 
-    /* Main cards */
     .nc-easy-card {
         background: var(--nc-white, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 20px;
         box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
-    }
-
-    .nc-card-padding {
         padding: 30px;
+        margin-bottom: 22px;
     }
 
-    .nc-card-title {
-        color: var(--nc-heading, #172235);
-        font-weight: 750;
-    }
+    .nc-section-title { color: var(--nc-heading, #172235); font-weight: 750; margin-bottom: 18px; }
 
-    /* Application profile information */
-    .nc-application-info {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .nc-application-info::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: var(--nc-primary, #159a78);
-    }
-
-    .nc-info-item {
-        height: 100%;
-        padding: 17px;
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 14px;
-        background: #fbfdfc;
-    }
-
-    .nc-info-label {
+    .nc-profile-field-label {
+        display: block;
         color: var(--nc-muted, #8994a3);
-        font-size: 0.75rem;
+        font-size: 0.74rem;
         font-weight: 800;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
         text-transform: uppercase;
-        margin-bottom: 7px;
+        margin-bottom: 5px;
     }
 
-    .nc-info-value {
+    .nc-profile-field-value {
         color: var(--nc-heading, #172235);
         font-weight: 650;
         word-break: break-word;
     }
 
-    .nc-info-value a {
-        color: var(--nc-primary, #159a78);
-        text-decoration: none;
-    }
+    .nc-profile-field { margin-bottom: 18px; }
 
-    .nc-info-value a:hover {
-        text-decoration: underline;
-    }
-
-    .nc-resume-icon {
-        color: var(--nc-primary, #159a78);
-    }
-
-    .nc-skill-badge {
+    .nc-profile-skill-chip {
+        display: inline-block;
+        margin: 0 6px 6px 0;
+        padding: 5px 10px;
         border-radius: 999px;
-        padding: 7px 11px;
+        background: #f3f7f5;
+        border: 1px solid var(--nc-border, #e1e8e4);
         font-size: 0.78rem;
         font-weight: 650;
-    }
-
-    .nc-edit-profile {
-        border-radius: 10px;
-        font-weight: 650;
-        padding: 9px 15px;
-    }
-
-    /* Warning */
-    .nc-warning {
-        border-radius: 14px;
-        border: 1px solid #f0d48a;
-        padding: 14px 17px;
-        background: #fffaf0;
-    }
-
-    /* Match card */
-    .nc-match-card {
-        overflow: hidden;
-    }
-
-    .nc-match-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .nc-match-label {
-        color: var(--nc-muted, #8994a3);
-        font-size: 0.8rem;
-        font-weight: 750;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 8px;
-    }
-
-    .nc-match-score {
-        color: var(--nc-primary, #159a78);
-        font-size: 3.8rem;
-        font-weight: 850;
-        line-height: 1;
-        letter-spacing: -0.04em;
-    }
-
-    .nc-match-component {
-        height: 100%;
-        padding: 17px;
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 14px;
-        background: #fbfdfc;
-    }
-
-    .nc-component-label {
-        color: var(--nc-heading, #172235);
-        font-weight: 700;
-    }
-
-    .nc-component-percent {
-        color: var(--nc-text, #586678);
-        font-weight: 700;
-    }
-
-
-    .nc-disclaimer {
-        padding-top: 18px;
-        border-top: 1px solid var(--nc-border, #e1e8e4);
-    }
-
-    /* Matching skills */
-    .nc-skill-card {
-        height: 100%;
-        padding: 25px;
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 18px;
-        background: var(--nc-white, #ffffff);
-        box-shadow: 0 10px 28px rgba(23, 34, 53, 0.05);
-    }
-
-    .nc-skill-card-title {
-        color: var(--nc-heading, #172235);
-        font-weight: 750;
-        margin-bottom: 16px;
-    }
-
-    .nc-matched-badge {
-        border-radius: 999px;
-        padding: 7px 11px;
-        font-weight: 650;
-    }
-
-    .nc-missing-badge {
-        border-radius: 999px;
-        padding: 7px 11px;
-        font-weight: 650;
-    }
-
-    /* Suggestions */
-    .nc-suggestions {
-        padding: 25px;
-    }
-
-    .nc-suggestions-title {
-        color: var(--nc-heading, #172235);
-        font-weight: 750;
-    }
-
-    .nc-suggestions ul {
-        padding-left: 21px;
         color: var(--nc-text, #586678);
     }
 
-    .nc-suggestions li {
-        padding-left: 4px;
-        line-height: 1.6;
-    }
+    .nc-form-label { display: block; color: var(--nc-heading, #172235); font-weight: 700; font-size: 0.88rem; margin-bottom: 7px; }
+    .nc-form-group { margin-bottom: 18px; }
 
-    /* Bottom actions */
-    .nc-confirm-actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 10px;
-    }
+    .nc-confirm-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+    .nc-confirm-actions .btn { min-height: 46px; border-radius: 10px; padding: 10px 20px; font-weight: 700; }
 
-    .nc-confirm-actions .btn {
-        min-height: 46px;
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-weight: 700;
-    }
-
-    .nc-confirm-actions .btn-primary {
-        box-shadow: 0 8px 20px rgba(21, 154, 120, 0.18);
-    }
-
-    .nc-confirm-actions .btn-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 26px rgba(21, 154, 120, 0.24);
-    }
-
-    .nc-confirm-actions .btn-outline-secondary:hover {
-        transform: translateY(-1px);
-    }
-
-    /* Mobile */
     @media (max-width: 767.98px) {
-        .nc-easy-apply-page {
-            padding: 28px 0 50px;
-        }
-
-        .nc-card-padding {
-            padding: 22px;
-        }
-
-        .nc-easy-apply-header h2 {
-            font-size: 1.55rem;
-        }
-
-        .nc-match-score {
-            font-size: 3rem;
-        }
-
-        .nc-confirm-actions {
-            flex-direction: column-reverse;
-            align-items: stretch;
-        }
-
-        .nc-confirm-actions .btn {
-            width: 100%;
-        }
-
-        .nc-skill-card {
-            padding: 22px;
-        }
+        .nc-easy-apply-page { padding: 26px 0 50px; }
+        .nc-easy-card { padding: 22px; }
+        .nc-confirm-actions { flex-direction: column-reverse; align-items: stretch; }
+        .nc-confirm-actions .btn { width: 100%; }
     }
 </style>
 
-
 <div class="nc-easy-apply-page">
     <div class="container">
-
         <div class="nc-easy-apply-wrapper">
 
-            <!-- Page Header -->
             <div class="nc-easy-apply-header">
-
-                <div class="nc-eyebrow reveal">
-                    <i class="bi bi-lightning-charge-fill"></i>
-                    Easy Apply
-                </div>
-
-                <h2 class="mb-1 reveal">
-                    Apply to {{ job.title }}
-                </h2>
-
-                <p class="mb-0 reveal">
-                    {{ job.company.name }} &middot; {{ job.location }}
-                </p>
-
+                <div class="nc-eyebrow"><i class="bi bi-lightning-charge-fill"></i> Easy Apply</div>
+                <h2 class="mb-1">Apply to {{ job.title }}</h2>
+                <p class="mb-0">{{ job.company.name }} &middot; {{ job.location }}</p>
             </div>
 
-
-            <!-- Profile Information -->
-            <div class="nc-easy-card nc-application-info nc-card-padding mb-4 reveal">
-
-                <h5 class="nc-card-title mb-4">
-                    Your application will use
-                </h5>
-
-                <div class="row g-3">
-
-                    <!-- Resume -->
-                    <div class="col-sm-6">
-
-                        <div class="nc-info-item">
-
-                            <p class="nc-info-label">
-                                Resume
-                            </p>
-
-                            <p class="nc-info-value mb-0">
-                                <i class="bi bi-file-earmark-text me-1 nc-resume-icon"></i>
-                                {{ profile.resume.name|default:"No resume on file" }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Experience -->
-                    <div class="col-sm-6">
-
-                        <div class="nc-info-item">
-
-                            <p class="nc-info-label">
-                                Experience
-                            </p>
-
-                            <p class="nc-info-value mb-0">
-                                {{ profile.experience_years }}
-                                year{{ profile.experience_years|pluralize }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Skills -->
-                    <div class="col-12">
-
-                        <div class="nc-info-item">
-
-                            <p class="nc-info-label">
-                                Skills
-                            </p>
-
-                            {% for skill in profile.skills_list %}
-
-                                <span class="badge skill-badge nc-skill-badge me-1 mb-1">
-                                    {{ skill }}
-                                </span>
-
-                            {% empty %}
-
-                                <span class="text-muted small">
-                                    No skills listed on your profile.
-                                </span>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- LinkedIn -->
-                    <div class="col-sm-6">
-
-                        <div class="nc-info-item">
-
-                            <p class="nc-info-label">
-                                LinkedIn
-                            </p>
-
-                            <p class="nc-info-value mb-0">
-
-                                {% if profile.linkedin_url %}
-
-                                    <a
-                                        href="{{ profile.linkedin_url }}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="small"
-                                    >
-                                        {{ profile.linkedin_url }}
-                                    </a>
-
-                                {% else %}
-
-                                    <span class="text-muted small">
-                                        Not provided
-                                    </span>
-
-                                {% endif %}
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- GitHub -->
-                    <div class="col-sm-6">
-
-                        <div class="nc-info-item">
-
-                            <p class="nc-info-label">
-                                GitHub
-                            </p>
-
-                            <p class="nc-info-value mb-0">
-
-                                {% if profile.github_url %}
-
-                                    <a
-                                        href="{{ profile.github_url }}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="small"
-                                    >
-                                        {{ profile.github_url }}
-                                    </a>
-
-                                {% else %}
-
-                                    <span class="text-muted small">
-                                        Not provided
-                                    </span>
-
-                                {% endif %}
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <a
-                    href="{% url 'accounts:profile_edit' %}?next={% url 'applications:easy_apply_review' job.pk %}"
-                    class="btn btn-outline-secondary btn-sm nc-edit-profile mt-3"
-                >
-                    <i class="bi bi-pencil me-1"></i>
-                    Edit Profile
-                </a>
-
-            </div>
-
-
-            <!-- Resume Warning -->
-            {% if resume_error %}
-
-            <div class="alert alert-warning nc-warning reveal mb-4">
-
-                <i class="bi bi-exclamation-triangle me-1"></i>
-                {{ resume_error }}
-                Match analysis below is based on your profile skills only.
-
-            </div>
-
-            {% endif %}
-
-
-            <!-- Job Match -->
-            <div class="nc-easy-card nc-card-padding nc-match-card mb-4 reveal">
-
-                <div class="nc-match-header">
-
-                    <p class="nc-match-label">
-                        Your Job Match
-                    </p>
-
-                    <h1
-                        class="nc-match-score match-score-value"
-                        data-count-to="{{ match.overall_percent }}"
-                    >
-                        {{ match.overall_percent }}%
-                    </h1>
-
-                </div>
-
-
-                <div class="row g-3">
-
-                    {% for key, component in match.components.items %}
-
-                    <div class="col-sm-6">
-
-                        <div class="nc-match-component">
-
-                            <div class="d-flex justify-content-between small mb-2">
-
-                                <span class="nc-component-label">
-                                    {{ component.label }}
-                                </span>
-
-                                <span class="nc-component-percent">
-                                    {{ component.percent }}%
-                                </span>
-
-                            </div>
-
-
-                            <!-- Progress bar -->
-                            <div
-                                class="progress nc-progress mb-2"
-                            >
-
-                                <div
-                                    class="progress-bar"
-                                    role="progressbar"
-                                    data-progress="{{ component.percent }}"
-                                    aria-valuenow="{{ component.percent }}"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                ></div>
-
-                            </div>
-
-
-                            <p class="text-muted small mb-0">
-                                {{ component.reason }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-
-                <p class="text-muted small mt-4 mb-0 fst-italic nc-disclaimer">
-                    {{ match.disclaimer }}
-                </p>
-
-            </div>
-
-
-            <!-- Matching Skills -->
-            <div class="row g-4 mb-4">
-
-                <div class="col-md-6">
-
-                    <div class="nc-skill-card reveal">
-
-                        <h6 class="nc-skill-card-title">
-                            Matching Skills
-                        </h6>
-
-                        {% for skill in match.matched_skills %}
-
-                            <span class="badge bg-success nc-matched-badge me-1 mb-1">
-                                <i class="bi bi-check-lg"></i>
-                                {{ skill }}
-                            </span>
-
-                        {% empty %}
-
-                            <p class="text-muted small mb-0">
-                                No direct skill matches detected.
-                            </p>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6">
-
-                    <div class="nc-skill-card reveal">
-
-                        <h6 class="nc-skill-card-title">
-                            Missing / Not Detected
-                        </h6>
-
-                        {% for skill in match.missing_skills %}
-
-                            <span class="badge bg-warning nc-missing-badge me-1 mb-1">
-                                <i class="bi bi-exclamation-triangle"></i>
-                                {{ skill }}
-                            </span>
-
-                        {% empty %}
-
-                            <p class="text-muted small mb-0">
-                                No missing skills detected.
-                            </p>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Resume Suggestions -->
-            {% if suggestions %}
-
-            <div class="nc-easy-card nc-suggestions mb-4 reveal">
-
-                <h6 class="nc-suggestions-title mb-3">
-                    Resume Improvement Suggestions
-                </h6>
-
-                <ul class="mb-0">
-
-                    {% for suggestion in suggestions %}
-
-                        <li class="mb-1">
-                            {{ suggestion }}
-                        </li>
-
-                    {% endfor %}
-
-                </ul>
-
-            </div>
-
-            {% endif %}
-
-
-            <!-- Confirmation -->
-            <form
-                method="post"
-                action="{% url 'applications:easy_apply_confirm' job.pk %}"
-                class="nc-confirm-actions reveal"
-            >
-
+            <form method="post" novalidate>
                 {% csrf_token %}
 
-                <a
-                    href="{% url 'jobs:detail' job.pk %}"
-                    class="btn btn-outline-secondary"
-                >
-                    Back
-                </a>
+                <!-- Your Profile - read-only, pulled straight from the profile (spec section 1) -->
+                <div class="nc-easy-card">
+                    <h5 class="nc-section-title">Your Profile</h5>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Name</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.first_name }} {{ snapshot.last_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Email</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Mobile Number</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.phone }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Location</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.location }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Resume</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.resume_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">Experience</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.experience_years }} year{{ snapshot.experience_years|pluralize }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">LinkedIn</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.linkedin_url|default:"—" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="nc-profile-field">
+                                <span class="nc-profile-field-label">GitHub</span>
+                                <p class="nc-profile-field-value mb-0">{{ snapshot.github_url|default:"—" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="nc-profile-field mb-0">
+                                <span class="nc-profile-field-label">Skills</span>
+                                {% for skill in profile.effective_skills_list %}
+                                    <span class="nc-profile-skill-chip">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary btn-lg"
-                >
-                    <i class="bi bi-send me-1"></i>
-                    Confirm &amp; Apply
-                </button>
+                <!-- Skill Match - deterministic comparison against the job's required skills -->
+                <div class="nc-easy-card">
+                    <h5 class="nc-section-title">Skill Match</h5>
+                    {% include "applications/_skill_match.html" %}
+                </div>
+
+                {% if screening_form.questions %}
+                <div class="nc-easy-card">
+                    <h5 class="nc-section-title">Screening Questions</h5>
+                    {% for field in screening_form %}
+                        <div class="nc-form-group">
+                            <label class="nc-form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                            {{ field|add_class:"form-control" }}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="nc-confirm-actions">
+                    <a href="{% url 'jobs:detail' job.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{% url 'accounts:profile_edit' %}?next={% url 'applications:easy_apply_review' job.pk %}" class="btn btn-outline-primary">Edit Profile</a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send me-1"></i> Confirm &amp; Apply
+                    </button>
+                </div>
 
             </form>
 

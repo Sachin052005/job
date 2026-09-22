@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Review {{ company.name }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-review-form-page { padding: 45px 0 70px; }
+    .nc-review-form-wrapper { max-width: 640px; margin: 0 auto; }
+
+    .nc-review-form-card {
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 22px;
+        box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
+        padding: 32px;
+    }
+
+    .nc-review-form-eyebrow {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 7px 12px; margin-bottom: 12px; border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1); color: var(--nc-primary, #159a78);
+        font-size: 0.76rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    .nc-review-form-title { color: var(--nc-heading, #172235); font-weight: 800; margin-bottom: 26px; }
+
+    .nc-form-label { display: block; color: var(--nc-heading, #172235); font-weight: 700; font-size: 0.88rem; margin-bottom: 9px; }
+    .nc-field { margin-bottom: 22px; }
+
+    /* Pure-CSS star rating (spec section 12/26) */
+    .nc-star-input {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+    .nc-star-input input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .nc-star-input label {
+        font-size: 2.1rem;
+        line-height: 1;
+        color: #dfe3e0;
+        cursor: pointer;
+        transition: color 0.15s ease, transform 0.15s ease;
+    }
+    .nc-star-input input:checked ~ label,
+    .nc-star-input input:checked ~ label ~ label,
+    .nc-star-input label:hover,
+    .nc-star-input label:hover ~ label {
+        color: #f5b400;
+    }
+    .nc-star-input input:focus-visible + label { outline: 2px solid var(--nc-primary, #159a78); border-radius: 4px; }
+
+    .nc-review-form-card textarea.form-control {
+        min-height: 140px;
+        resize: vertical;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+    .nc-review-form-card input[type="file"].form-control {
+        border: 1px dashed #cbd9d3;
+        border-radius: 12px;
+        background: #fbfdfc;
+        padding: 12px;
+    }
+
+    .nc-review-form-actions { display: flex; align-items: center; gap: 10px; padding-top: 6px; }
+    .nc-review-form-actions .btn { min-height: 46px; border-radius: 10px; padding: 10px 20px; font-weight: 700; }
+
+    @media (max-width: 575.98px) {
+        .nc-review-form-card { padding: 22px; }
+        .nc-star-input label { font-size: 1.8rem; }
+        .nc-review-form-actions { flex-direction: column-reverse; align-items: stretch; }
+        .nc-review-form-actions .btn { width: 100%; }
+    }
+</style>
+
+<div class="nc-review-form-page">
+    <div class="container">
+        <div class="nc-review-form-wrapper">
+
+            <div class="nc-review-form-card reveal">
+
+                <div class="nc-review-form-eyebrow"><i class="bi bi-star-fill"></i> Verified Hire</div>
+                <h3 class="nc-review-form-title">Review {{ company.name }}</h3>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    <div class="nc-field">
+                        <label class="nc-form-label">Your Rating</label>
+                        <div class="nc-star-input">
+                            {% for value, label in form.fields.rating.choices %}
+                                <input
+                                    type="radio"
+                                    id="nc-star-{{ value }}"
+                                    name="{{ form.rating.html_name }}"
+                                    value="{{ value }}"
+                                    {% if form.rating.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}
+                                    required
+                                >
+                                <label for="nc-star-{{ value }}" title="{{ value }} stars">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% for error in form.rating.errors %}<div class="text-danger small mt-2">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="nc-field">
+                        <label class="nc-form-label">Share your experience working at this company</label>
+                        {{ form.content|add_class:"form-control" }}
+                        {% for error in form.content.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="nc-field">
+                        <label class="nc-form-label">Review Image (optional)</label>
+                        {{ form.image|add_class:"form-control" }}
+                        {% for error in form.image.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="nc-review-form-actions">
+                        <a href="{% url 'companies:detail' company.slug %}?tab=reviews" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i> Submit Review
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

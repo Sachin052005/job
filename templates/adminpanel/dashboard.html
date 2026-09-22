@@ -1,0 +1,76 @@
+{% extends "adminpanel/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin</div>
+        <h1 class="h4 mb-0">Dashboard</h1>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-people"></i><div class="np-stat-value">{{ total_users }}</div><div class="np-stat-label">Users</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-mortarboard"></i><div class="np-stat-value">{{ student_count }}</div><div class="np-stat-label">Students</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-person-badge"></i><div class="np-stat-value">{{ recruiter_count }}</div><div class="np-stat-label">Recruiters</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-building"></i><div class="np-stat-value">{{ company_count }}</div><div class="np-stat-label">Companies</div></div></div>
+
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-briefcase"></i><div class="np-stat-value">{{ total_jobs }}</div><div class="np-stat-label">Total Jobs</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-briefcase-fill"></i><div class="np-stat-value">{{ published_jobs }}</div><div class="np-stat-label">Published Jobs</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-file-earmark-person"></i><div class="np-stat-value">{{ application_count }}</div><div class="np-stat-label">Applications</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-check2-square"></i><div class="np-stat-value">{{ shortlisted_count }}</div><div class="np-stat-label">Shortlisted</div></div></div>
+
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-camera-video"></i><div class="np-stat-value">{{ interview_count }}</div><div class="np-stat-label">Interviews</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-trophy"></i><div class="np-stat-value">{{ hired_count }}</div><div class="np-stat-label">Selected / Hired</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-star-half"></i><div class="np-stat-value">{{ review_count }}</div><div class="np-stat-label">Reviews</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-bell"></i><div class="np-stat-value">{{ unread_notification_count }}</div><div class="np-stat-label">Unread Notifications</div></div></div>
+
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-chat-square-text"></i><div class="np-stat-value">{{ feedback_count }}</div><div class="np-stat-label">Feedback</div></div></div>
+    <div class="col-6 col-md-3"><div class="np-stat-card"><i class="bi bi-patch-check"></i><div class="np-stat-value">{{ pending_recruiter_verifications }}</div><div class="np-stat-label">Pending Verifications</div></div></div>
+</div>
+
+<div class="np-section-title">Quick Actions</div>
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{% url 'adminpanel:user_add' %}" class="btn btn-sm btn-np-primary"><i class="bi bi-plus-lg"></i> Add User</a>
+    <a href="{% url 'adminpanel:company_add' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-lg"></i> Add Company</a>
+    <a href="{% url 'adminpanel:job_add' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-lg"></i> Add Job</a>
+    <a href="{% url 'adminpanel:application_list' %}" class="btn btn-sm btn-outline-secondary">View Applications</a>
+    <a href="{% url 'adminpanel:review_list' %}" class="btn btn-sm btn-outline-secondary">View Reviews</a>
+    <a href="{% url 'adminpanel:feedback_list' %}" class="btn btn-sm btn-outline-secondary">View Feedback</a>
+    <a href="{% url 'adminpanel:notification_list' %}" class="btn btn-sm btn-outline-secondary">View Notifications</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="np-section-title">Recent Applications</div>
+        <div class="np-table-wrap">
+            <table class="table np-table mb-0">
+                <thead><tr><th>Candidate</th><th>Job</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for application in recent_applications %}
+                        <tr><td><a href="{% url 'adminpanel:application_detail' application.pk %}">{{ application.full_name }}</a></td><td>{{ application.job.title }}</td><td>{{ application.get_status_display }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="3"><div class="np-empty">No applications yet.</div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="np-section-title">Recent Jobs</div>
+        <div class="np-table-wrap">
+            <table class="table np-table mb-0">
+                <thead><tr><th>Title</th><th>Company</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for job in recent_jobs %}
+                        <tr><td><a href="{% url 'adminpanel:job_detail' job.pk %}">{{ job.title }}</a></td><td>{{ job.company.name }}</td><td>{{ job.get_status_display }}</td></tr>
+                    {% empty %}
+                        <tr><td colspan="3"><div class="np-empty">No jobs yet.</div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

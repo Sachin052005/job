@@ -470,28 +470,11 @@
                                 <div class="nc-health-stat">
 
                                     <p class="nc-health-label">
-                                        ATS Readiness
-                                    </p>
-
-                                    <p class="nc-health-value">
-                                        {{ resume_readiness_percent }}%
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="col-4">
-
-                                <div class="nc-health-stat">
-
-                                    <p class="nc-health-label">
                                         Profile
                                     </p>
 
                                     <p class="nc-health-value">
-                                        {{ profile.completion_percent }}%
+                                        {{ profile_completion_percent }}%
                                     </p>
 
                                 </div>
@@ -504,11 +487,28 @@
                                 <div class="nc-health-stat">
 
                                     <p class="nc-health-label">
-                                        Resume
+                                        Applications
                                     </p>
 
                                     <p class="nc-health-value">
-                                        {{ resume_readiness_percent }}%
+                                        {{ total_applications }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-4">
+
+                                <div class="nc-health-stat">
+
+                                    <p class="nc-health-label">
+                                        Shortlisted
+                                    </p>
+
+                                    <p class="nc-health-value">
+                                        {{ shortlisted_count }}
                                     </p>
 
                                 </div>
@@ -563,17 +563,10 @@
                         <div class="nc-card-actions">
 
                             <a
-                                href="{% url 'accounts:resume_analysis' %}"
-                                class="btn btn-outline-primary btn-sm"
-                            >
-                                Analyze Resume
-                            </a>
-
-                            <a
                                 href="{% url 'accounts:profile_edit' %}"
                                 class="btn btn-outline-secondary btn-sm"
                             >
-                                Improve Profile
+                                Update Profile
                             </a>
 
                         </div>
@@ -581,70 +574,6 @@
                     </div>
 
                 </div>
-
-
-                <!-- Recent Job Matches -->
-
-                {% if recent_job_matches %}
-
-                <div class="nc-dashboard-card mt-4 reveal">
-
-                    <div class="nc-card-inner">
-
-                        <div class="nc-card-header">
-
-                            <h5 class="nc-card-title">
-                                <i class="bi bi-stars"></i>
-                                Recent Job Matches
-                            </h5>
-
-                        </div>
-
-
-                        <p class="nc-match-description small mb-4">
-                            Informational match estimates, not a guarantee of hiring.
-                        </p>
-
-
-                        {% for entry in recent_job_matches %}
-
-                        <div class="nc-match-item">
-
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-
-                                <span class="small nc-match-title">
-                                    {{ entry.job_title }}
-                                </span>
-
-                                <span class="small nc-match-percent">
-                                    {{ entry.percent }}%
-                                </span>
-
-                            </div>
-
-
-                            <div class="progress nc-progress">
-
-                                <div
-                                    class="progress-bar"
-                                    role="progressbar"
-                                    data-progress="{{ entry.percent }}"
-                                    aria-valuenow="{{ entry.percent }}"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                ></div>
-
-                            </div>
-
-                        </div>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-                {% endif %}
 
             </div>
 

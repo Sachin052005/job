@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Job Alerts - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 42px 0 70px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="color: var(--nc-heading, #172235); font-weight: 800;">
+            <i class="bi bi-bell-fill me-2"></i> Job Alerts
+        </h2>
+        <a href="{% url 'job_alerts:create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Create Alert
+        </a>
+    </div>
+
+    {% if alerts %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Alert Name</th>
+                        <th>Criteria</th>
+                        <th>Frequency</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                        <tr>
+                            <td class="fw-semibold">{{ alert.name }}</td>
+                            <td class="small text-muted">
+                                {{ alert.keywords|default:"Any keywords" }}
+                                {% if alert.location %} &middot; {{ alert.location }}{% endif %}
+                                {% if alert.domain %} &middot; {{ alert.domain }}{% endif %}
+                            </td>
+                            <td>{{ alert.get_frequency_display }}</td>
+                            <td>
+                                <span class="badge {% if alert.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {% if alert.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'job_alerts:edit' alert.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <form method="post" action="{% url 'job_alerts:toggle' alert.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        {% if alert.is_active %}Deactivate{% else %}Activate{% endif %}
+                                    </button>
+                                </form>
+                                <form method="post" action="{% url 'job_alerts:delete' alert.pk %}" class="d-inline" data-confirm="Delete this job alert?">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5 border rounded-4" style="border-color: var(--nc-border, #e1e8e4) !important;">
+            <p class="mb-3 text-muted">No job alerts created yet.</p>
+            <a href="{% url 'job_alerts:create' %}" class="btn btn-primary">Create Job Alert</a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

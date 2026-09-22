@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-theme="{{ resolved_theme|default:'light' }}">
 
 <head>
 
@@ -13,6 +13,35 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
+
+<!-- =========================================================
+     THEME BOOTSTRAP (spec section 42-43)
+     Runs before CSS paints to avoid a flash of the wrong theme.
+     Resolves "system" -> light/dark via prefers-color-scheme and
+     keeps it live if the OS preference changes mid-session.
+========================================================== -->
+<script>
+(function () {
+    var root = document.documentElement;
+    function resolve(theme) {
+        if (theme === "system" || !theme) {
+            return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        return theme;
+    }
+    var declared = root.getAttribute("data-theme") || "system";
+    root.setAttribute("data-theme", resolve(declared));
+    root.setAttribute("data-theme-preference", declared);
+
+    if (window.matchMedia) {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+            if (root.getAttribute("data-theme-preference") === "system") {
+                root.setAttribute("data-theme", resolve("system"));
+            }
+        });
+    }
+})();
+</script>
 
 <title>
     {% block title %}

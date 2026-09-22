@@ -1,0 +1,98 @@
+<!-- Deterministic skill match (spec sections 6/7/18/19) - no AI, just a
+     matched-vs-unmatched comparison against the job's required skills. -->
+<style>
+    .nc-skill-match-score {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .nc-skill-match-circle {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary-dark, #0d6b52);
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .nc-skill-match-bar-wrap {
+        flex: 1;
+        height: 10px;
+        border-radius: 999px;
+        background: #edf2ef;
+        overflow: hidden;
+    }
+
+    .nc-skill-match-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-skill-match-list-title {
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .nc-skill-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin: 0 6px 6px 0;
+        padding: 6px 11px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 650;
+    }
+
+    .nc-skill-pill-matched {
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary-dark, #0d6b52);
+        border: 1px solid rgba(21, 154, 120, 0.18);
+    }
+
+    .nc-skill-pill-missing {
+        background: #fff3d6;
+        color: #996600;
+        border: 1px solid rgba(153, 102, 0, 0.15);
+    }
+</style>
+
+{% if match.percentage is None %}
+    <p class="text-muted small mb-0">Skill match unavailable — this job does not list required skills.</p>
+{% else %}
+    <div class="nc-skill-match-score">
+        <div class="nc-skill-match-circle">{{ match.percentage }}%</div>
+        <div class="nc-skill-match-bar-wrap">
+            <div class="nc-skill-match-bar" style="width: {{ match.percentage }}%;"></div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <p class="nc-skill-match-list-title text-success">Matched Skills</p>
+            {% for skill in match.matched_skills %}
+                <span class="badge nc-skill-pill nc-skill-pill-matched"><i class="bi bi-check-lg"></i>{{ skill }}</span>
+            {% empty %}
+                <p class="text-muted small mb-0">None of the required skills were found.</p>
+            {% endfor %}
+        </div>
+        <div class="col-sm-6">
+            <p class="nc-skill-match-list-title text-muted">Skills Not Found</p>
+            {% for skill in match.unmatched_skills %}
+                <span class="badge nc-skill-pill nc-skill-pill-missing">{{ skill }}</span>
+            {% empty %}
+                <p class="text-muted small mb-0">All required skills matched.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

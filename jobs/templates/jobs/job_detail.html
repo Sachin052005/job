@@ -432,7 +432,23 @@
                         </span>
                         {% endif %}
 
+                        {% if job.work_mode %}
+                        <span class="nc-job-meta-item">
+                            <i class="bi bi-laptop"></i>
+                            {{ job.get_work_mode_display }}
+                        </span>
+                        {% endif %}
+
                     </div>
+
+
+                    {% if job.badge_labels %}
+                    <div class="nc-job-skills pt-0">
+                        {% for label in job.badge_labels %}
+                            <span class="badge bg-warning-subtle text-dark nc-skill-badge">{{ label }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
 
 
                     <!-- Skills -->
@@ -481,6 +497,30 @@
 
                         </section>
 
+                        {% endif %}
+
+
+                        {% if job.education_required %}
+                        <section class="nc-job-section">
+                            <h5 class="nc-job-section-title">Education</h5>
+                            <div class="nc-job-description">{{ job.get_education_required_display }}</div>
+                        </section>
+                        {% endif %}
+
+
+                        {% if job.benefits %}
+                        <section class="nc-job-section">
+                            <h5 class="nc-job-section-title">Benefits</h5>
+                            <div class="nc-job-description">{{ job.benefits|linebreaks }}</div>
+                        </section>
+                        {% endif %}
+
+
+                        {% if job.highlights %}
+                        <section class="nc-job-section">
+                            <h5 class="nc-job-section-title">Job Highlights</h5>
+                            <div class="nc-job-description">{{ job.highlights|linebreaks }}</div>
+                        </section>
                         {% endif %}
 
 
@@ -565,33 +605,49 @@
 
                         {% elif job.is_open %}
 
-                            {% if easy_apply_ready %}
+                            {% if job.allows_easy_apply %}
+
+                                {% if easy_apply_ready %}
+
+                                    <a
+                                        href="{% url 'applications:easy_apply_review' job.pk %}"
+                                        class="btn btn-primary w-100 mb-2"
+                                    >
+                                        <i class="bi bi-lightning-charge-fill me-1"></i>
+                                        Easy Apply
+                                    </a>
+
+                                    <p class="text-muted small text-center mb-2 nc-action-help">
+                                        Apply using your saved profile and resume.
+                                    </p>
+
+                                {% else %}
+
+                                    <a
+                                        href="{% url 'accounts:profile_edit' %}?next={% url 'applications:easy_apply_review' job.pk %}"
+                                        class="btn btn-primary w-100 mb-2"
+                                    >
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Complete your profile
+                                    </a>
+
+                                    <p class="text-muted small text-center mb-2 nc-action-help">
+                                        Complete your profile{% if missing_easy_apply_fields %} ({{ missing_easy_apply_fields|join:", " }}){% endif %} to use Easy Apply.
+                                    </p>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                            {% if job.allows_apply %}
 
                                 <a
-                                    href="{% url 'applications:easy_apply_review' job.pk %}"
-                                    class="btn btn-primary w-100 mb-2"
+                                    href="{% url 'applications:apply' job.pk %}"
+                                    class="btn btn-outline-primary w-100 mb-2"
                                 >
-                                    <i class="bi bi-lightning-charge-fill me-1"></i>
-                                    Easy Apply
+                                    <i class="bi bi-send me-1"></i>
+                                    Apply
                                 </a>
-
-                                <p class="text-muted small text-center mb-2 nc-action-help">
-                                    Apply using your saved profile and resume.
-                                </p>
-
-                            {% else %}
-
-                                <a
-                                    href="{% url 'accounts:profile_edit' %}?next={% url 'jobs:detail' job.pk %}"
-                                    class="btn btn-primary w-100 mb-2"
-                                >
-                                    <i class="bi bi-exclamation-triangle me-1"></i>
-                                    Complete your profile
-                                </a>
-
-                                <p class="text-muted small text-center mb-2 nc-action-help">
-                                    Complete your profile{% if missing_easy_apply_fields %} ({{ missing_easy_apply_fields|join:", " }}){% endif %} to use Easy Apply.
-                                </p>
 
                             {% endif %}
 
@@ -668,6 +724,20 @@
             </div>
 
         </div>
+
+
+        {% if similar_jobs %}
+        <div class="mt-5">
+            <h4 class="nc-job-section-title mb-3">Similar Jobs</h4>
+            <div class="row g-4">
+                {% for similar in similar_jobs %}
+                    <div class="col-md-6 col-lg-3">
+                        {% include "components/job_card.html" with job=similar %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
     </div>
 

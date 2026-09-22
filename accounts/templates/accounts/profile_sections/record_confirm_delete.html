@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Remove {{ title }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .record-delete-page {
+        padding: 60px 0;
+        background: #f7faf8;
+        min-height: calc(100vh - 72px);
+    }
+
+    .record-delete-card {
+        border: 1px solid #e1e8e4;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
+        padding: 35px;
+        text-align: center;
+    }
+
+    .record-delete-card h3 {
+        margin: 14px 0 8px;
+        color: #172235;
+        font-family: "Manrope", sans-serif;
+        font-size: 1.3rem;
+        font-weight: 800;
+    }
+
+    .record-delete-card p {
+        color: #586678;
+        font-size: 0.9rem;
+    }
+
+    .record-delete-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #fff0f0;
+        color: #dc6b6b;
+        font-size: 24px;
+    }
+
+    .record-delete-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .record-delete-actions .btn {
+        min-height: 44px;
+        padding: 9px 22px;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+</style>
+
+<div class="record-delete-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="record-delete-card">
+                    <span class="record-delete-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </span>
+                    <h3>Remove this {{ title }}?</h3>
+                    <p>{{ object }}</p>
+                    <p>This action cannot be undone.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="record-delete-actions">
+                            <button type="submit" class="btn btn-danger">Yes, remove it</button>
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "adminpanel/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin</div>
+        <h1 class="h4 mb-0">{{ page_title }}</h1>
+    </div>
+    {% if back_url %}<a href="{{ back_url }}" class="btn btn-sm btn-outline-secondary">Cancel</a>{% endif %}
+</div>
+
+<div class="np-card" style="max-width:720px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label small fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                {% if field.field.widget.input_type == "checkbox" %}
+                    <div class="form-check">{{ field }}</div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-np-primary">Save</button>
+        {% if back_url %}<a href="{{ back_url }}" class="btn btn-outline-secondary">Cancel</a>{% endif %}
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Existing project forms (JobForm, CompanyForm, ...) don't all set Bootstrap
+// classes on every widget - apply them generically here instead of touching
+// every reused ModelForm (spec section 32: reuse, don't duplicate forms).
+document.querySelectorAll(".np-card form input:not([type=checkbox]):not([type=radio]):not([type=file]), .np-card form select, .np-card form textarea").forEach(function (el) {
+    el.classList.add(el.tagName === "SELECT" ? "form-select" : "form-control");
+});
+document.querySelectorAll(".np-card form input[type=checkbox], .np-card form input[type=radio]").forEach(function (el) {
+    el.classList.add("form-check-input");
+});
+document.querySelectorAll(".np-card form input[type=file]").forEach(function (el) {
+    el.classList.add("form-control");
+});
+</script>
+{% endblock %}

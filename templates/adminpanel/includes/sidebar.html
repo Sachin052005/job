@@ -1,0 +1,62 @@
+{% load static %}
+{% with current=request.resolver_match.url_name %}
+<nav class="np-sidebar" id="npSidebar">
+    <a class="np-sidebar-brand" href="{% url 'adminpanel:dashboard' %}">
+        <img
+            src="{% static 'images/job-hero.png' %}"
+            alt="NammaCareer"
+            class="nc-admin-logo"
+        >
+        <span>NammaCareer Admin</span>
+    </a>
+
+    <a class="np-nav-link{% if current == 'dashboard' %} active{% endif %}" href="{% url 'adminpanel:dashboard' %}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <div class="np-nav-group">Users</div>
+    <a class="np-nav-link{% if current == 'user_list' or current == 'user_detail' %} active{% endif %}" href="{% url 'adminpanel:user_list' %}"><i class="bi bi-people"></i> Users</a>
+    <a class="np-nav-link{% if current == 'profile_list' or current == 'profile_detail' %} active{% endif %}" href="{% url 'adminpanel:profile_list' %}"><i class="bi bi-person-vcard"></i> Profiles</a>
+    <a class="np-nav-link{% if current == 'skill_list' %} active{% endif %}" href="{% url 'adminpanel:skill_list' %}"><i class="bi bi-stars"></i> Candidate Skills</a>
+    <a class="np-nav-link{% if current == 'education_list' %} active{% endif %}" href="{% url 'adminpanel:education_list' %}"><i class="bi bi-mortarboard"></i> Education</a>
+    <a class="np-nav-link{% if current == 'experience_list' %} active{% endif %}" href="{% url 'adminpanel:experience_list' %}"><i class="bi bi-briefcase"></i> Work Experience</a>
+    <a class="np-nav-link{% if current == 'project_list' %} active{% endif %}" href="{% url 'adminpanel:project_list' %}"><i class="bi bi-kanban"></i> Projects</a>
+    <a class="np-nav-link{% if current == 'internship_list' %} active{% endif %}" href="{% url 'adminpanel:internship_list' %}"><i class="bi bi-laptop"></i> Internships</a>
+    <a class="np-nav-link{% if current == 'accomplishment_list' %} active{% endif %}" href="{% url 'adminpanel:accomplishment_list' %}"><i class="bi bi-trophy"></i> Accomplishments</a>
+    <a class="np-nav-link{% if current == 'language_list' %} active{% endif %}" href="{% url 'adminpanel:language_list' %}"><i class="bi bi-translate"></i> Languages</a>
+    <a class="np-nav-link{% if current == 'careerpref_list' %} active{% endif %}" href="{% url 'adminpanel:careerpref_list' %}"><i class="bi bi-signpost-split"></i> Career Preferences</a>
+    <a class="np-nav-link{% if current == 'usersettings_list' %} active{% endif %}" href="{% url 'adminpanel:usersettings_list' %}"><i class="bi bi-sliders"></i> User Settings</a>
+    <a class="np-nav-link{% if current == 'social_list' %} active{% endif %}" href="{% url 'adminpanel:social_list' %}"><i class="bi bi-google"></i> Social Accounts</a>
+    <a class="np-nav-link{% if current == 'recruiter_list' or current == 'recruiter_detail' %} active{% endif %}" href="{% url 'adminpanel:recruiter_list' %}"><i class="bi bi-person-badge"></i> Recruiter Profiles</a>
+
+    <div class="np-nav-group">Companies</div>
+    <a class="np-nav-link{% if current == 'company_list' or current == 'company_detail' %} active{% endif %}" href="{% url 'adminpanel:company_list' %}"><i class="bi bi-building"></i> Companies</a>
+    <a class="np-nav-link{% if current == 'office_list' %} active{% endif %}" href="{% url 'adminpanel:office_list' %}"><i class="bi bi-geo-alt"></i> Company Offices</a>
+    <a class="np-nav-link{% if current == 'salary_list' %} active{% endif %}" href="{% url 'adminpanel:salary_list' %}"><i class="bi bi-cash-coin"></i> Company Salaries</a>
+    <a class="np-nav-link{% if current == 'product_list' %} active{% endif %}" href="{% url 'adminpanel:product_list' %}"><i class="bi bi-box-seam"></i> Products &amp; Services</a>
+    <a class="np-nav-link{% if current == 'review_list' or current == 'review_detail' %} active{% endif %}" href="{% url 'adminpanel:review_list' %}"><i class="bi bi-star-half"></i> Company Reviews</a>
+    <a class="np-nav-link{% if current == 'follower_list' %} active{% endif %}" href="{% url 'adminpanel:follower_list' %}"><i class="bi bi-person-check"></i> Company Followers</a>
+
+    <div class="np-nav-group">Jobs</div>
+    <a class="np-nav-link{% if current == 'job_list' or current == 'job_detail' %} active{% endif %}" href="{% url 'adminpanel:job_list' %}"><i class="bi bi-briefcase-fill"></i> Jobs</a>
+    <a class="np-nav-link{% if current == 'category_list' %} active{% endif %}" href="{% url 'adminpanel:category_list' %}"><i class="bi bi-tags"></i> Categories</a>
+    <a class="np-nav-link{% if current == 'jobalert_list' or current == 'jobalert_detail' %} active{% endif %}" href="{% url 'adminpanel:jobalert_list' %}"><i class="bi bi-bell-fill"></i> Job Alerts</a>
+
+    <div class="np-nav-group">Applications</div>
+    <a class="np-nav-link{% if current == 'application_list' or current == 'application_detail' %} active{% endif %}" href="{% url 'adminpanel:application_list' %}"><i class="bi bi-file-earmark-person"></i> Applications</a>
+
+    <div class="np-nav-group">Engagement</div>
+    <a class="np-nav-link{% if current == 'savedjob_list' %} active{% endif %}" href="{% url 'adminpanel:savedjob_list' %}"><i class="bi bi-bookmark-heart"></i> Saved Jobs</a>
+    <a class="np-nav-link{% if current == 'notification_list' or current == 'notification_detail' %} active{% endif %}" href="{% url 'adminpanel:notification_list' %}"><i class="bi bi-bell"></i> Notifications</a>
+    <a class="np-nav-link{% if current == 'feedback_list' or current == 'feedback_detail' %} active{% endif %}" href="{% url 'adminpanel:feedback_list' %}"><i class="bi bi-chat-square-text"></i> Feedback</a>
+    <a class="np-nav-link{% if current == 'chatmessage_list' or current == 'chatmessage_detail' %} active{% endif %}" href="{% url 'adminpanel:chatmessage_list' %}"><i class="bi bi-chat-dots"></i> Chat Messages</a>
+
+    <div class="np-nav-group">System</div>
+    <a class="np-nav-link" href="/admin/"><i class="bi bi-shield-lock"></i> Django Admin</a>
+    <form method="post" action="{% url 'accounts:logout' %}" class="np-logout-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'accounts:login' %}">
+        <button type="submit" class="np-nav-link"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+</nav>
+{% endwith %}

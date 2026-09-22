@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Company Profile Management - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-manage-page { padding: 42px 0 70px; }
+
+    .nc-manage-header { margin-bottom: 28px; }
+    .nc-manage-header h2 { color: var(--nc-heading, #172235); font-weight: 800; letter-spacing: -0.025em; }
+    .nc-manage-header p { color: var(--nc-text, #586678); margin-bottom: 0; }
+
+    .nc-manage-card {
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.06);
+        padding: 28px;
+        margin-bottom: 24px;
+    }
+
+    .nc-manage-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .nc-manage-card-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+
+    .nc-manage-card-title i { color: var(--nc-primary, #159a78); }
+
+    .nc-manage-add-btn { border-radius: 9px; font-weight: 700; white-space: nowrap; }
+
+    .nc-form-label { display: block; color: var(--nc-heading, #172235); font-weight: 700; font-size: 0.86rem; margin-bottom: 7px; }
+    .nc-field { margin-bottom: 18px; }
+    .nc-field:last-child { margin-bottom: 0; }
+
+    .nc-manage-card .form-control {
+        min-height: 44px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 10px;
+        padding: 10px 13px;
+    }
+    .nc-manage-card textarea.form-control { min-height: 100px; resize: vertical; }
+
+    .nc-manage-save-btn { border-radius: 10px; font-weight: 700; padding: 10px 20px; }
+
+    .nc-record-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .nc-record-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 15px 16px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 14px;
+        background: #fbfdfc;
+    }
+
+    .nc-record-item-body { min-width: 0; }
+
+    .nc-record-item-title { color: var(--nc-heading, #172235); font-weight: 750; margin-bottom: 3px; }
+    .nc-record-item-meta { color: var(--nc-text, #586678); font-size: 0.83rem; margin-bottom: 0; }
+
+    .nc-record-item-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+    .nc-record-item-actions .btn { border-radius: 8px; padding: 6px 10px; font-size: 0.78rem; }
+
+    .nc-manage-empty { color: var(--nc-muted, #8994a3); font-size: 0.9rem; margin: 0; }
+
+    .nc-review-item-img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; margin-top: 8px; }
+    .nc-review-inactive { opacity: 0.55; }
+    .nc-review-badge { font-size: 0.72rem; padding: 4px 8px; border-radius: 999px; font-weight: 700; }
+
+    @media (max-width: 767.98px) {
+        .nc-manage-page { padding: 26px 0 50px; }
+        .nc-manage-card { padding: 20px; }
+        .nc-record-item { flex-direction: column; }
+        .nc-record-item-actions { width: 100%; }
+        .nc-record-item-actions .btn { flex: 1; text-align: center; }
+    }
+</style>
+
+<div class="nc-manage-page">
+    <div class="container">
+
+        <div class="nc-manage-header">
+            <h2 class="mb-1">Company Profile Management</h2>
+            <p>Manage {{ company.name }}&rsquo;s overview, culture, salaries, locations, products &amp; services, and reviews.</p>
+        </div>
+
+        <!-- Overview + Culture -->
+        <div class="nc-manage-card">
+            <div class="nc-manage-card-header">
+                <h5 class="nc-manage-card-title"><i class="bi bi-file-text"></i> Overview &amp; Culture</h5>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if content_form.non_field_errors %}
+                    <div class="alert alert-danger">{{ content_form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="nc-field">
+                    <label class="nc-form-label">{{ content_form.description.label }}</label>
+                    {{ content_form.description|add_class:"form-control" }}
+                    {% for error in content_form.description.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="nc-field">
+                    <label class="nc-form-label">{{ content_form.culture.label }}</label>
+                    {{ content_form.culture|add_class:"form-control" }}
+                </div>
+                <div class="nc-field mb-3">
+                    <label class="nc-form-label">{{ content_form.work_environment.label }}</label>
+                    {{ content_form.work_environment|add_class:"form-control" }}
+                </div>
+
+                <button type="submit" class="btn btn-primary nc-manage-save-btn">
+                    <i class="bi bi-check2-circle me-1"></i> Save Changes
+                </button>
+            </form>
+        </div>
+
+        <!-- Salaries -->
+        <div class="nc-manage-card">
+            <div class="nc-manage-card-header">
+                <h5 class="nc-manage-card-title"><i class="bi bi-cash-coin"></i> Salary Information</h5>
+                <a href="{% url 'companies:salary_add' %}" class="btn btn-sm btn-primary nc-manage-add-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add Salary
+                </a>
+            </div>
+
+            {% if salaries %}
+                <div class="nc-record-list">
+                    {% for salary in salaries %}
+                        <div class="nc-record-item">
+                            <div class="nc-record-item-body">
+                                <p class="nc-record-item-title">{{ salary.role }} &middot; {{ salary.salary_range }}</p>
+                                <p class="nc-record-item-meta">
+                                    {% if salary.experience_level %}{{ salary.get_experience_level_display }}{% endif %}
+                                    {% if salary.employment_type %} &middot; {{ salary.get_employment_type_display }}{% endif %}
+                                    {% if salary.location %} &middot; {{ salary.location }}{% endif %}
+                                </p>
+                            </div>
+                            <div class="nc-record-item-actions">
+                                <a href="{% url 'companies:salary_edit' salary.pk %}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'companies:salary_delete' salary.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="nc-manage-empty">No salary information provided yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Locations -->
+        <div class="nc-manage-card">
+            <div class="nc-manage-card-header">
+                <h5 class="nc-manage-card-title"><i class="bi bi-geo-alt"></i> Branch Locations</h5>
+                <a href="{% url 'companies:location_add' %}" class="btn btn-sm btn-primary nc-manage-add-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add Branch
+                </a>
+            </div>
+
+            {% if offices %}
+                <div class="nc-record-list">
+                    {% for office in offices %}
+                        <div class="nc-record-item">
+                            <div class="nc-record-item-body">
+                                <p class="nc-record-item-title">
+                                    {{ office.name|default:office.get_office_type_display }}
+                                    {% if office.is_headquarters %}<span class="badge bg-light text-dark border ms-1">HQ</span>{% endif %}
+                                </p>
+                                <p class="nc-record-item-meta">
+                                    {{ office.address }}{% if office.address %},{% endif %}
+                                    {{ office.city }} {{ office.state }} {{ office.country }} {{ office.pincode }}
+                                </p>
+                            </div>
+                            <div class="nc-record-item-actions">
+                                <a href="{% url 'companies:location_edit' office.pk %}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'companies:location_delete' office.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="nc-manage-empty">No branch locations provided yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Products & Services -->
+        <div class="nc-manage-card">
+            <div class="nc-manage-card-header">
+                <h5 class="nc-manage-card-title"><i class="bi bi-box-seam"></i> Products &amp; Services</h5>
+                <a href="{% url 'companies:product_add' %}" class="btn btn-sm btn-primary nc-manage-add-btn">
+                    <i class="bi bi-plus-lg me-1"></i> Add Product/Service
+                </a>
+            </div>
+
+            {% if products_services %}
+                <div class="nc-record-list">
+                    {% for item in products_services %}
+                        <div class="nc-record-item">
+                            <div class="nc-record-item-body">
+                                <p class="nc-record-item-title">{{ item.name }} <span class="badge bg-light text-dark border">{{ item.get_item_type_display }}</span></p>
+                                <p class="nc-record-item-meta">{{ item.description|truncatewords:20 }}</p>
+                            </div>
+                            <div class="nc-record-item-actions">
+                                <a href="{% url 'companies:product_edit' item.pk %}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'companies:product_delete' item.pk %}" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="nc-manage-empty">No products or services information provided yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Reviews (HR view - read only, moderation toggle only, spec section 20) -->
+        <div class="nc-manage-card">
+            <div class="nc-manage-card-header">
+                <h5 class="nc-manage-card-title"><i class="bi bi-star"></i> Student Reviews</h5>
+            </div>
+
+            {% if reviews %}
+                <div class="nc-record-list">
+                    {% for review in reviews %}
+                        <div class="nc-record-item {% if not review.is_active %}nc-review-inactive{% endif %}">
+                            <div class="nc-record-item-body">
+                                <p class="nc-record-item-title">
+                                    {{ review.rating }} &#9733; &middot; {{ review.reviewer_display_name }}
+                                    <span class="badge nc-review-badge {% if review.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if review.is_active %}Visible{% else %}Hidden{% endif %}
+                                    </span>
+                                </p>
+                                <p class="nc-record-item-meta mb-1">{{ review.content }}</p>
+                                <p class="nc-record-item-meta">{{ review.created_at|date:"F Y" }}</p>
+                                {% if review.image %}
+                                    <img src="{{ review.image.url }}" alt="Review image" class="nc-review-item-img">
+                                {% endif %}
+                            </div>
+                            <div class="nc-record-item-actions">
+                                <form method="post" action="{% url 'companies:review_toggle' review.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        {% if review.is_active %}Hide{% else %}Show{% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="nc-manage-empty">No reviews yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

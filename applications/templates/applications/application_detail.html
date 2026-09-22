@@ -598,27 +598,6 @@
 
             <div class="row justify-content-center g-3 nc-submitted-stats">
 
-                {% if application.match_snapshot %}
-
-                <div class="col-auto">
-
-                    <div class="nc-submitted-stat">
-
-                        <p class="text-muted small mb-0">
-                            Match Signals
-                        </p>
-
-                        <p class="h4 mb-0">
-                            {{ application.match_snapshot.overall_percent }}%
-                        </p>
-
-                    </div>
-
-                </div>
-
-                {% endif %}
-
-
                 <div class="col-auto">
 
                     <div class="nc-submitted-stat">
@@ -827,338 +806,153 @@
                         {{ application.get_applied_via_display }}
                     </p>
 
+                    {% if can_review_company %}
+                        <a href="{% url 'companies:review_add' application.job.company.slug %}" class="btn btn-primary btn-sm mt-3">
+                            <i class="bi bi-star-fill me-1"></i> Review Company
+                        </a>
+                    {% endif %}
+
                 </div>
 
 
-                {% if is_employer_view and match %}
-
                 <!-- =================================================
-                     CANDIDATE MATCH ANALYSIS
+                     SKILL MATCH SNAPSHOT (spec sections 6/13/14/15)
+                     Frozen at submission time - never recalculated from
+                     the candidate's current profile.
                 ================================================== -->
 
-                <div class="card nc-app-card nc-match-card mt-4 reveal">
+                <div class="card nc-app-card mt-4 p-4 p-md-5 reveal">
+                    <h5 class="nc-app-section-title mb-3">Skill Match</h5>
+                    {% with match=application.match_snapshot %}
+                        {% include "applications/_skill_match.html" %}
+                    {% endwith %}
+                </div>
 
-                    <h5 class="nc-app-section-title mb-1">
-                        Candidate Match Analysis
+
+                {% if is_employer_view %}
+
+                <!-- =================================================
+                     CANDIDATE INFORMATION (spec section 18)
+                ================================================== -->
+
+                <div class="card nc-app-card mt-4 reveal">
+
+                    <h5 class="nc-app-section-title mb-3">
+                        Candidate Information
                     </h5>
 
-                    <p class="text-muted nc-match-intro mb-4">
-                        ATS Match Signals - an informational aid for human review, not a hiring decision.
-                    </p>
-
-
-                    <div class="text-center">
-
-                        <div class="nc-match-score">
-
-                            <h2 class="fw-bold mb-0">
-                                {{ match.overall_percent }}%
-                            </h2>
-
-                            <p class="text-muted small mb-0">
-                                Overall match signal
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="row g-3 mb-4">
-
-                        {% for key, component in match.components.items %}
-
-                        <div class="col-sm-6">
-
-                            <div class="nc-component">
-
-                                <div class="d-flex justify-content-between small mb-1 nc-component-header">
-
-                                    <span class="fw-semibold">
-                                        {{ component.label }}
-                                    </span>
-
-                                    <span class="nc-component-percent">
-                                        {{ component.percent }}%
-                                    </span>
-
-                                </div>
-
-
-                                <div class="progress mb-2">
-
-                                    <div
-                                        class="progress-bar"
-                                        role="progressbar"
-                                        data-progress="{{ component.percent }}"
-                                        aria-valuenow="{{ component.percent }}"
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"
-                                    ></div>
-
-                                </div>
-
-
-                                <p class="text-muted small nc-component-reason mb-0">
-                                    {{ component.reason }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        {% endfor %}
-
-                    </div>
-
-
                     <div class="row g-3">
-
-                        <div class="col-md-6">
-
-                            <div class="nc-match-skills h-100">
-
-                                <h6 class="small text-uppercase nc-match-skills-title mb-2">
-                                    Matched Skills
-                                </h6>
-
-                                {% for skill in match.matched_skills %}
-
-                                <span class="badge bg-success nc-match-skill me-1 mb-1">
-                                    {{ skill }}
-                                </span>
-
-                                {% empty %}
-
-                                <p class="text-muted small mb-0">
-                                    None detected.
-                                </p>
-
-                                {% endfor %}
-
-                            </div>
-
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Name</p>
+                            <p class="fw-semibold mb-0">{{ application.full_name }}</p>
                         </div>
-
-
-                        <div class="col-md-6">
-
-                            <div class="nc-match-skills h-100">
-
-                                <h6 class="small text-uppercase nc-match-skills-title mb-2">
-                                    Missing / Not Detected
-                                </h6>
-
-                                {% for skill in match.missing_skills %}
-
-                                <span class="badge bg-warning nc-match-skill me-1 mb-1">
-                                    {{ skill }}
-                                </span>
-
-                                {% empty %}
-
-                                <p class="text-muted small mb-0">
-                                    None detected.
-                                </p>
-
-                                {% endfor %}
-
-                                <p class="text-muted small mt-2 mb-0">
-                                    "Not detected" means the skill wasn't found in submitted information - not proof the candidate lacks it.
-                                </p>
-
-                            </div>
-
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Email</p>
+                            <p class="fw-semibold mb-0">{{ application.email }}</p>
                         </div>
-
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Phone</p>
+                            <p class="fw-semibold mb-0">{{ application.phone|default:"—" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Location</p>
+                            <p class="fw-semibold mb-0">{{ application.location|default:"—" }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Current Title / Company</p>
+                            <p class="fw-semibold mb-0">{{ application.current_title|default:"—" }}{% if application.current_company %} at {{ application.current_company }}{% endif %}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Experience</p>
+                            <p class="fw-semibold mb-0">{{ application.experience_years }} year{{ application.experience_years|pluralize }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="text-muted small mb-1">Education</p>
+                            <p class="fw-semibold mb-0">{{ application.education_summary|default:"—" }}</p>
+                        </div>
+                        <div class="col-12">
+                            <p class="text-muted small mb-1">Skills</p>
+                            {% for skill in application.skills_list %}
+                                <span class="badge bg-light text-dark border me-1 mb-1">{{ skill }}</span>
+                            {% empty %}
+                                <span class="text-muted small">Not provided.</span>
+                            {% endfor %}
+                        </div>
                     </div>
-
-
-                    <p class="text-muted small nc-match-disclaimer mt-4 mb-0 fst-italic">
-                        {{ match.disclaimer }}
-                    </p>
 
                 </div>
 
 
                 <!-- =================================================
-                     LINK ANALYSIS
+                     PROFESSIONAL LINKS
                 ================================================== -->
 
                 <div class="row g-4 mt-1">
 
-                    <!-- LINKEDIN -->
-
-                    <div class="col-md-6">
-
+                    <div class="col-md-4">
                         <div class="card nc-app-card nc-social-card reveal">
-
-                            <h6 class="nc-social-title">
-                                <i class="bi bi-linkedin"></i>
-                                LinkedIn
-                            </h6>
-
-
-                            {% if linkedin_analysis.status == "manual_review" %}
-
-                                <p class="small text-muted nc-social-text mb-2">
-                                    <i class="bi bi-check-circle text-success me-1"></i>
-                                    Valid profile URL
-                                </p>
-
-                                <p class="small text-muted nc-social-text mb-2">
-                                    Automatic public-data analysis unavailable.
-                                </p>
-
-                                <a
-                                    href="{{ linkedin_analysis.url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="btn btn-outline-secondary btn-sm nc-social-button"
-                                >
-                                    Open LinkedIn
-                                </a>
-
-                            {% elif linkedin_analysis.status == "invalid_url" %}
-
-                                <p class="small text-muted nc-social-text mb-0">
-                                    The provided URL does not look like a LinkedIn profile.
-                                </p>
-
+                            <h6 class="nc-social-title"><i class="bi bi-linkedin"></i> LinkedIn</h6>
+                            {% if application.linkedin_url %}
+                                <a href="{{ application.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open LinkedIn ↗</a>
                             {% else %}
-
-                                <p class="small text-muted nc-social-text mb-0">
-                                    Not provided by candidate.
-                                </p>
-
+                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
                             {% endif %}
-
                         </div>
-
                     </div>
 
-
-                    <!-- GITHUB -->
-
-                    <div class="col-md-6">
-
+                    <div class="col-md-4">
                         <div class="card nc-app-card nc-social-card reveal">
-
-                            <h6 class="nc-social-title">
-                                <i class="bi bi-github"></i>
-                                GitHub
-                            </h6>
-
-
-                            {% if github_analysis.status == "available" %}
-
-                                <p class="small text-muted nc-social-text mb-1">
-                                    Repositories: {{ github_analysis.repository_count }}
-                                </p>
-
-
-                                {% if github_analysis.detected_technologies %}
-
-                                <p class="small text-muted nc-social-text mb-1">
-                                    Detected technologies:
-                                </p>
-
-                                <div class="nc-tech-list mb-2">
-
-                                    {% for tech in github_analysis.detected_technologies %}
-
-                                    <span class="badge bg-light text-dark border">
-                                        {{ tech }}
-                                    </span>
-
-                                    {% endfor %}
-
-                                </div>
-
-                                {% endif %}
-
-
-                                {% if github_analysis.relevant_repositories %}
-
-                                <p class="small text-muted nc-social-text mb-1">
-                                    Job-relevant repositories:
-                                </p>
-
-                                <ul class="small nc-repository-list mb-2">
-
-                                    {% for repo in github_analysis.relevant_repositories %}
-
-                                    <li>
-                                        {{ repo }}
-                                    </li>
-
-                                    {% endfor %}
-
-                                </ul>
-
-                                {% endif %}
-
-
-                                <a
-                                    href="{{ github_analysis.url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="btn btn-outline-secondary btn-sm nc-social-button"
-                                >
-                                    Open GitHub
-                                </a>
-
-
-                            {% elif github_analysis.status == "not_found" or github_analysis.status == "invalid_url" %}
-
-                                <p class="small text-muted nc-social-text mb-2">
-                                    GitHub profile could not be verified automatically.
-                                </p>
-
-                                {% if github_analysis.url %}
-
-                                <a
-                                    href="{{ github_analysis.url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="btn btn-outline-secondary btn-sm nc-social-button"
-                                >
-                                    Open GitHub
-                                </a>
-
-                                {% endif %}
-
-
-                            {% elif github_analysis.status == "rate_limited" or github_analysis.status == "unavailable" %}
-
-                                <p class="small text-muted nc-social-text mb-2">
-                                    Automatic analysis is currently unavailable.
-                                </p>
-
-                                <a
-                                    href="{{ github_analysis.url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="btn btn-outline-secondary btn-sm nc-social-button"
-                                >
-                                    Open GitHub
-                                </a>
-
-
+                            <h6 class="nc-social-title"><i class="bi bi-github"></i> GitHub</h6>
+                            {% if application.github_url %}
+                                <a href="{{ application.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open GitHub ↗</a>
                             {% else %}
-
-                                <p class="small text-muted nc-social-text mb-0">
-                                    Not provided by candidate.
-                                </p>
-
+                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
                             {% endif %}
-
                         </div>
+                    </div>
 
+                    <div class="col-md-4">
+                        <div class="card nc-app-card nc-social-card reveal">
+                            <h6 class="nc-social-title"><i class="bi bi-globe"></i> Portfolio</h6>
+                            {% if application.portfolio_url %}
+                                <a href="{{ application.portfolio_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open Portfolio ↗</a>
+                            {% else %}
+                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
+                            {% endif %}
+                        </div>
                     </div>
 
                 </div>
 
+                {% endif %}
+
+
+                {% if screening_answers %}
+                <div class="card nc-app-card mt-4 reveal">
+                    <h5 class="nc-app-section-title mb-3">Screening Questions</h5>
+                    {% for answer in screening_answers %}
+                        <div class="mb-3">
+                            <p class="text-muted small mb-1">{{ answer.question.question }}</p>
+                            <p class="fw-semibold mb-0">{{ answer.answer_text|default:"—" }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+                {% if status_history %}
+                <div class="card nc-app-card mt-4 reveal">
+                    <h5 class="nc-app-section-title mb-3">Status History</h5>
+                    <ul class="list-unstyled mb-0">
+                        {% for entry in status_history %}
+                            <li class="small mb-2">
+                                {% if entry.old_status %}{{ entry.get_old_status_display }} &rarr; {% endif %}
+                                <strong>{{ entry.get_new_status_display }}</strong>
+                                <span class="text-muted">&middot; {{ entry.changed_at|date:"d M Y, H:i" }}{% if entry.changed_by %} &middot; by {{ entry.changed_by.get_username }}{% endif %}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
 
             </div>
@@ -1201,7 +995,7 @@
 
 
                     <p class="text-muted small nc-status-note mt-3 mb-0">
-                        ATS match signals are decision-support only. The final hiring decision remains with you.
+                        Status changes notify the candidate automatically.
                     </p>
 
                 </div>

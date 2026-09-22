@@ -1,0 +1,117 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}Company — {{ object.name }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin / Companies</div>
+        <h1 class="h4 mb-0">{{ object.name }}</h1>
+    </div>
+    <div>
+        <a href="{% url edit_url_name object.pk %}" class="btn btn-sm btn-np-primary">Edit</a>
+        <a href="{% url delete_url_name object.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url list_url_name %}" class="btn btn-sm btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<div class="np-card">
+    <dl class="np-detail-grid">
+        {% for label, path in detail_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ object|resolve:path|default:"—" }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-md-4"><div class="np-stat-card"><div class="np-stat-value">{{ review_average|floatformat:1|default:"—" }}</div><div class="np-stat-label">Avg Rating</div></div></div>
+    <div class="col-md-4"><div class="np-stat-card"><div class="np-stat-value">{{ follower_count }}</div><div class="np-stat-label">Followers</div></div></div>
+    <div class="col-md-4"><div class="np-stat-card"><div class="np-stat-value">{{ jobs|length }}</div><div class="np-stat-label">Recent Jobs</div></div></div>
+</div>
+
+<div class="np-section-title d-flex justify-content-between align-items-center">
+    <span>Offices</span>
+    <a href="{% url 'adminpanel:office_add' object.pk %}" class="btn btn-sm btn-outline-secondary">+ Add</a>
+</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Name</th><th>City</th><th>HQ</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for office in offices %}
+                <tr><td>{{ office.name|default:office.get_office_type_display }}</td><td>{{ office.city }}</td><td>{{ office.is_headquarters|yesno:"Yes,No" }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:office_edit' office.pk %}">Edit</a><a href="{% url 'adminpanel:office_delete' office.pk %}" class="text-danger">Delete</a></td></tr>
+            {% empty %}
+                <tr><td colspan="4"><div class="np-empty">No offices.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title d-flex justify-content-between align-items-center">
+    <span>Salaries</span>
+    <a href="{% url 'adminpanel:salary_add' object.pk %}" class="btn btn-sm btn-outline-secondary">+ Add</a>
+</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Role</th><th>Range</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for salary in salaries %}
+                <tr><td>{{ salary.role }}</td><td>{{ salary.salary_range }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:salary_edit' salary.pk %}">Edit</a><a href="{% url 'adminpanel:salary_delete' salary.pk %}" class="text-danger">Delete</a></td></tr>
+            {% empty %}
+                <tr><td colspan="3"><div class="np-empty">No salary data.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title d-flex justify-content-between align-items-center">
+    <span>Products &amp; Services</span>
+    <a href="{% url 'adminpanel:product_add' object.pk %}" class="btn btn-sm btn-outline-secondary">+ Add</a>
+</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Name</th><th>Type</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for item in products_services %}
+                <tr><td>{{ item.name }}</td><td>{{ item.get_item_type_display }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:product_edit' item.pk %}">Edit</a><a href="{% url 'adminpanel:product_delete' item.pk %}" class="text-danger">Delete</a></td></tr>
+            {% empty %}
+                <tr><td colspan="3"><div class="np-empty">No products/services.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title">Recent Reviews</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Student</th><th>Rating</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for review in reviews %}
+                <tr><td>{{ review.reviewer_display_name }}</td><td>{{ review.rating }}★</td><td>{{ review.is_active|yesno:"Yes,No" }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:review_detail' review.pk %}">View</a></td></tr>
+            {% empty %}
+                <tr><td colspan="4"><div class="np-empty">No reviews.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="np-section-title">Jobs</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr><th>Title</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+            {% for job in jobs %}
+                <tr><td>{{ job.title }}</td><td>{{ job.get_status_display }}</td>
+                <td class="np-row-actions"><a href="{% url 'adminpanel:job_detail' job.pk %}">View</a></td></tr>
+            {% empty %}
+                <tr><td colspan="3"><div class="np-empty">No jobs.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

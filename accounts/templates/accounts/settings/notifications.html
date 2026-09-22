@@ -1,0 +1,20 @@
+{% extends "accounts/settings/_base.html" %}
+
+{% block settings_content %}
+<h5 class="mb-3">Notifications</h5>
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <div class="d-flex align-items-center justify-content-between py-3 border-bottom" style="border-color: var(--nc-border, #e1e8e4) !important;">
+            <span class="fw-semibold">{{ field.label }}</span>
+            <div class="form-check form-switch">
+                {{ field }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary mt-4">Save Changes</button>
+</form>
+{% endblock %}

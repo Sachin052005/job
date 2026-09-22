@@ -73,6 +73,105 @@
 
     --naukri-primary: var(--nc-primary);
     --naukri-radius: var(--radius-md);
+
+    /* Surfaces that flip between light/dark (spec sections 42-43) */
+    --nc-card-bg: var(--nc-white);
+    --nc-input-bg: var(--nc-white);
+    --nc-input-border: var(--nc-border);
+    --nc-overlay: rgba(23, 34, 53, 0.45);
+
+    /* ----------------------------------------------------------------
+       Generic aliases some components/newer code reach for by these
+       exact names - same tokens above, just under their more common
+       spelling. Keep the *values* defined once (above); these only
+       re-point to them, so the dark override below still only needs to
+       change one set of underlying values.
+       ---------------------------------------------------------------- */
+    --bg-primary: var(--nc-background);
+    --bg-secondary: var(--nc-white);
+    --bg-tertiary: var(--nc-primary-soft);
+    --card-bg: var(--nc-card-bg);
+    --surface: var(--nc-card-bg);
+    --border-color: var(--nc-border);
+    --input-bg: var(--nc-input-bg);
+    --input-border: var(--nc-input-border);
+    --shadow: var(--shadow-md);
+    --primary-color: var(--nc-primary);
+    --primary-hover: var(--nc-primary-dark);
+}
+
+/* ==========================================================================
+   Dark theme
+   Applied when data-theme="dark" (resolved from the user's light/dark/system
+   preference by the inline bootstrap script in base.html). Overrides only the
+   token values below - every rule elsewhere in this file already reads
+   through these variables, so nothing else needs to be duplicated.
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+    --nc-primary: #22c99a;
+    --nc-primary-dark: #159a78;
+    --nc-primary-soft: rgba(34, 201, 154, 0.14);
+
+    --nc-heading: #f1f5f3;
+    --nc-text: #c3ccd6;
+    --nc-muted: #8b96a5;
+
+    --nc-background: #0f1520;
+    --nc-white: #161d2b;
+    --nc-card-bg: #161d2b;
+    --nc-input-bg: #1c2434;
+    --nc-border: #2a3345;
+    --nc-overlay: rgba(0, 0, 0, 0.6);
+
+    --success-light: #10331f;
+    --warning-light: #3a2e0f;
+    --danger-light: #3a1414;
+    --info-light: #1c1f3a;
+
+    color-scheme: dark;
+}
+
+body {
+    background-color: var(--nc-background);
+    transition: background-color .2s ease, color .2s ease;
+}
+
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .dropdown-menu,
+:root[data-theme="dark"] .table {
+    background-color: var(--nc-card-bg);
+    color: var(--nc-text);
+}
+
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .form-select {
+    background-color: var(--nc-input-bg);
+    color: var(--nc-heading);
+    border-color: var(--nc-border);
+}
+
+:root[data-theme="dark"] .form-control::placeholder {
+    color: var(--nc-muted);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+    color: var(--nc-text);
+    border-color: var(--nc-border);
+}
+
+:root[data-theme="dark"] a {
+    color: var(--nc-primary);
+}
+
+:root[data-theme="dark"] .text-muted {
+    color: var(--nc-muted) !important;
+}
+
+:root[data-theme="dark"] .badge.bg-light {
+    background-color: var(--nc-input-bg) !important;
+    color: var(--nc-text) !important;
 }
 
 /* ==========================================================================

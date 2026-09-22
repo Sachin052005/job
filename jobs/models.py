@@ -5,11 +5,18 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from core.constants import (
+    APPLICATION_METHOD_APPLY,
+    APPLICATION_METHOD_BOTH,
+    APPLICATION_METHOD_CHOICES,
+    APPLICATION_METHOD_EASY_APPLY,
+    EDUCATION_LEVEL_CHOICES,
     EMPLOYMENT_TYPE_CHOICES,
+    JOB_BADGE_CHOICES,
     JOB_STATUS_BADGE_CLASS,
     JOB_STATUS_CHOICES,
     JOB_STATUS_DRAFT,
     JOB_STATUS_PUBLISHED,
+    WORK_MODE_CHOICES,
 )
 
 
@@ -44,10 +51,20 @@ class Job(models.Model):
     responsibilities = models.TextField(blank=True)
     skills = models.CharField(max_length=500, blank=True, help_text="Comma-separated skills")
     employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default="full_time")
+    work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, blank=True)
     experience_min = models.PositiveSmallIntegerField(default=0)
     experience_max = models.PositiveSmallIntegerField(default=0)
+    education_required = models.CharField(max_length=20, choices=EDUCATION_LEVEL_CHOICES, blank=True)
     salary_min = models.PositiveIntegerField(blank=True, null=True)
     salary_max = models.PositiveIntegerField(blank=True, null=True)
+    benefits = models.TextField(blank=True)
+    highlights = models.TextField(blank=True)
+    badges = models.CharField(
+        max_length=300, blank=True, help_text="Comma-separated badge keys, e.g. urgent_hiring,remote"
+    )
+    application_method = models.CharField(
+        max_length=20, choices=APPLICATION_METHOD_CHOICES, default=APPLICATION_METHOD_BOTH
+    )
     status = models.CharField(max_length=20, choices=JOB_STATUS_CHOICES, default=JOB_STATUS_DRAFT)
     application_deadline = models.DateField(blank=True, null=True)
     views_count = models.PositiveIntegerField(default=0)
@@ -89,3 +106,29 @@ class Job(models.Model):
 
     def badge_class(self):
         return JOB_STATUS_BADGE_CLASS.get(self.status, "secondary")
+
+    def badges_list(self):
+        return [b.strip() for b in self.badges.split(",") if b.strip()]
+
+    def badge_labels(self):
+        labels = dict(JOB_BADGE_CHOICES)
+        return [labels.get(key, key) for key in self.badges_list()]
+
+    def allows_easy_apply(self):
+        return self.application_method in (APPLICATION_METHOD_EASY_APPLY, APPLICATION_METHOD_BOTH)
+
+    def allows_apply(self):
+        return self.application_method in (APPLICATION_METHOD_APPLY, APPLICATION_METHOD_BOTH)
+
+
+class ScreeningQuestion(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="screening_questions")
+    question = models.CharField(max_length=300)
+    is_required = models.BooleanField(default=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.question

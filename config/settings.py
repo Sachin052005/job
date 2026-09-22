@@ -94,7 +94,10 @@ INSTALLED_APPS = [
     "jobs",
     "applications",
     "saved_jobs",
+    "notifications",
+    "helpcenter",
     "dashboard",
+    "adminpanel",
 ]
 
 
@@ -151,6 +154,12 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
 
                 "django.contrib.messages.context_processors.messages",
+
+                "notifications.context_processors.notifications_context",
+
+                "core.context_processors.theme_context",
+
+                "accounts.context_processors.drawer_stats_context",
             ],
         },
     },
@@ -297,14 +306,24 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 # ============================================================
 # EMAIL
 # ============================================================
+# Gmail SMTP is used to deliver password-reset (and other transactional)
+# email. Credentials always come from the environment - never hardcode a
+# Gmail account or App Password here. Locally, set these in .env; in
+# production, set them on the host/deployment environment.
 
-EMAIL_BACKEND = (
-    "django.core.mail.backends.console.EmailBackend"
-)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-DEFAULT_FROM_EMAIL = (
-    "NammaCareer <no-reply@nammacareer.local>"
-)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 
 # ============================================================

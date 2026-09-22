@@ -1,0 +1,85 @@
+{% extends "adminpanel/base.html" %}
+{% load adminpanel_extras %}
+
+{% block title %}Profile — {{ object.user.username }}{% endblock %}
+
+{% block content %}
+<div class="np-page-header">
+    <div>
+        <div class="np-breadcrumb">NammaCareer Admin / Profiles</div>
+        <h1 class="h4 mb-0">{{ object.user.username }}'s Profile</h1>
+    </div>
+    <div>
+        <a href="{% url edit_url_name object.pk %}" class="btn btn-sm btn-np-primary">Edit</a>
+        <a href="{% url delete_url_name object.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+        <a href="{% url list_url_name %}" class="btn btn-sm btn-outline-secondary">Back to list</a>
+    </div>
+</div>
+
+<div class="np-card">
+    <dl class="np-detail-grid">
+        {% for label, path in detail_fields %}
+            <dt>{{ label }}</dt>
+            <dd>{{ object|resolve:path|default:"—" }}</dd>
+        {% endfor %}
+    </dl>
+</div>
+
+<div class="np-section-title d-flex justify-content-between align-items-center">
+    <span>Career Preference</span>
+    {% if not career_preference %}<a href="{% url 'adminpanel:careerpref_add' object.pk %}" class="btn btn-sm btn-outline-secondary">+ Add</a>{% endif %}
+</div>
+<div class="np-card">
+    {% if career_preference %}
+        <dl class="np-detail-grid">
+            <dt>Preferred title</dt><dd>{{ career_preference.preferred_job_title|default:"—" }}</dd>
+            <dt>Work mode</dt><dd>{{ career_preference.get_work_mode_display }}</dd>
+            <dt>Job search status</dt><dd>{{ career_preference.get_job_search_status_display }}</dd>
+        </dl>
+        <a href="{% url 'adminpanel:careerpref_edit' career_preference.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <a href="{% url 'adminpanel:careerpref_delete' career_preference.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+    {% else %}
+        <div class="np-empty">Not set.</div>
+    {% endif %}
+</div>
+
+{% for section_title, rows, columns, add_url, edit_name, delete_name in related_table_sections %}
+<div class="np-section-title d-flex justify-content-between align-items-center">
+    <span>{{ section_title }}</span>
+    <a href="{{ add_url }}" class="btn btn-sm btn-outline-secondary">+ Add</a>
+</div>
+<div class="np-table-wrap">
+    <table class="table np-table mb-0">
+        <thead><tr>{% for label, path in columns %}<th>{{ label }}</th>{% endfor %}<th>Actions</th></tr></thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    {% for label, path in columns %}<td>{{ row|resolve:path|default:"—" }}</td>{% endfor %}
+                    <td class="np-row-actions">
+                        <a href="{% url edit_name row.pk %}">Edit</a>
+                        <a href="{% url delete_name row.pk %}" class="text-danger">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="10"><div class="np-empty">No records.</div></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+
+<div class="np-section-title">Account Settings &amp; Social Accounts</div>
+<div class="np-card">
+    <dl class="np-detail-grid">
+        <dt>Theme</dt><dd>{{ user_settings.get_theme_display|default:"—" }}</dd>
+        <dt>Profile visibility</dt><dd>{{ user_settings.get_profile_visibility_display|default:"—" }}</dd>
+    </dl>
+    {% if user_settings %}<a href="{% url 'adminpanel:usersettings_edit' user_settings.pk %}" class="btn btn-sm btn-outline-secondary">Edit settings</a>{% endif %}
+    <hr>
+    {% for social in social_accounts %}
+        <span class="badge text-bg-light border me-2">{{ social.provider }}: {{ social.email }}</span>
+    {% empty %}
+        <span class="text-muted small">No linked social accounts.</span>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% load static %}
+<form
+    method="post"
+    action="{% url 'companies:follow_toggle' company.slug %}"
+    hx-post="{% url 'companies:follow_toggle' company.slug %}"
+    hx-target="this"
+    hx-swap="outerHTML"
+>
+    {% csrf_token %}
+    <button
+        type="submit"
+        class="btn {% if is_following %}btn-secondary{% else %}btn-outline-primary{% endif %} nc-edit-company-btn"
+    >
+        {% if is_following %}
+            <i class="bi bi-check-lg me-1"></i> Following
+        {% else %}
+            <i class="bi bi-plus-lg me-1"></i> Follow
+        {% endif %}
+    </button>
+</form>

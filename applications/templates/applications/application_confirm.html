@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Review Your Application - {{ job.title }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-easy-apply-page { padding: 45px 0 70px; }
+    .nc-easy-apply-wrapper { max-width: 820px; margin: 0 auto; }
+
+    .nc-easy-apply-header { margin-bottom: 24px; }
+    .nc-easy-apply-header h2 { color: var(--nc-heading, #172235); font-weight: 800; letter-spacing: -0.025em; }
+    .nc-easy-apply-header p { color: var(--nc-text, #586678); }
+
+    .nc-eyebrow {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 7px 12px; margin-bottom: 12px; border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1); color: var(--nc-primary, #159a78);
+        font-size: 0.76rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    .nc-easy-card {
+        background: var(--nc-white, #ffffff);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 20px;
+        box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
+        padding: 30px;
+        margin-bottom: 22px;
+    }
+
+    .nc-section-title { color: var(--nc-heading, #172235); font-weight: 750; margin-bottom: 18px; }
+
+    .nc-profile-field-label {
+        display: block;
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .nc-profile-field-value {
+        color: var(--nc-heading, #172235);
+        font-weight: 650;
+        word-break: break-word;
+    }
+
+    .nc-profile-field { margin-bottom: 18px; }
+
+    .nc-profile-skill-chip {
+        display: inline-block;
+        margin: 0 6px 6px 0;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: #f3f7f5;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        font-size: 0.78rem;
+        font-weight: 650;
+        color: var(--nc-text, #586678);
+    }
+
+    .nc-confirm-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+    .nc-confirm-actions .btn { min-height: 46px; border-radius: 10px; padding: 10px 20px; font-weight: 700; }
+
+    @media (max-width: 767.98px) {
+        .nc-easy-apply-page { padding: 26px 0 50px; }
+        .nc-easy-card { padding: 22px; }
+        .nc-confirm-actions { flex-direction: column-reverse; align-items: stretch; }
+        .nc-confirm-actions .btn { width: 100%; }
+    }
+</style>
+
+<div class="nc-easy-apply-page">
+    <div class="container">
+        <div class="nc-easy-apply-wrapper">
+
+            <div class="nc-easy-apply-header">
+                <div class="nc-eyebrow"><i class="bi bi-clipboard-check-fill"></i> Review Your Application</div>
+                <h2 class="mb-1">Apply to {{ job.title }}</h2>
+                <p class="mb-0">{{ job.company.name }} &middot; {{ job.location }}</p>
+            </div>
+
+            <!-- Skill Match - deterministic comparison against the job's required skills -->
+            <div class="nc-easy-card">
+                <h5 class="nc-section-title">Skill Match</h5>
+                {% include "applications/_skill_match.html" %}
+            </div>
+
+            <!-- Application Details - exactly what was submitted, not the profile (spec section 12) -->
+            <div class="nc-easy-card">
+                <h5 class="nc-section-title">Application Details</h5>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Name</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.first_name }} {{ pending.last_name }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Email</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.email }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Mobile</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.phone|default:"—" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Location</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.location|default:"—" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Resume</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.resume_name }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="nc-profile-field">
+                            <span class="nc-profile-field-label">Experience</span>
+                            <p class="nc-profile-field-value mb-0">{{ pending.experience_years }} year{{ pending.experience_years|pluralize }}</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="nc-profile-field mb-0">
+                            <span class="nc-profile-field-label">Skills</span>
+                            {% for skill in match.candidate_skills %}
+                                <span class="nc-profile-skill-chip">{{ skill }}</span>
+                            {% empty %}
+                                <span class="text-muted small">Not provided.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nc-confirm-actions">
+                <form method="post" action="{% url 'applications:apply_cancel' job.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-secondary">Cancel</button>
+                </form>
+                <a href="{% url 'applications:apply' job.pk %}" class="btn btn-outline-primary">
+                    <i class="bi bi-pencil me-1"></i> Back &amp; Edit
+                </a>
+                <form method="post" action="{% url 'applications:apply_confirm' job.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send me-1"></i> Confirm &amp; Apply
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
