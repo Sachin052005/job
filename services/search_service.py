@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from core.constants import JOB_STATUS_PUBLISHED
+from core.constants import JOB_STATUS_PUBLISHED, ROLE_JOB_SEEKER
 
 TRUTHY_PARAM_VALUES = {"1", "true", "yes", "on"}
 
@@ -101,3 +101,79 @@ def filter_applications(queryset, params):
         queryset = queryset.exclude(applicant__profile__github_url="")
 
     return queryset.select_related("applicant", "applicant__profile").distinct()
+
+
+def filter_students(queryset, params):
+    """Recruiter-facing candidate search filters (NammaCareer update spec
+    sections 8-9). Only ever returns job-seeker profiles that have opted
+    into recruiter search (UserSettings.show_in_recruiter_search) - this is
+    the one place that privacy rule is enforced for search results, never a
+    bypass some other call site could skip.
+
+    Domain/subdomain filters are deliberately not offered here: there is no
+    structured domain/subdomain field on a candidate's career preferences
+    to filter against (spec section 9: "Do not create filters for fields
+    that do not exist").
+    """
+    queryset = queryset.filter(role=ROLE_JOB_SEEKER, user__settings__show_in_recruiter_search=True)
+
+    name = (params.get("name") or "").strip()
+    if name:
+        queryset = queryset.filter(
+            Q(user__first_name__icontains=name)
+            | Q(user__last_name__icontains=name)
+            | Q(user__username__icontains=name)
+        )
+
+    location = (params.get("location") or "").strip()
+    if location:
+        queryset = queryset.filter(location__icontains=location)
+
+    skills = (params.get("skills") or "").strip()
+    if skills:
+        queryset = queryset.filter(Q(skills__icontains=skills) | Q(structured_skills__name__icontains=skills))
+
+    education = (params.get("education") or "").strip()
+    if education:
+        queryset = queryset.filter(
+            Q(education_records__degree__icontains=education) | Q(education_records__level=education)
+        )
+
+    college = (params.get("college") or "").strip()
+    if college:
+        queryset = queryset.filter(education_records__institution__icontains=college)
+
+    min_experience = params.get("min_experience")
+    if min_experience not in (None, ""):
+        try:
+            queryset = queryset.filter(experience_years__gte=int(min_experience))
+        except (TypeError, ValueError):
+            pass
+
+    experience_level = (params.get("experience_level") or "").strip()
+    if experience_level:
+        queryset = queryset.filter(career_preference__experience_level=experience_level)
+
+    job_title = (params.get("job_title") or "").strip()
+    if job_title:
+        queryset = queryset.filter(
+            Q(career_preference__preferred_job_title__icontains=job_title) | Q(headline__icontains=job_title)
+        )
+
+    industry = (params.get("industry") or "").strip()
+    if industry:
+        queryset = queryset.filter(career_preference__preferred_industry__icontains=industry)
+
+    employment_type = (params.get("employment_type") or "").strip()
+    if employment_type:
+        queryset = queryset.filter(career_preference__employment_type=employment_type)
+
+    work_mode = (params.get("work_mode") or "").strip()
+    if work_mode:
+        queryset = queryset.filter(career_preference__work_mode=work_mode)
+
+    return (
+        queryset.select_related("user", "career_preference")
+        .prefetch_related("education_records", "structured_skills")
+        .distinct()
+    )

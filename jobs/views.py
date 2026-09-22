@@ -11,7 +11,7 @@ from core.constants import JOB_STATUS_CHOICES, JOB_STATUS_PUBLISHED, PAGE_SIZE
 from core.permissions import EmployerRequiredMixin, OwnerRequiredMixin
 from jobs.forms import JobForm, JobSearchForm
 from jobs.models import Category, Job
-from jobs.services import notify_job_published
+from jobs.services import notify_job_published, record_job_view
 from saved_jobs.models import SavedJob
 from services.search_service import filter_jobs
 
@@ -106,9 +106,7 @@ class JobDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
-        job = self.object
-        if not (request.user.is_authenticated and job.employer_id == request.user.id):
-            Job.objects.filter(pk=job.pk).update(views_count=job.views_count + 1)
+        record_job_view(self.object, request)
         return response
 
     def get_context_data(self, **kwargs):

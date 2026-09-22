@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
 from django.views.generic import TemplateView
 
 from applications.models import Application
@@ -32,6 +33,10 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                     "company": company,
                     "total_jobs": jobs.count(),
                     "active_jobs": jobs.filter(status="published").count(),
+                    # Real, deduplicated job-view total (spec section 7) - never a
+                    # hardcoded/fake value: SUM of the same views_count field
+                    # jobs.services.record_job_view() maintains per job.
+                    "total_job_views": jobs.aggregate(total=Sum("views_count"))["total"] or 0,
                     "total_applications": applications.count(),
                     "pending_applications": applications.filter(
                         status__in=[APPLICATION_STATUS_APPLIED, APPLICATION_STATUS_UNDER_REVIEW]

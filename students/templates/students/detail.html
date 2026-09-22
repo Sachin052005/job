@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}{{ candidate.user.get_full_name|default:candidate.user.username }} - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-candidate-detail-page {
+        padding: 35px 0 75px;
+    }
+
+    .nc-candidate-detail-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .nc-candidate-detail-avatar {
+        width: 72px;
+        height: 72px;
+        flex: 0 0 72px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-size: 1.6rem;
+        font-weight: 800;
+    }
+
+    .nc-candidate-detail-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-candidate-detail-name {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        margin: 0 0 3px;
+    }
+
+    .nc-candidate-detail-headline {
+        color: var(--nc-muted, #8994a3);
+        margin: 0;
+    }
+
+    .nc-candidate-card {
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        padding: 28px;
+        margin-bottom: 18px;
+    }
+
+    .nc-candidate-section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 18px;
+        color: var(--nc-heading, #172235);
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
+
+    .nc-candidate-section-title::before {
+        content: "";
+        width: 4px;
+        height: 18px;
+        border-radius: 99px;
+        background: var(--nc-primary, #159a78);
+    }
+
+    .nc-candidate-row {
+        padding: 12px 0;
+        border-bottom: 1px solid #edf1ef;
+    }
+
+    .nc-candidate-row:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .nc-candidate-row:first-child {
+        padding-top: 0;
+    }
+
+    .nc-candidate-label {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .nc-candidate-value {
+        color: var(--nc-heading, #172235);
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    .nc-candidate-skill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        margin: 0 6px 6px 0;
+        border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        border: 1px solid rgba(21, 154, 120, 0.12);
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+</style>
+
+
+<div class="nc-candidate-detail-page">
+    <div class="container">
+
+        <div class="mb-4">
+            <a href="{% url 'students:search' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Back to Search
+            </a>
+        </div>
+
+        <div class="nc-candidate-detail-header">
+            <div class="nc-candidate-detail-avatar">
+                {% if candidate.photo %}
+                    <img src="{{ candidate.photo.url }}" alt="">
+                {% else %}
+                    {{ candidate.user.first_name|default:candidate.user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div>
+                <h3 class="nc-candidate-detail-name">{{ candidate.user.get_full_name|default:candidate.user.username }}</h3>
+                <p class="nc-candidate-detail-headline">{{ candidate.headline|default:"No headline provided" }}</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Overview</h5>
+                    <div class="row">
+                        <div class="col-sm-6 nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Location</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.location|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-sm-6 nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Experience</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.experience_years }} year{{ candidate.experience_years|pluralize }}</p>
+                        </div>
+                        {% if candidate.career_preference %}
+                        <div class="col-sm-6 nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Preferred Role</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.career_preference.preferred_job_title|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-sm-6 nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Work Mode</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.career_preference.get_work_mode_display|default:"Not specified" }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if candidate.summary %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Summary</p>
+                            <p class="nc-candidate-value mb-0" style="font-weight: 500;">{{ candidate.summary }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if candidate.effective_skills_list %}
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Skills</h5>
+                    <div>
+                        {% for skill in candidate.effective_skills_list %}
+                            <span class="nc-candidate-skill">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Education</h5>
+                    {% for edu in candidate.education_records.all %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-value mb-0">{{ edu.degree }}{% if edu.specialization %} in {{ edu.specialization }}{% endif %}</p>
+                            <p class="nc-candidate-label mb-0">{{ edu.institution }} &middot; {{ edu.start_year }}&ndash;{{ edu.end_year|default:"Present" }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No education on file.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Experience</h5>
+                    {% for exp in candidate.experience_records.all %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-value mb-0">{{ exp.designation }} at {{ exp.company }}</p>
+                            <p class="nc-candidate-label mb-0">{{ exp.start_date }}&ndash;{% if exp.is_current %}Present{% else %}{{ exp.end_date }}{% endif %}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No professional experience - candidate may be a fresher.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Projects</h5>
+                    {% for project in candidate.projects.all %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-value mb-0">{{ project.title }}</p>
+                            {% if project.technologies %}<p class="nc-candidate-label mb-0">{{ project.technologies }}</p>{% endif %}
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No projects on file.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Internships</h5>
+                    {% for internship in candidate.internships.all %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-value mb-0">{{ internship.role }} at {{ internship.company }}</p>
+                            <p class="nc-candidate-label mb-0">{{ internship.start_date }}&ndash;{{ internship.end_date|default:"Present" }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No internships on file.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Accomplishments</h5>
+                    {% for accomplishment in candidate.accomplishments.all %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-value mb-0">{{ accomplishment.title }}</p>
+                            <p class="nc-candidate-label mb-0">{{ accomplishment.get_category_display }}{% if accomplishment.issuer %} &middot; {{ accomplishment.issuer }}{% endif %}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No accomplishments on file.</p>
+                    {% endfor %}
+                </div>
+
+                {% if candidate.languages.all %}
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Languages</h5>
+                    <div>
+                        {% for language in candidate.languages.all %}
+                            <span class="nc-candidate-skill">{{ language.name }} &middot; {{ language.get_proficiency_display }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Contact</h5>
+                    {% if candidate_can_contact %}
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Email</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.user.email|default:"Not provided" }}</p>
+                        </div>
+                        <div class="nc-candidate-row">
+                            <p class="nc-candidate-label mb-1">Phone</p>
+                            <p class="nc-candidate-value mb-0">{{ candidate.phone|default:"Not provided" }}</p>
+                        </div>
+                    {% else %}
+                        <p class="text-muted small mb-0">This candidate has not opted in to sharing contact details.</p>
+                    {% endif %}
+                </div>
+
+                {% if candidate.resume and candidate_can_download_resume %}
+                <div class="nc-candidate-card">
+                    <h5 class="nc-candidate-section-title">Resume</h5>
+                    <a href="{{ candidate.resume.url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-file-earmark-text me-1"></i> View Resume
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

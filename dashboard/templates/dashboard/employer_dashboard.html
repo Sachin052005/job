@@ -327,6 +327,14 @@
                     </a>
 
                     <a
+                        href="{% url 'students:search' %}"
+                        class="btn btn-outline-primary nc-post-job-btn"
+                    >
+                        <i class="bi bi-search me-1"></i>
+                        Search Candidates
+                    </a>
+
+                    <a
                         href="{% url 'jobs:create' %}"
                         class="btn btn-primary nc-post-job-btn"
                     >
@@ -459,6 +467,31 @@
 
                         <p class="nc-stat-value">
                             {{ pending_applications }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3 col-6">
+
+                <div class="nc-stat-card">
+
+                    <span class="nc-stat-icon info">
+                        <i class="bi bi-eye"></i>
+                    </span>
+
+                    <div>
+
+                        <p class="nc-stat-label">
+                            Job Views
+                        </p>
+
+                        <p class="nc-stat-value">
+                            {{ total_job_views }}
                         </p>
 
                     </div>

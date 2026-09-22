@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Search Candidates - NammaCareer{% endblock %}
+
+{% block content %}
+
+<style>
+    .nc-candidates-page {
+        padding: 42px 0 70px;
+    }
+
+    .nc-candidates-header {
+        margin-bottom: 28px;
+    }
+
+    .nc-candidates-title {
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .nc-candidates-subtitle {
+        color: var(--nc-text, #586678);
+    }
+
+    .nc-filter-card {
+        padding: 24px;
+        margin-bottom: 24px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-filter-card .form-label {
+        color: var(--nc-heading, #172235);
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .nc-filter-card .form-control,
+    .nc-filter-card .form-select {
+        min-height: 45px;
+        border-radius: 10px;
+        border-color: var(--nc-border, #e1e8e4);
+        background: #fbfdfc;
+    }
+
+    .nc-filter-card .form-control:focus,
+    .nc-filter-card .form-select:focus {
+        border-color: var(--nc-primary, #159a78);
+        box-shadow: 0 0 0 4px rgba(21, 154, 120, 0.10);
+        background: #ffffff;
+    }
+
+    .nc-filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .nc-filter-actions .btn {
+        min-height: 45px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .nc-reset-btn {
+        width: 45px;
+        flex: 0 0 45px;
+    }
+
+    .nc-candidate-card {
+        height: 100%;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 17px;
+        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nc-candidate-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(21, 154, 120, 0.28);
+        box-shadow: 0 14px 32px rgba(23, 34, 53, 0.08);
+    }
+
+    .nc-candidate-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .nc-candidate-avatar {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary, #159a78);
+        font-weight: 800;
+    }
+
+    .nc-candidate-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .nc-candidate-name {
+        color: var(--nc-heading, #172235);
+        font-weight: 750;
+        margin: 0;
+    }
+
+    .nc-candidate-headline {
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.82rem;
+        margin: 0;
+    }
+
+    .nc-candidate-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        color: var(--nc-text, #586678);
+        font-size: 0.78rem;
+        margin-bottom: 12px;
+    }
+
+    .nc-candidate-meta i {
+        color: var(--nc-primary, #159a78);
+        margin-right: 4px;
+    }
+
+    .nc-candidate-skill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        margin: 0 4px 5px 0;
+        border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        border: 1px solid rgba(21, 154, 120, 0.12);
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .nc-candidate-footer {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--nc-border, #e1e8e4);
+        text-align: right;
+    }
+
+    .nc-view-candidate-btn {
+        border-radius: 9px;
+        font-weight: 650;
+    }
+
+    .nc-empty-state {
+        padding: 70px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
+    }
+
+    .nc-empty-state i {
+        opacity: 0.55;
+    }
+
+    .nc-empty-state p {
+        color: var(--nc-text, #586678);
+        margin-bottom: 0;
+    }
+</style>
+
+
+<div class="nc-candidates-page">
+    <div class="container">
+
+        <div class="nc-candidates-header">
+            <h2 class="nc-candidates-title mb-1">Search Candidates</h2>
+            <p class="nc-candidates-subtitle mb-0">
+                {{ total_candidate_count }} candidate{{ total_candidate_count|pluralize }} match your filters
+            </p>
+        </div>
+
+        <div class="nc-filter-card">
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" value="{{ request.GET.name }}" class="form-control" placeholder="Candidate name">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Skills</label>
+                    <input type="text" name="skills" value="{{ request.GET.skills }}" class="form-control" placeholder="e.g. Python, React">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" value="{{ request.GET.location }}" class="form-control" placeholder="City">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" name="job_title" value="{{ request.GET.job_title }}" class="form-control" placeholder="Preferred role">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Degree / Education</label>
+                    <input type="text" name="education" value="{{ request.GET.education }}" class="form-control" placeholder="e.g. B.Tech">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">College</label>
+                    <input type="text" name="college" value="{{ request.GET.college }}" class="form-control" placeholder="Institution">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Min. Experience</label>
+                    <input type="number" min="0" name="min_experience" value="{{ request.GET.min_experience }}" class="form-control" placeholder="Years">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Experience Level</label>
+                    <select name="experience_level" class="form-select">
+                        <option value="">Any</option>
+                        {% for value, label in experience_level_choices %}
+                            <option value="{{ value }}" {% if request.GET.experience_level == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Employment Type</label>
+                    <select name="employment_type" class="form-select">
+                        <option value="">Any</option>
+                        {% for value, label in employment_type_choices %}
+                            <option value="{{ value }}" {% if request.GET.employment_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Remote Preference</label>
+                    <select name="work_mode" class="form-select">
+                        <option value="">Any</option>
+                        {% for value, label in work_mode_choices %}
+                            <option value="{{ value }}" {% if request.GET.work_mode == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Industry</label>
+                    <input type="text" name="industry" value="{{ request.GET.industry }}" class="form-control" placeholder="e.g. Fintech">
+                </div>
+
+                <div class="col-md-2">
+                    <div class="nc-filter-actions">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-search me-1"></i>
+                            Search
+                        </button>
+                        <a href="{% url 'students:search' %}" class="btn btn-outline-secondary nc-reset-btn" title="Reset filters">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+
+        {% if candidates %}
+
+            <div class="row g-3 stagger-grid">
+
+                {% for candidate in candidates %}
+
+                    <div class="col-lg-4 col-md-6">
+
+                        <div class="nc-candidate-card">
+
+                            <div class="nc-candidate-header">
+                                <div class="nc-candidate-avatar">
+                                    {% if candidate.photo %}
+                                        <img src="{{ candidate.photo.url }}" alt="">
+                                    {% else %}
+                                        {{ candidate.user.first_name|default:candidate.user.username|slice:":1"|upper }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <p class="nc-candidate-name">{{ candidate.user.get_full_name|default:candidate.user.username }}</p>
+                                    <p class="nc-candidate-headline">{{ candidate.headline|default:"No headline provided" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="nc-candidate-meta">
+                                {% if candidate.location %}
+                                    <span><i class="bi bi-geo-alt"></i>{{ candidate.location }}</span>
+                                {% endif %}
+                                <span><i class="bi bi-briefcase"></i>{{ candidate.experience_years }} yr{{ candidate.experience_years|pluralize }} exp</span>
+                            </div>
+
+                            <div>
+                                {% for skill in candidate.effective_skills_list|slice:":5" %}
+                                    <span class="nc-candidate-skill">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <div class="nc-candidate-footer">
+                                <a href="{% url 'students:detail' candidate.user_id %}?source=candidate_search" class="btn btn-sm btn-outline-primary nc-view-candidate-btn">
+                                    View Profile
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% include "components/pagination.html" %}
+
+        {% else %}
+
+            <div class="nc-empty-state">
+                <i class="bi bi-people display-1 text-secondary"></i>
+                <p class="mt-3">No candidates match these filters.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

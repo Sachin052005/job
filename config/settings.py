@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     "adminpanel",
     "activity",
     "resumes",
+    "students",
 ]
 
 

@@ -24,6 +24,7 @@ urlpatterns = [
     path("applications/", include("applications.urls")),
     path("saved-jobs/", include("saved_jobs.urls")),
     path("notifications/", include("notifications.urls")),
+    path("candidates/", include("students.urls")),
     path("job-alerts/", include("accounts.job_alert_urls")),
     path("settings/", include("accounts.settings_urls")),
     path("help/", include("helpcenter.urls")),

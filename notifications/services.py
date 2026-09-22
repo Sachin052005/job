@@ -10,10 +10,12 @@ a status change notifies the applicant (never whoever made the change,
 recruiter or admin). Call these instead of create_notification() directly
 so the recipient/content rules live in exactly one place.
 """
-from core.constants import NOTIFICATION_TYPE_APPLICATION
+from core.constants import NOTIFICATION_TYPE_APPLICATION, NOTIFICATION_TYPE_RECRUITER
 
 
-def create_notification(recipient, notification_type, title, message="", job=None, application=None, company=None):
+def create_notification(
+    recipient, notification_type, title, message="", job=None, application=None, company=None, actor=None
+):
     from notifications.models import Notification
 
     settings_obj = getattr(recipient, "settings", None)
@@ -28,6 +30,7 @@ def create_notification(recipient, notification_type, title, message="", job=Non
         job=job,
         application=application,
         company=company,
+        actor=actor,
     )
 
 
@@ -63,4 +66,20 @@ def notify_application_status_change(application, old_status, new_status):
         job=job,
         application=application,
         company=job.company,
+    )
+
+
+def notify_profile_view(activity):
+    """A recruiter viewed a student's profile (spec sections 12, 39) - notify
+    the student, naming the recruiter/company when available via
+    StudentActivity.actor_label(). `activity` is the StudentActivity row
+    activity.services.record_profile_view() just created, which is already
+    deduplicated, so this fires exactly once per genuinely new view."""
+    return create_notification(
+        activity.student,
+        NOTIFICATION_TYPE_RECRUITER,
+        "Your profile was viewed",
+        f"{activity.actor_label()} viewed your profile.",
+        company=activity.company,
+        actor=activity.recruiter,
     )

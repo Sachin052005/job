@@ -26,7 +26,7 @@
         {% if user.profile.role == "job_seeker" %}
             <a href="{% url 'accounts:profile' %}" class="btn btn-primary btn-sm nc-drawer-cta">View &amp; Update Profile</a>
         {% else %}
-            <a href="{% url 'accounts:recruiter_profile_edit' %}" class="btn btn-primary btn-sm nc-drawer-cta">View &amp; Update Profile</a>
+            <a href="{% url 'companies:manage' %}" class="btn btn-primary btn-sm nc-drawer-cta">Manage Company Profile</a>
         {% endif %}
     </div>
 
@@ -63,7 +63,7 @@
             <p class="nc-drawer-section-sub">Last 90 days</p>
             <div class="nc-drawer-perf-grid nc-drawer-perf-grid-4">
                 <a href="{% url 'accounts:recruiter_performance' %}" class="nc-drawer-perf-card">
-                    <span class="nc-drawer-perf-value">0</span>
+                    <span class="nc-drawer-perf-value">{{ drawer_job_views_count|default:0 }}</span>
                     <span class="nc-drawer-perf-label">Job Views</span>
                 </a>
                 <a href="{% url 'accounts:recruiter_performance' %}" class="nc-drawer-perf-card">
@@ -82,14 +82,10 @@
         </div>
 
         <nav class="nc-drawer-nav">
-            <a href="{% url 'accounts:recruiter_profile_edit' %}"><i class="bi bi-person-badge"></i> Recruiter Profile</a>
-            {% if user.company %}
-                <a href="{% url 'companies:edit' user.company.slug %}"><i class="bi bi-building"></i> Company Profile</a>
-            {% else %}
-                <a href="{% url 'companies:create' %}"><i class="bi bi-building"></i> Company Profile</a>
-            {% endif %}
+            <a href="{% url 'companies:manage' %}"><i class="bi bi-building"></i> Company Profile</a>
+            <a href="{% url 'students:search' %}"><i class="bi bi-search"></i> Search Candidates</a>
             <a href="{% url 'dashboard:home' %}"><i class="bi bi-briefcase"></i> Dashboard</a>
-            
+
             <a href="{% url 'help:feedback' %}"><i class="bi bi-star"></i> Feedback &amp; Rate</a>
             <a href="{% url 'settings:home' %}"><i class="bi bi-gear"></i> Settings</a>
             <a href="{% url 'help:faq' %}"><i class="bi bi-question-circle"></i> FAQs</a>
