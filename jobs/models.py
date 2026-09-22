@@ -21,6 +21,12 @@ from core.constants import (
 
 
 class Category(models.Model):
+    """Legacy flat job category - superseded by JobDomain/JobSubdomain (spec
+    sections 17-21). Kept only until Phase 6 (domains wiring) migrates every
+    remaining usage (job alerts, filters, forms) off it and removes it and
+    Job.category in one clean follow-up migration - not a permanent duplicate
+    taxonomy alongside JobDomain/JobSubdomain."""
+
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=120, unique=True, blank=True)
 
@@ -37,6 +43,56 @@ class Category(models.Model):
         return self.name
 
 
+class JobDomain(models.Model):
+    """Top-level job domain (spec section 17) - exactly IT / Non-IT / Medical
+    Coding, seeded by a data migration. Not user-creatable beyond that set in
+    the current spec, but modeled as a normal table (not a hardcoded choices
+    list) so display_order/is_active stay data-driven."""
+
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["display_order", "name"]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class JobSubdomain(models.Model):
+    """Subdomain within a JobDomain (spec sections 18-20) - the subdomain
+    choices offered when creating/editing a job depend on the selected
+    JobDomain (spec section 22)."""
+
+    domain = models.ForeignKey(JobDomain, on_delete=models.CASCADE, related_name="subdomains")
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, blank=True)
+    is_active = models.BooleanField(default=True)
+    display_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["display_order", "name"]
+        constraints = [
+            models.UniqueConstraint(fields=["domain", "slug"], name="unique_subdomain_slug_per_domain"),
+            models.UniqueConstraint(fields=["domain", "name"], name="unique_subdomain_name_per_domain"),
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.domain.name} / {self.name}"
+
+
 class Job(models.Model):
     employer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="jobs"
@@ -44,6 +100,16 @@ class Job(models.Model):
     company = models.ForeignKey("companies.Company", on_delete=models.CASCADE, related_name="jobs")
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="jobs"
+    )
+    # domain/subdomain replace `category` (spec sections 17-22). Nullable at
+    # the DB level only to keep the transition migration non-destructive;
+    # JobForm requires both for every new/edited job going forward, and the
+    # Phase 3 data migration backfills every pre-existing job.
+    domain = models.ForeignKey(
+        JobDomain, on_delete=models.SET_NULL, null=True, blank=True, related_name="jobs"
+    )
+    subdomain = models.ForeignKey(
+        JobSubdomain, on_delete=models.SET_NULL, null=True, blank=True, related_name="jobs"
     )
     title = models.CharField(max_length=200)
     location = models.CharField(max_length=150)
@@ -132,3 +198,32 @@ class ScreeningQuestion(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class JobView(models.Model):
+    """One real job-detail view (spec section 7).
+
+    Deduplicated per (job, viewer) for authenticated users and per
+    (job, session_key) for anonymous visitors within
+    core.constants.JOB_VIEW_DEDUP_HOURS - see jobs.views.JobDetailView, the
+    single write path for this model. Job.views_count stays a denormalized
+    counter incremented only when a genuinely new JobView is recorded, so
+    existing templates reading it keep working unchanged.
+    """
+
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="view_events")
+    viewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    session_key = models.CharField(max_length=40, blank=True)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-viewed_at"]
+        indexes = [
+            models.Index(fields=["job", "viewer"]),
+            models.Index(fields=["job", "session_key"]),
+        ]
+
+    def __str__(self):
+        return f"View of job {self.job_id} at {self.viewed_at}"

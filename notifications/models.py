@@ -18,6 +18,13 @@ class Notification(models.Model):
         "applications.Application", on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
     company = models.ForeignKey("companies.Company", on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
+    # Who performed the action that triggered this notification (e.g. the
+    # recruiter who viewed a profile) - lets the message say "Rahul from ABC
+    # Technologies viewed your profile" instead of a generic recruiter/company
+    # notice when that information is actually available (spec section 39).
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
 
     class Meta:
         ordering = ["-created_at"]

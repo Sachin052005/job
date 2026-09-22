@@ -333,3 +333,135 @@ FEEDBACK_CATEGORY_CHOICES = [
     ("account", "Account"),
     ("other", "Other"),
 ]
+
+# ---------------------------------------------------------------------------
+# Student activity / recruiter-action tracking (NammaCareer update spec
+# sections 7, 10-13, 32-39, 78-80)
+# ---------------------------------------------------------------------------
+
+ACTIVITY_PROFILE_VIEW = "profile_view"
+ACTIVITY_SEARCH_APPEARANCE = "search_appearance"
+ACTIVITY_RESUME_VIEW = "resume_view"
+ACTIVITY_RESUME_DOWNLOAD = "resume_download"
+ACTIVITY_SHORTLISTED = "shortlisted"
+ACTIVITY_CONTACTED = "contacted"
+ACTIVITY_INTERVIEW = "interview"
+ACTIVITY_APPLICATION_STATUS = "application_status"
+ACTIVITY_PROFILE_UPDATE = "profile_update"
+
+STUDENT_ACTIVITY_EVENT_CHOICES = [
+    (ACTIVITY_PROFILE_VIEW, "Profile View"),
+    (ACTIVITY_SEARCH_APPEARANCE, "Search Appearance"),
+    (ACTIVITY_RESUME_VIEW, "Resume View"),
+    (ACTIVITY_RESUME_DOWNLOAD, "Resume Download"),
+    (ACTIVITY_SHORTLISTED, "Shortlisted"),
+    (ACTIVITY_CONTACTED, "Contacted"),
+    (ACTIVITY_INTERVIEW, "Interview"),
+    (ACTIVITY_APPLICATION_STATUS, "Application Status Update"),
+    (ACTIVITY_PROFILE_UPDATE, "Profile Update"),
+]
+
+# Recruiter-initiated event types counted toward the "Recruiter Actions"
+# dashboard counter (spec section 35) - excludes PROFILE_UPDATE, which is
+# student-initiated and would otherwise inflate the count.
+RECRUITER_ACTION_EVENT_TYPES = [
+    ACTIVITY_PROFILE_VIEW,
+    ACTIVITY_SEARCH_APPEARANCE,
+    ACTIVITY_RESUME_VIEW,
+    ACTIVITY_RESUME_DOWNLOAD,
+    ACTIVITY_SHORTLISTED,
+    ACTIVITY_CONTACTED,
+    ACTIVITY_INTERVIEW,
+    ACTIVITY_APPLICATION_STATUS,
+]
+
+PROFILE_VIEW_SOURCE_SEARCH = "candidate_search"
+PROFILE_VIEW_SOURCE_APPLICATION = "application"
+PROFILE_VIEW_SOURCE_DIRECT = "direct"
+
+PROFILE_VIEW_SOURCE_CHOICES = [
+    (PROFILE_VIEW_SOURCE_SEARCH, "Candidate Search"),
+    (PROFILE_VIEW_SOURCE_APPLICATION, "Application"),
+    (PROFILE_VIEW_SOURCE_DIRECT, "Direct"),
+]
+
+# Dedup windows (hours): a repeat of the same event within the window does not
+# create a new record/notification (spec sections 7, 10, 12, 78, 80) - defined
+# once here so every tracking call site (jobs, activity, notifications) agrees
+# on the same policy instead of re-deriving it.
+JOB_VIEW_DEDUP_HOURS = 24
+PROFILE_VIEW_DEDUP_HOURS = 24
+SEARCH_APPEARANCE_DEDUP_HOURS = 24
+NOTIFICATION_DEDUP_HOURS = 24
+
+# ---------------------------------------------------------------------------
+# Job domain / subdomain taxonomy (NammaCareer update spec sections 17-21)
+# ---------------------------------------------------------------------------
+
+JOB_DOMAIN_IT = "it"
+JOB_DOMAIN_NON_IT = "non-it"
+JOB_DOMAIN_MEDICAL_CODING = "medical-coding"
+
+# Seed data for the data migration that creates the 3 fixed top-level domains
+# and their initial subdomains. Slugs are stable identifiers used elsewhere
+# (URL filters, the migration that backfills existing jobs) - do not rename
+# without a follow-up migration.
+JOB_DOMAIN_SEED = [
+    {
+        "slug": JOB_DOMAIN_IT,
+        "name": "IT",
+        "subdomains": [
+            "Software Development",
+            "Web Development",
+            "Mobile Development",
+            "Data Science",
+            "Artificial Intelligence / Machine Learning",
+            "Cybersecurity",
+            "Cloud Computing",
+            "DevOps",
+            "QA / Testing",
+            "UI/UX Design",
+            "Database",
+            "Networking",
+            "Technical Support",
+            "IT Infrastructure",
+        ],
+    },
+    {
+        "slug": JOB_DOMAIN_NON_IT,
+        "name": "Non-IT",
+        "subdomains": [
+            "Mechanical",
+            "Civil",
+            "Electrical",
+            "Electronics",
+            "Chemical",
+            "Automobile",
+            "Manufacturing",
+            "Construction",
+            "Human Resources",
+            "Finance",
+            "Accounting",
+            "Sales",
+            "Marketing",
+            "Operations",
+            "Logistics",
+            "Administration",
+        ],
+    },
+    {
+        "slug": JOB_DOMAIN_MEDICAL_CODING,
+        "name": "Medical Coding",
+        "subdomains": [
+            "Medical Coder",
+            "Medical Billing",
+            "ICD Coding",
+            "CPT Coding",
+            "HCC Coding",
+            "Clinical Documentation",
+            "Medical Claims",
+            "Healthcare BPO",
+            "Medical Coding QA",
+        ],
+    },
+]

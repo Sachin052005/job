@@ -98,6 +98,8 @@ INSTALLED_APPS = [
     "helpcenter",
     "dashboard",
     "adminpanel",
+    "activity",
+    "resumes",
 ]
 
 
