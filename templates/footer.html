@@ -125,7 +125,7 @@
 
 .app-footer {
     position: relative;
-    background: #172235;
+    background: var(--nc-dark-navy, #08182E);
     color: #ffffff;
     overflow: hidden;
 }
@@ -142,9 +142,9 @@
 
     background: linear-gradient(
         90deg,
-        #159a78,
-        #20b88f,
-        #159a78
+        var(--nc-primary, #2563EB),
+        var(--nc-indigo, #4F46E5),
+        var(--nc-primary, #2563EB)
     );
 }
 
@@ -173,6 +173,7 @@
     font-size: 1.2rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+    color: #FFFFFF;
 }
 
 
@@ -181,8 +182,8 @@
 ========================================= */
 
 .footer-logo {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
 
     display: block;
 
@@ -209,7 +210,7 @@
 
     margin-top: 18px;
 
-    color: #aeb8c5;
+    color: var(--nc-text-light, #94A3B8);
 
     font-size: 0.92rem;
     line-height: 1.7;
@@ -255,25 +256,25 @@
 
     gap: 9px;
 
-    color: #aeb8c5;
+    color: var(--nc-text-light, #94A3B8);
 
     text-decoration: none;
 
     font-size: 0.9rem;
 
     transition:
-        color 0.25s ease,
-        transform 0.25s ease;
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 
 .footer-column a i {
-    color: #159a78;
+    color: var(--nc-primary, #2563EB);
 
     font-size: 0.72rem;
 
     transition:
-        transform 0.25s ease;
+        transform 0.2s ease;
 }
 
 
@@ -296,12 +297,12 @@
 .footer-bottom {
     padding: 22px 0 25px;
 
-    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 
 .footer-bottom p {
-    color: #8994a3;
+    color: var(--nc-text-muted, #64748B);
 
     font-size: 0.78rem;
 }

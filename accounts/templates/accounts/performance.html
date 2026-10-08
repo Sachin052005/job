@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Your Profile Performance - NammaCareer{% endblock %}
 
 {% block content %}
 <div class="container" style="padding: 42px 0 70px;">
     <h2 class="mb-1" style="color: var(--nc-heading, #172235); font-weight: 800;">Your Profile Performance</h2>
-    <p class="text-muted mb-4">Last 90 days</p>
+    
 
     <div class="row g-4">
         <div class="col-6 col-md-3">
@@ -32,8 +33,183 @@
                 <p class="h3 mb-0">{{ applications_count }}</p>
             </div>
         </div>
+        <div class="col-6 col-md-4">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Resume Views</p>
+                <p class="h3 mb-0">{{ resume_views }}</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Resume Downloads</p>
+                <p class="h3 mb-0">{{ resume_downloads }}</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="card p-4 text-center" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+                <p class="text-muted small mb-1">Profile Updates</p>
+                <p class="h3 mb-0">{{ profile_updates }}</p>
+            </div>
+        </div>
     </div>
 
-    <p class="text-muted small mt-4">Profile Views and Search Appearances require dedicated event tracking not yet implemented - shown as 0 rather than an invented number.</p>
+    <div class="card p-4 mt-4" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            {% for key, label in range_options %}
+                <a href="?range={{ key }}" class="btn btn-sm {% if range_key == key %}btn-primary{% else %}btn-outline-secondary{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+        {% if range_key == "custom" %}
+        <form method="get" class="d-flex flex-wrap gap-2 align-items-center mb-3">
+            <input type="hidden" name="range" value="custom">
+            <input type="date" name="start" value="{{ range_start|date:'Y-m-d' }}" class="form-control form-control-sm" style="max-width:160px;">
+            <span class="text-muted small">to</span>
+            <input type="date" name="end" value="{{ range_end|date:'Y-m-d' }}" class="form-control form-control-sm" style="max-width:160px;">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Apply</button>
+        </form>
+        {% endif %}
+
+        <h5 class="mb-1">Activity Overview</h5>
+        <p class="text-muted small mb-3">{{ range_label }}</p>
+
+        {% if chart_has_data %}
+
+            {{ chart_json|json_script:"nc-activity-chart-data" }}
+
+            <div
+                class="nc-activity-chart"
+                data-activity-chart
+                data-chart-source="nc-activity-chart-data"
+                role="img"
+                aria-label="Activity Overview for {{ range_label }}: {{ profile_views }} profile views, {{ search_appearances }} search appearances, {{ recruiter_actions }} recruiter actions."
+            ></div>
+
+            <div class="nc-activity-chart-legend">
+                {% for series in chart_series %}
+                <span class="nc-activity-chart-legend-item">
+                    <span class="nc-activity-chart-dot" style="background: {{ series.color }};"></span>
+                    {{ series.label }}
+                </span>
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <div class="nc-perf-empty">
+                <i class="bi bi-graph-up"></i>
+                <p class="mb-0 fw-semibold">No activity recorded yet.</p>
+                <p class="text-muted small mb-0">
+                    Your activity will appear here when recruiters view, discover, contact, or interact with your profile.
+                </p>
+            </div>
+
+        {% endif %}
+    </div>
+
+    <div class="card p-4 mt-4" style="border-radius: 14px; border-color: var(--nc-border, #e1e8e4);">
+        <h5 class="mb-3">Activity Details — {{ range_label }}</h5>
+        {% if timeline %}
+        {% for group in timeline %}
+        <p class="text-muted small fw-bold mb-2{% if not forloop.first %} mt-3{% endif %}">{{ group.label }}</p>
+        <ul class="list-unstyled mb-0">
+            {% for item in group.items %}
+            <li class="nc-perf-timeline__item">{{ item.text }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+        {% else %}
+        <p class="text-muted mb-0">No activity yet. Once recruiters view your profile or you apply to jobs, it will show up here.</p>
+        {% endif %}
+    </div>
 </div>
+
+<style>
+.nc-activity-chart {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+}
+.nc-activity-chart svg {
+    display: block;
+    width: 100%;
+    cursor: crosshair;
+}
+.nc-activity-chart-tooltip {
+    position: absolute;
+    top: 8px;
+    transform: translateX(-50%);
+    min-width: 170px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--nc-heading, #172235);
+    color: #fff;
+    font-size: 0.78rem;
+    box-shadow: 0 10px 25px rgba(23, 34, 53, 0.25);
+    pointer-events: none;
+    z-index: 2;
+}
+.nc-activity-chart-tooltip-date {
+    font-weight: 800;
+    margin-bottom: 6px;
+    font-size: 0.76rem;
+    opacity: 0.85;
+}
+.nc-activity-chart-tooltip-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 0;
+}
+.nc-activity-chart-tooltip-row strong {
+    margin-left: auto;
+}
+.nc-activity-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 14px;
+}
+.nc-activity-chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--nc-text, #586678);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.nc-activity-chart-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.nc-perf-empty {
+    padding: 40px 20px;
+    text-align: center;
+    border: 1px dashed var(--nc-border, #e1e8e4);
+    border-radius: 14px;
+}
+.nc-perf-empty i {
+    font-size: 2rem;
+    color: var(--nc-muted, #8994a3);
+    margin-bottom: 10px;
+    display: inline-block;
+}
+.nc-perf-timeline__item {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--nc-border, #e1e8e4);
+}
+.nc-perf-timeline__item:last-child {
+    border-bottom: none;
+}
+@media (max-width: 576px) {
+    .nc-activity-chart { min-height: 180px; }
+    .nc-activity-chart-tooltip { min-width: 150px; font-size: 0.72rem; }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/activity-chart.js' %}"></script>
 {% endblock %}

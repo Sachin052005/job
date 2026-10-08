@@ -157,19 +157,6 @@
                     {% include "applications/_skill_match.html" %}
                 </div>
 
-                {% if screening_form.questions %}
-                <div class="nc-easy-card">
-                    <h5 class="nc-section-title">Screening Questions</h5>
-                    {% for field in screening_form %}
-                        <div class="nc-form-group">
-                            <label class="nc-form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-                            {{ field|add_class:"form-control" }}
-                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
                 <div class="nc-confirm-actions">
                     <a href="{% url 'jobs:detail' job.pk %}" class="btn btn-outline-secondary">Cancel</a>
                     <a href="{% url 'accounts:profile_edit' %}?next={% url 'applications:easy_apply_review' job.pk %}" class="btn btn-outline-primary">Edit Profile</a>

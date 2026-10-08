@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}{{ resume.title }} - ATS Analysis - NammaCareer{% endblock %}
+
+{% block content %}
+<style>
+    .nc-ats-page { padding: 36px 0 70px; }
+    .nc-ats-header {
+        background: linear-gradient(135deg, #ffffff 0%, var(--nc-primary-soft, #e8f6f1) 100%);
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 18px;
+        padding: 26px 28px;
+        margin-bottom: 22px;
+    }
+    .nc-ats-eyebrow { color: var(--nc-primary-dark, #08785d); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nc-ats-title { font-weight: 800; color: var(--nc-heading, #172235); margin: 4px 0 2px; }
+    .nc-ats-sub { color: var(--nc-text, #586678); font-size: 0.88rem; }
+    .nc-score-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0 16px; }
+    .nc-score-tile { flex: 1 1 130px; background: #fff; border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 14px; text-align: center; }
+    .nc-score-tile .val { font-size: 1.6rem; font-weight: 800; color: var(--nc-heading, #172235); }
+    .nc-score-tile .lbl { font-size: 0.76rem; color: var(--nc-muted, #8994a3); font-weight: 700; text-transform: uppercase; }
+    .nc-score-delta { font-size: 0.8rem; font-weight: 700; }
+    .nc-score-delta.up { color: #159a78; }
+    .nc-score-delta.down { color: #d64545; }
+
+    .nc-ats-tabs .nav-link { font-weight: 700; color: var(--nc-text, #586678); border: 0; border-bottom: 3px solid transparent; }
+    .nc-ats-tabs .nav-link.active { color: var(--nc-primary-dark, #08785d); border-bottom-color: var(--nc-primary, #159a78); background: transparent; }
+
+    .nc-ats-card { background: #fff; border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .nc-check-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--nc-border, #e1e8e4); font-size: 0.88rem; }
+    .nc-check-row:last-child { border-bottom: none; }
+    .nc-check-good { color: #159a78; }
+    .nc-check-warn { color: #b8860b; }
+    .nc-check-bad { color: #d64545; }
+
+    .nc-bar-track { height: 8px; border-radius: 999px; background: #eef2f0; overflow: hidden; margin-top: 4px; }
+    .nc-bar-fill { height: 100%; background: var(--nc-primary, #159a78); }
+
+    .nc-issue-item { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .nc-issue-item.sev-high { border-left: 4px solid #d64545; }
+    .nc-issue-item.sev-medium { border-left: 4px solid #d99425; }
+    .nc-issue-item.sev-low { border-left: 4px solid #6a8caf; }
+    .nc-issue-quote { background: #fff5f5; border-left: 3px solid #d64545; padding: 8px 12px; margin: 8px 0; font-size: 0.85rem; font-style: italic; border-radius: 0 8px 8px 0; }
+    .nc-issue-actions form { display: inline; }
+
+    .nc-skill-chip { display: inline-flex; align-items: center; padding: 6px 12px; margin: 0 6px 6px 0; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+    .nc-skill-chip.matched { background: var(--nc-primary-soft, #e8f6f1); color: var(--nc-primary-dark, #08785d); }
+    .nc-skill-chip.missing { background: #fff0f0; color: #b23a3a; }
+
+    .nc-history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--nc-border, #e1e8e4); font-size: 0.86rem; }
+    .nc-history-item:last-child { border-bottom: none; }
+
+    @media (max-width: 767.98px) {
+        .nc-ats-header { padding: 20px; }
+        .nc-score-tile { flex-basis: 45%; }
+    }
+</style>
+
+<div class="nc-ats-page">
+    <div class="container">
+
+        <div class="nc-ats-header">
+            <p class="nc-ats-eyebrow mb-0">NammaCareer ATS &middot; Resume Intelligence Center</p>
+            <h2 class="nc-ats-title">{{ resume.title }}</h2>
+            <p class="nc-ats-sub mb-0">
+                {% if latest_scan %}Last scanned {{ latest_scan.created_at|date:"d M Y, H:i" }}{% else %}Not scanned yet{% endif %}
+                {% if resume.parse_status == "failed" %}
+                    <span class="badge bg-danger ms-2">Could not read file</span>
+                {% endif %}
+            </p>
+
+            {% if resume.parse_status == "failed" %}
+                <div class="alert alert-warning mt-3 mb-0">{{ resume.parse_error }}</div>
+            {% elif latest_scan %}
+            <div class="nc-score-row">
+                <div class="nc-score-tile">
+                    <div class="val">{{ latest_scan.score }}</div>
+                    <div class="lbl">Resume Health</div>
+                    {% if score_delta is not None %}
+                        <div class="nc-score-delta {% if score_delta >= 0 %}up{% else %}down{% endif %}">
+                            {% if score_delta >= 0 %}+{% endif %}{{ score_delta }} since last scan
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="nc-score-tile">
+                    <div class="val">{{ latest_scan.score_breakdown.ats_compatibility }}%</div>
+                    <div class="lbl">ATS Compatibility</div>
+                </div>
+                <div class="nc-score-tile">
+                    <div class="val">{{ latest_scan.score_breakdown.skills_coverage }}%</div>
+                    <div class="lbl">Skills Coverage</div>
+                </div>
+                <div class="nc-score-tile">
+                    <div class="val">{{ latest_scan.score_breakdown.formatting }}%</div>
+                    <div class="lbl">Formatting</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2 flex-wrap">
+                <form method="post" action="{% url 'resumes:scan' resume.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-repeat me-1"></i> Re-scan Resume</button>
+                </form>
+                <a href="{% url 'resumes:download' resume.pk %}" class="btn btn-outline-secondary">Download</a>
+                <a href="{% url 'resumes:rename' resume.pk %}" class="btn btn-outline-secondary">Rename</a>
+                <a href="{% url 'resumes:list' %}" class="btn btn-outline-secondary">All Resumes</a>
+            </div>
+        </div>
+
+        {% if latest_scan %}
+        <ul class="nav nc-ats-tabs mb-3" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview" type="button">Overview</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-content" type="button">Content</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-skills" type="button">Skills</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-formatting" type="button">Formatting</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-grammar" type="button">Grammar</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-jobmatch" type="button">Job Match</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-fixes" type="button">Fix Center {% if open_issues %}<span class="badge bg-danger">{{ open_issues.count }}</span>{% endif %}</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-history" type="button">History</button></li>
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- OVERVIEW -->
+            <div class="tab-pane fade show active" id="tab-overview">
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="nc-ats-card">
+                            <h6 class="fw-bold mb-3">Score Breakdown</h6>
+                            {% with b=latest_scan.score_breakdown %}
+                                {% for label, value in b.items %}
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between small"><span>{{ label|title }}</span><strong>{{ value }}%</strong></div>
+                                    <div class="nc-bar-track"><div class="nc-bar-fill" style="width:{{ value }}%;"></div></div>
+                                </div>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                        <div class="nc-ats-card">
+                            <h6 class="fw-bold mb-3">Resume Sections</h6>
+                            {% for key, status in latest_scan.extracted_data.sections_report.items %}
+                            <div class="nc-check-row">
+                                <span>{{ key|title }}</span>
+                                {% if status == "detected" %}<span class="nc-check-good"><i class="bi bi-check-circle-fill"></i> Detected</span>
+                                {% elif status == "possibly_detected" %}<span class="nc-check-warn"><i class="bi bi-exclamation-circle-fill"></i> Possibly detected</span>
+                                {% elif status == "not_applicable" %}<span class="text-muted"><i class="bi bi-dash-circle"></i> Not required (fresher)</span>
+                                {% else %}<span class="nc-check-bad"><i class="bi bi-x-circle-fill"></i> Missing</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="nc-ats-card">
+                            <h6 class="fw-bold mb-3">Contact Information</h6>
+                            {% with c=latest_scan.extracted_data.contact %}
+                            <div class="nc-check-row"><span>Name</span><span>{{ latest_scan.extracted_data.name|default:"Not detected" }}</span></div>
+                            <div class="nc-check-row"><span>Email</span><span>{{ c.email|default:"Not detected" }}</span></div>
+                            <div class="nc-check-row"><span>Phone</span><span>{{ c.phone|default:"Not detected" }}</span></div>
+                            <div class="nc-check-row"><span>LinkedIn</span><span>{{ c.linkedin|default:"Not detected" }}</span></div>
+                            <div class="nc-check-row"><span>GitHub</span><span>{{ c.github|default:"Not detected" }}</span></div>
+                            <div class="nc-check-row"><span>Portfolio</span><span>{{ c.portfolio|default:"Not detected" }}</span></div>
+                            {% endwith %}
+                        </div>
+                        <div class="nc-ats-card">
+                            <h6 class="fw-bold mb-3">Recommendations</h6>
+                            {% if latest_scan.recommendations %}
+                                <ul class="mb-0 small">
+                                    {% for rec in latest_scan.recommendations %}<li class="mb-2">{{ rec }}</li>{% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted small mb-0">No specific recommendations right now.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="tab-pane fade" id="tab-content">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Content Quality: {{ latest_scan.score_breakdown.content_quality }}%</h6>
+                    <p class="text-muted small">Action-verb usage, quantified results, and the absence of filler phrases, passive voice, and personal pronouns.</p>
+                    {% for issue in open_issues %}
+                        {% if issue.category == "content" %}
+                        <div class="nc-issue-item sev-{{ issue.severity }}">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ issue.message }}</strong>
+                                <span class="badge bg-{% if issue.severity == 'high' %}danger{% elif issue.severity == 'medium' %}warning text-dark{% else %}secondary{% endif %}">{{ issue.get_severity_display }}</span>
+                            </div>
+                            {% if issue.text %}<div class="nc-issue-quote">"{{ issue.text }}"</div>{% endif %}
+                            {% if issue.suggestion %}<p class="small text-muted mb-0">{{ issue.suggestion }}</p>{% endif %}
+                            <div class="nc-issue-actions mt-2">
+                                <form method="post" action="{% url 'resumes:issue_status' resume.pk issue.pk %}">
+                                    {% csrf_token %}<input type="hidden" name="status" value="ignored">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Ignore</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <p class="text-muted small mb-0">No content issues detected.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="tab-pane fade" id="tab-skills">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Detected Skills ({{ latest_scan.score_breakdown.skills_coverage }}% coverage)</h6>
+                    {% for skill in latest_scan.extracted_data.skills %}
+                        <span class="nc-skill-chip matched">{{ skill }}</span>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No skills detected. Add a dedicated Skills section to your resume.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- FORMATTING -->
+            <div class="tab-pane fade" id="tab-formatting">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Formatting: {{ latest_scan.score_breakdown.formatting }}%</h6>
+                    <div class="nc-check-row"><span>Pages</span><span>{{ latest_scan.extracted_data.page_count|default:"1" }}</span></div>
+                    <div class="nc-check-row"><span>Multi-column layout</span>{% if latest_scan.extracted_data.multi_column %}<span class="nc-check-bad">Detected</span>{% else %}<span class="nc-check-good">Not detected</span>{% endif %}</div>
+                    <div class="nc-check-row"><span>Tables</span>{% if latest_scan.extracted_data.has_tables %}<span class="nc-check-warn">Detected</span>{% else %}<span class="nc-check-good">Not detected</span>{% endif %}</div>
+                    <div class="nc-check-row"><span>Images</span>{% if latest_scan.extracted_data.has_images %}<span class="nc-check-warn">Detected</span>{% else %}<span class="nc-check-good">Not detected</span>{% endif %}</div>
+                </div>
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Formatting Issues</h6>
+                    {% for issue in open_issues %}
+                        {% if issue.category == "formatting" %}
+                        <div class="nc-issue-item sev-{{ issue.severity }}">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ issue.message }}</span>
+                                <span class="badge bg-{% if issue.severity == 'high' %}danger{% elif issue.severity == 'medium' %}warning text-dark{% else %}secondary{% endif %}">{{ issue.get_severity_display }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                        <p class="text-muted small mb-0">No formatting issues detected.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- GRAMMAR -->
+            <div class="tab-pane fade" id="tab-grammar">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Spelling</h6>
+                    {% with misspelled=latest_scan.extracted_data.grammar.misspelled %}
+                    {% if misspelled %}
+                        <ul class="small mb-0">
+                            {% for item in misspelled %}
+                                <li>"{{ item.word }}"{% if item.suggestion %} &rarr; did you mean "{{ item.suggestion }}"?{% endif %}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted small mb-0">No spelling issues detected.</p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Repetition</h6>
+                    {% with repeated=latest_scan.extracted_data.grammar.repeated_words %}
+                    {% if repeated %}
+                        <p class="small mb-0">Repeated consecutive words: {{ repeated|join:", " }}</p>
+                    {% else %}
+                        <p class="text-muted small mb-0">No repeated wording detected.</p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+            <!-- JOB MATCH -->
+            <div class="tab-pane fade" id="tab-jobmatch">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Run a Job Match</h6>
+                    <p class="text-muted small mb-3">Provide the job description one way - select an existing NammaCareer job, paste the text, or upload a file.</p>
+                    <form method="post" action="{% url 'resumes:job_match' resume.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if job_match_form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small">{{ job_match_form.non_field_errors }}</div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label class="fw-bold small mb-1 d-block">Select a NammaCareer Job</label>
+                            {{ job_match_form.job|add_class:"form-select" }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold small mb-1 d-block">Or Paste a Job Description</label>
+                            {{ job_match_form.pasted_text }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold small mb-1 d-block">Or Upload a Job Description (PDF/DOCX)</label>
+                            {{ job_match_form.jd_file }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analyze Match</button>
+                    </form>
+                </div>
+                {% if latest_match %}
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-1">Job Match: {{ latest_match.job.title|default:latest_match.analysis.jd_title|default:"Job Description" }}{% if latest_match.job.company %} at {{ latest_match.job.company.name }}{% endif %}</h6>
+                    <p class="text-muted small">Analyzed {{ latest_match.created_at|date:"d M Y, H:i" }}</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {% with a=latest_match.analysis %}
+                            <div class="nc-check-row"><span>Overall Compatibility</span><strong>{{ latest_match.compatibility_score }}%</strong></div>
+                            <div class="nc-check-row"><span>Required Skills</span><strong>{{ a.required_skills_percent|default:"N/A" }}{% if a.required_skills_percent != None %}%{% endif %}</strong></div>
+                            <div class="nc-check-row"><span>Preferred Skills</span><strong>{{ a.preferred_skills_percent|default:"N/A" }}{% if a.preferred_skills_percent != None %}%{% endif %}</strong></div>
+                            <div class="nc-check-row"><span>Experience</span><strong>{{ a.experience_match|title }}</strong></div>
+                            <div class="nc-check-row"><span>Education</span><strong>{{ a.education_match|title }}</strong></div>
+                            <div class="nc-check-row"><span>Location</span><strong>{{ a.location_match|title }}</strong></div>
+                            <div class="nc-check-row"><span>Job Title Relevance</span><strong>{{ a.job_title_relevance_percent }}%</strong></div>
+                            <div class="nc-check-row"><span>Project Relevance</span><strong>{{ a.project_relevance_percent }}%</strong></div>
+                            <div class="nc-check-row"><span>Keyword Coverage</span><strong>{{ a.keyword_coverage_percent }}%</strong></div>
+                            <div class="nc-check-row"><span>Keyword Relevance</span><strong>{{ a.keyword_relevance_percent }}%</strong></div>
+                            {% endwith %}
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fw-bold small mb-1">Missing Required Skills</p>
+                            {% for skill in latest_match.missing_skills %}<span class="nc-skill-chip missing">{{ skill }}</span>{% empty %}<p class="text-muted small">None - great match.</p>{% endfor %}
+                            <p class="fw-bold small mb-1 mt-3">Missing Preferred Skills</p>
+                            {% for skill in latest_match.analysis.missing_preferred_skills %}<span class="nc-skill-chip missing">{{ skill }}</span>{% empty %}<p class="text-muted small">None.</p>{% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- FIX CENTER -->
+            <div class="tab-pane fade" id="tab-fixes">
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-info-circle me-1"></i>
+                    These issues are found in your uploaded file. Edit the affected text in your original document,
+                    then <a href="{% url 'resumes:upload' %}">upload the corrected file as a new version</a> and analyze it to confirm the fix.
+                </p>
+                {% with groups=issues_by_severity %}
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold text-danger mb-3">High Priority ({{ groups.high.count }})</h6>
+                    {% for issue in groups.high %}
+                        {% include "resumes/_issue_row.html" %}
+                    {% empty %}<p class="text-muted small mb-0">None.</p>{% endfor %}
+                </div>
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3" style="color:#b8860b;">Medium Priority ({{ groups.medium.count }})</h6>
+                    {% for issue in groups.medium %}
+                        {% include "resumes/_issue_row.html" %}
+                    {% empty %}<p class="text-muted small mb-0">None.</p>{% endfor %}
+                </div>
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3 text-secondary">Low Priority ({{ groups.low.count }})</h6>
+                    {% for issue in groups.low %}
+                        {% include "resumes/_issue_row.html" %}
+                    {% empty %}<p class="text-muted small mb-0">None.</p>{% endfor %}
+                </div>
+                {% endwith %}
+            </div>
+
+            <!-- HISTORY -->
+            <div class="tab-pane fade" id="tab-history">
+                <div class="nc-ats-card">
+                    <h6 class="fw-bold mb-3">Analysis History</h6>
+                    {% for entry in score_history|dictsortreversed:"created_at" %}
+                        <div class="nc-history-item">
+                            <span>{{ entry.created_at|date:"d M Y, H:i" }}</span>
+                            <span>ATS {{ entry.score_breakdown.ats_compatibility }}% &middot; Skills {{ entry.score_breakdown.skills_coverage }}% &middot; Formatting {{ entry.score_breakdown.formatting }}% &middot; <strong>Health {{ entry.score }}</strong></span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

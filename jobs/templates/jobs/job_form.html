@@ -288,10 +288,16 @@
                                         <div class="nc-field">
 
                                             <label class="nc-form-label">
-                                                Category
+                                                Main Domain
                                             </label>
 
-                                            {{ form.category|add_class:"form-select" }}
+                                            {{ form.domain|add_class:"form-select" }}
+
+                                            {% for error in form.domain.errors %}
+                                                <div class="invalid-feedback d-block nc-form-error">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
 
                                         </div>
 
@@ -303,12 +309,12 @@
                                         <div class="nc-field">
 
                                             <label class="nc-form-label">
-                                                Location
+                                                Subdomain
                                             </label>
 
-                                            {{ form.location|add_class:"form-control" }}
+                                            {{ form.subdomain|add_class:"form-select" }}
 
-                                            {% for error in form.location.errors %}
+                                            {% for error in form.subdomain.errors %}
                                                 <div class="invalid-feedback d-block nc-form-error">
                                                     {{ error }}
                                                 </div>
@@ -317,6 +323,22 @@
                                         </div>
 
                                     </div>
+
+                                </div>
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Location
+                                    </label>
+
+                                    {{ form.location|add_class:"form-control" }}
+
+                                    {% for error in form.location.errors %}
+                                        <div class="invalid-feedback d-block nc-form-error">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
 
                                 </div>
 
@@ -379,10 +401,21 @@
                                 <div class="nc-field">
 
                                     <label class="nc-form-label">
-                                        Skills (comma-separated)
+                                        Required Skills (comma-separated)
                                     </label>
 
                                     {{ form.skills|add_class:"form-control" }}
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Preferred Skills (comma-separated, optional)
+                                    </label>
+
+                                    {{ form.preferred_skills|add_class:"form-control" }}
 
                                 </div>
 
@@ -546,21 +579,6 @@
                             </div>
 
 
-                            <!-- Screening Questions -->
-                            <div class="nc-form-section">
-
-                                <div class="nc-form-section-title">
-                                    Screening Questions
-                                </div>
-
-                                <div class="nc-field">
-                                    {{ form.screening_questions|add_class:"form-control" }}
-                                    <div class="form-text">{{ form.screening_questions.help_text }}</div>
-                                </div>
-
-                            </div>
-
-
                             <!-- Application Method -->
                             <div class="nc-form-section">
 
@@ -632,5 +650,33 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var domainSelect = document.getElementById("id_domain");
+    var subdomainSelect = document.getElementById("id_subdomain");
+    if (!domainSelect || !subdomainSelect) return;
+
+    var allOptions = Array.prototype.slice.call(subdomainSelect.options);
+
+    function applyFilter(preserveSelection) {
+        var domainId = domainSelect.value;
+        var previousValue = subdomainSelect.value;
+        subdomainSelect.innerHTML = "";
+        allOptions.forEach(function (option) {
+            var optionDomain = option.getAttribute("data-domain");
+            if (!option.value || optionDomain === domainId) {
+                subdomainSelect.appendChild(option);
+            }
+        });
+        if (preserveSelection && Array.prototype.some.call(subdomainSelect.options, function (o) { return o.value === previousValue; })) {
+            subdomainSelect.value = previousValue;
+        }
+    }
+
+    applyFilter(true);
+    domainSelect.addEventListener("change", function () { applyFilter(false); });
+});
+</script>
 
 {% endblock %}

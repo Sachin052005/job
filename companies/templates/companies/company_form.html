@@ -350,6 +350,44 @@
                                         <div class="nc-field">
 
                                             <label class="nc-form-label">
+                                                Sub Industry
+                                            </label>
+
+                                            {{ form.sub_industry|add_class:"form-control" }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
+                                                Company Type
+                                            </label>
+
+                                            {{ form.company_type|add_class:"form-select" }}
+
+                                            <div class="nc-error text-muted mt-1">
+                                                Drives the "MNC / Startups / Product / Service" company filters.
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-6">
+
+                                        <div class="nc-field">
+
+                                            <label class="nc-form-label">
                                                 Company Size
                                             </label>
 
@@ -358,6 +396,17 @@
                                         </div>
 
                                     </div>
+
+                                </div>
+
+
+                                <div class="nc-field">
+
+                                    <label class="nc-form-label">
+                                        Technologies
+                                    </label>
+
+                                    {{ form.technologies|add_class:"form-control" }}
 
                                 </div>
 

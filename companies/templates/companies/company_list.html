@@ -23,9 +23,9 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        color: var(--nc-primary, #159a78);
-        font-size: 0.74rem;
-        font-weight: 800;
+        color: var(--nc-primary, #2563EB);
+        font-size: 0.75rem;
+        font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
         margin-bottom: 7px;
@@ -36,8 +36,8 @@
     }
 
     .nc-companies-title {
-        color: var(--nc-heading, #172235);
-        font-weight: 800;
+        color: var(--nc-text-primary, #0F172A);
+        font-weight: 700;
         letter-spacing: -0.025em;
         margin: 0;
     }
@@ -58,33 +58,33 @@
     .nc-search-wrapper .nc-search-icon {
         position: absolute;
         left: 14px;
-        color: var(--nc-muted, #8994a3);
+        color: var(--nc-text-light, #94A3B8);
         pointer-events: none;
         z-index: 2;
     }
 
     .nc-company-search input {
-        min-height: 45px;
+        min-height: 44px;
         width: 100%;
         padding: 10px 50px 10px 40px;
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 11px;
+        border: 1px solid #DCE3EC;
+        border-radius: 10px;
         background: #ffffff;
-        color: var(--nc-heading, #172235);
-        box-shadow: 0 5px 16px rgba(23, 34, 53, 0.04);
+        color: var(--nc-text-heading, #172033);
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
     }
 
     .nc-company-search input:focus {
-        border-color: var(--nc-primary, #159a78);
-        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+        border-color: #93C5FD;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
         outline: none;
     }
 
     .nc-company-search input::placeholder {
-        color: var(--nc-muted, #8994a3);
+        color: var(--nc-text-light, #94A3B8);
     }
 
     .nc-search-submit {
@@ -92,13 +92,13 @@
         right: 5px;
         top: 5px;
         bottom: 5px;
-        width: 36px;
+        width: 34px;
         border: 0;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: var(--nc-primary, #159a78);
+        background: var(--nc-primary, #2563EB);
         color: #ffffff;
         transition:
             background 0.2s ease,
@@ -106,7 +106,7 @@
     }
 
     .nc-search-submit:hover {
-        background: var(--nc-primary-dark, #08785d);
+        background: var(--nc-primary-hover, #1D4ED8);
         transform: translateY(-1px);
     }
 
@@ -123,27 +123,28 @@
     /* Empty State */
 
     .nc-companies-empty {
-        padding: 75px 25px;
+        padding: 70px 25px;
         text-align: center;
         background: #ffffff;
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
+        border: 1px dashed var(--nc-border, #E2E8F0);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
     .nc-empty-icon {
-        width: 82px;
-        height: 82px;
+        width: 70px;
+        height: 70px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 22px;
-        background: var(--nc-primary-soft, #e8f6f1);
-        color: var(--nc-primary, #159a78);
+        border-radius: 16px;
+        background: var(--nc-primary-soft, #EFF6FF);
+        color: var(--nc-primary, #2563EB);
+        font-size: 1.8rem;
     }
 
     .nc-companies-empty p {
-        color: var(--nc-text, #586678);
+        color: var(--nc-text-secondary, #475569);
     }
 
     /* Responsive */
@@ -192,7 +193,7 @@
                 </div>
 
                 <h2 class="nc-companies-title">
-                    Companies Hiring Now
+                    {{ heading }}
                 </h2>
 
             </div>
@@ -267,7 +268,7 @@
                 </div>
 
                 <p class="mt-4 mb-0">
-                    No companies found.
+                    {{ empty_message }}
                 </p>
 
             </div>

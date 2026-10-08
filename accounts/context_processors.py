@@ -1,6 +1,9 @@
 def drawer_stats_context(request):
     """Real (not fabricated) counts for the profile side-drawer performance
     cards (spec section 33) - kept cheap since it runs on every page load.
+    Shares the same 90-day window and RECRUITER_ACTION_EVENT_TYPES definition
+    as accounts.views.StudentPerformanceView (/accounts/performance/), so the
+    drawer and the full performance page never disagree.
     """
     if not request.user.is_authenticated:
         return {}
@@ -8,12 +11,16 @@ def drawer_stats_context(request):
     if profile is None:
         return {}
 
+    from datetime import timedelta
+
     from django.db.models import Sum
+    from django.utils import timezone
 
     from applications.models import Application
     from core.constants import (
         APPLICATION_STATUS_INTERVIEW,
         APPLICATION_STATUS_SHORTLISTED,
+        RECRUITER_ACTION_EVENT_TYPES,
         ROLE_EMPLOYER,
     )
     from jobs.models import Job
@@ -27,4 +34,15 @@ def drawer_stats_context(request):
             "drawer_interviews_count": applications.filter(status=APPLICATION_STATUS_INTERVIEW).count(),
             "drawer_job_views_count": job_views,
         }
-    return {}
+
+    from activity.models import StudentActivity, StudentSearchAppearance
+
+    since = timezone.now() - timedelta(days=90)
+    return {
+        "drawer_search_appearances_count": StudentSearchAppearance.objects.filter(
+            student=request.user, created_at__gte=since
+        ).count(),
+        "drawer_recruiter_actions_count": StudentActivity.objects.filter(
+            student=request.user, created_at__gte=since, event_type__in=RECRUITER_ACTION_EVENT_TYPES
+        ).count(),
+    }

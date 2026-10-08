@@ -1,0 +1,176 @@
+/* =========================================================
+   REUSABLE JOB FILTERS - vertical sidebar (desktop) / drawer (mobile)
+   Used by jobs/job_list.html via components/job_filters.html.
+========================================================== */
+
+.nc-jobs-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.nc-filter-sidebar {
+    background: var(--nc-white, #ffffff);
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    padding: 20px;
+    position: sticky;
+    top: 90px;
+}
+
+.nc-filters-header {
+    margin-bottom: 14px;
+}
+
+.nc-filter-close {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--nc-text-secondary, #475569);
+}
+
+.nc-filter-group {
+    margin-bottom: 16px;
+}
+
+.nc-filter-label {
+    display: block;
+    color: var(--nc-text-heading, #172033);
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.nc-filter-sidebar .form-control,
+.nc-filter-sidebar .form-select {
+    min-height: 42px;
+    border: 1px solid #DCE3EC;
+    border-radius: 9px;
+    color: var(--nc-text-heading, #172033);
+    background: #ffffff;
+    box-shadow: none;
+    width: 100%;
+}
+
+.nc-filter-sidebar .form-control:focus,
+.nc-filter-sidebar .form-select:focus {
+    border-color: #93C5FD;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.nc-filter-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nc-filter-check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    color: var(--nc-text-secondary, #475569);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.nc-filter-check input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--nc-primary, #2563EB);
+}
+
+.nc-filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.nc-filter-apply,
+.nc-filter-clear {
+    width: 100%;
+    border-radius: 9px;
+    font-weight: 700;
+}
+
+/* Mobile/tablet toolbar (Search + Filters toggle) */
+.nc-jobs-toolbar-mobile {
+    display: none;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.nc-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 0 16px;
+    min-height: 43px;
+    border: 1px solid var(--nc-border, #e1e8e4);
+    border-radius: 9px;
+    background: #ffffff;
+    color: var(--nc-heading, #172235);
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.nc-filter-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 1055;
+}
+
+.nc-filter-overlay.is-open {
+    display: block;
+}
+
+@media (max-width: 991.98px) {
+
+    .nc-jobs-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .nc-jobs-toolbar-mobile {
+        display: flex;
+    }
+
+    .nc-filter-sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(320px, 86vw);
+        max-width: 320px;
+        border-radius: 0;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 1060;
+        overflow-y: auto;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .nc-filter-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .nc-filter-actions {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 992px) {
+    .nc-filters-header {
+        display: none !important;
+    }
+}

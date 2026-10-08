@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Rename Resume - NammaCareer{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 42px 0 70px; max-width: 480px;">
+    <h2 class="mb-4" style="color: var(--nc-heading, #172235); font-weight: 800;">Rename Resume</h2>
+    <div class="card p-4" style="border-radius: 16px; border-color: var(--nc-border, #e1e8e4);">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="fw-bold mb-1">Resume Title</label>
+                {{ form.title|add_class:"form-control" }}
+                {% for error in form.title.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

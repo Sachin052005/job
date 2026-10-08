@@ -115,7 +115,10 @@ class Job(models.Model):
     location = models.CharField(max_length=150)
     description = models.TextField()
     responsibilities = models.TextField(blank=True)
-    skills = models.CharField(max_length=500, blank=True, help_text="Comma-separated skills")
+    skills = models.CharField(max_length=500, blank=True, help_text="Comma-separated required skills")
+    preferred_skills = models.CharField(
+        max_length=500, blank=True, help_text="Comma-separated preferred (nice-to-have) skills"
+    )
     employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default="full_time")
     work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, blank=True)
     experience_min = models.PositiveSmallIntegerField(default=0)
@@ -160,6 +163,9 @@ class Job(models.Model):
     def skills_list(self):
         return [s.strip() for s in self.skills.split(",") if s.strip()]
 
+    def preferred_skills_list(self):
+        return [s.strip() for s in self.preferred_skills.split(",") if s.strip()]
+
     def is_open(self):
         if self.status != JOB_STATUS_PUBLISHED:
             return False
@@ -185,19 +191,6 @@ class Job(models.Model):
 
     def allows_apply(self):
         return self.application_method in (APPLICATION_METHOD_APPLY, APPLICATION_METHOD_BOTH)
-
-
-class ScreeningQuestion(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="screening_questions")
-    question = models.CharField(max_length=300)
-    is_required = models.BooleanField(default=True)
-    order = models.PositiveSmallIntegerField(default=0)
-
-    class Meta:
-        ordering = ["order", "id"]
-
-    def __str__(self):
-        return self.question
 
 
 class JobView(models.Model):

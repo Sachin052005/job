@@ -1,0 +1,97 @@
+{% load form_tags %}
+
+<!-- =========================================================
+     REUSABLE JOB FILTERS (sidebar on desktop, drawer on mobile)
+
+     Expects a `form` (jobs.forms.JobSearchForm) in context and to be
+     rendered inside the page's <form method="get"> so Apply/every field
+     submits together. Keyword lives in the page's own search bar, not
+     here - see job_list.html.
+========================================================== -->
+
+<div class="nc-filters-inner">
+
+    <div class="nc-filters-header d-flex d-lg-none align-items-center justify-content-between">
+
+        <h5 class="mb-0">Filters</h5>
+
+        <button
+            type="button"
+            class="nc-filter-close"
+            data-filter-close
+            aria-label="Close filters"
+        >
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+    </div>
+
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.domain.id_for_label }}">Domain</label>
+        {{ form.domain }}
+    </div>
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.subdomain.id_for_label }}">Subdomain</label>
+        {{ form.subdomain }}
+    </div>
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.location.id_for_label }}">Location</label>
+        {{ form.location }}
+    </div>
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.experience.id_for_label }}">Experience</label>
+        {{ form.experience }}
+    </div>
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.salary_min.id_for_label }}">Salary</label>
+        {{ form.salary_min }}
+    </div>
+
+    <div class="nc-filter-group">
+        <label class="nc-filter-label" for="{{ form.employment_type.id_for_label }}">Employment Type</label>
+        {{ form.employment_type }}
+    </div>
+
+    <div class="nc-filter-group nc-filter-checks">
+
+        <label class="nc-filter-check">
+            {{ form.freshers_only|add_class:"form-check-input" }}
+            Freshers
+        </label>
+
+        <label class="nc-filter-check">
+            {{ form.remote_only|add_class:"form-check-input" }}
+            Remote
+        </label>
+
+        <label class="nc-filter-check">
+            {{ form.walkin_only|add_class:"form-check-input" }}
+            Walk-in
+        </label>
+
+        <label class="nc-filter-check">
+            {{ form.urgent_only|add_class:"form-check-input" }}
+            Urgent
+        </label>
+
+    </div>
+
+
+    <div class="nc-filter-actions">
+
+        <button type="submit" class="btn btn-primary nc-filter-apply">
+            Apply Filters
+        </button>
+
+        <a href="{% url 'jobs:list' %}" class="btn btn-outline-secondary nc-filter-clear">
+            Clear Filters
+        </a>
+
+    </div>
+
+</div>

@@ -12,7 +12,6 @@ from accounts.models import (
     Language,
     Profile,
     Project,
-    RecruiterProfile,
     UserSettings,
     WorkExperience,
 )
@@ -264,14 +263,3 @@ class UserSettingsPrivacyForm(forms.ModelForm):
         }
 
 
-class RecruiterProfileForm(forms.ModelForm):
-    class Meta:
-        model = RecruiterProfile
-        fields = [
-            "job_title", "department", "professional_experience_years", "recruitment_experience_years",
-            "specialization", "roles_hiring_for", "hiring_domains", "candidate_experience_pref",
-            "hiring_locations", "salary_range_min", "salary_range_max", "employment_types_hiring",
-            "remote_hiring", "freshers_hiring", "urgent_hiring",
-            "designation", "official_company_email", "employee_id", "recruiter_role",
-            "verification_document",
-        ]

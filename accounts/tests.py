@@ -22,7 +22,6 @@ from accounts.models import (
     Language,
     Profile,
     Project,
-    RecruiterProfile,
     SocialAccount,
     WorkExperience,
 )
@@ -737,28 +736,6 @@ class SettingsAccessControlTests(TestCase):
             self.assertEqual(response.url, f"/accounts/login/?next={path}")
 
 
-class RecruiterProfileTests(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username="recruiter1", password="pass12345")
-        self.user.profile.role = ROLE_EMPLOYER
-        self.user.profile.save()
-        self.client.login(username="recruiter1", password="pass12345")
-
-    def test_seeker_cannot_access_recruiter_profile(self):
-        seeker = User.objects.create_user(username="seekerx", password="pass12345")
-        self.client.login(username="seekerx", password="pass12345")
-        response = self.client.get(reverse("accounts:recruiter_profile_edit"))
-        self.assertEqual(response.status_code, 403)
-
-    def test_recruiter_can_update_profile(self):
-        response = self.client.post(
-            reverse("accounts:recruiter_profile_edit"),
-            {"job_title": "Senior Recruiter", "professional_experience_years": 5, "recruitment_experience_years": 3},
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(RecruiterProfile.objects.get(user=self.user).job_title, "Senior Recruiter")
-
-
 class PasswordResetTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -848,4 +825,94 @@ class PasswordResetTests(TestCase):
                 {"email": "dave@example.com"},
             )
         self.assertRedirects(response, reverse("accounts:password_reset_done"))
+
+
+class StudentPerformanceRangeFilterTests(TestCase):
+    """The Profile Performance chart and the activity details list below it
+    must always share the exact same timezone-aware date range - selecting
+    a range narrows both together, never just the chart (spec sections
+    23-26)."""
+
+    def setUp(self):
+        from datetime import timedelta
+
+        from activity.models import StudentActivity
+
+        self.student = User.objects.create_user(username="perf_student", password="pass12345")
+        self.student.profile.role = ROLE_JOB_SEEKER
+        self.student.profile.save()
+        self.client.login(username="perf_student", password="pass12345")
+
+        now = timezone.now()
+        self.today_activity = StudentActivity.objects.create(
+            student=self.student, event_type="profile_view",
+        )
+        self.today_activity.created_at = now
+        self.today_activity.save(update_fields=["created_at"])
+
+        self.old_activity = StudentActivity.objects.create(student=self.student, event_type="profile_view")
+        self.old_activity.created_at = now - timedelta(days=45)
+        self.old_activity.save(update_fields=["created_at"])
+
+    def test_default_range_is_last_30_days(self):
+        response = self.client.get(reverse("accounts:performance"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["range_key"], "30d")
+
+    @staticmethod
+    def _total_chart_activity(response):
+        return sum(sum(series["data"]) for series in response.context["chart_series"])
+
+    def test_today_range_excludes_older_activity_from_chart_and_details(self):
+        response = self.client.get(reverse("accounts:performance"), {"range": "today"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self._total_chart_activity(response), 1)
+        self.assertTrue(response.context["chart_has_data"])
+        timeline_items = [item for group in response.context["timeline"] for item in group["items"]]
+        self.assertEqual(len(timeline_items), 1)
+
+    def test_90_day_range_includes_both_activities(self):
+        response = self.client.get(reverse("accounts:performance"), {"range": "90d"})
+        self.assertEqual(self._total_chart_activity(response), 2)
+        timeline_items = [item for group in response.context["timeline"] for item in group["items"]]
+        self.assertEqual(len(timeline_items), 2)
+
+    def test_custom_range_uses_given_start_and_end(self):
+        from datetime import timedelta
+
+        start = (timezone.localdate() - timedelta(days=50)).isoformat()
+        end = (timezone.localdate() - timedelta(days=40)).isoformat()
+        response = self.client.get(
+            reverse("accounts:performance"), {"range": "custom", "start": start, "end": end}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self._total_chart_activity(response), 1)  # only the 45-day-old activity falls in this window
+
+    def test_invalid_range_falls_back_to_default(self):
+        response = self.client.get(reverse("accounts:performance"), {"range": "not-a-real-range"})
+        self.assertEqual(response.context["range_key"], "30d")
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_chart_series_are_never_fabricated(self):
+        response = self.client.get(reverse("accounts:performance"), {"range": "90d"})
+        series_by_key = {s["key"]: s for s in response.context["chart_series"]}
+        self.assertEqual(set(series_by_key), {"profile_views", "search_appearances", "recruiter_actions"})
+        # Both seeded activities are profile_view events - they must land on
+        # the Profile Views line only, never fabricated onto the others.
+        self.assertEqual(sum(series_by_key["profile_views"]["data"]), 2)
+        self.assertEqual(sum(series_by_key["search_appearances"]["data"]), 0)
+        self.assertEqual(sum(series_by_key["recruiter_actions"]["data"]), 0)
+
+
+class StudentPerformanceEmptyStateTests(TestCase):
+    def test_no_activity_reports_no_chart_data(self):
+        student = User.objects.create_user(username="empty_perf_student", password="pass12345")
+        student.profile.role = ROLE_JOB_SEEKER
+        student.profile.save()
+        self.client.login(username="empty_perf_student", password="pass12345")
+
+        response = self.client.get(reverse("accounts:performance"))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context["chart_has_data"])
+        for series in response.context["chart_series"]:
+            self.assertEqual(sum(series["data"]), 0)

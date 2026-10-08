@@ -1,6 +1,7 @@
 from django import forms
+from django.db.models import Q
 
-from applications.models import Application, ScreeningAnswer
+from applications.models import Application, Interview, RecruiterNote
 
 _REQUIRED_APPLY_FIELDS = ["first_name", "last_name", "email", "phone", "location", "linkedin_url", "github_url", "portfolio_url"]
 
@@ -46,28 +47,48 @@ class ApplicationForm(forms.ModelForm):
 
 
 class ApplicationStatusForm(forms.ModelForm):
+    note = forms.CharField(
+        required=False, max_length=300, label="Note (optional)",
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Strong Django background, schedule technical round"}),
+    )
+
     class Meta:
         model = Application
         fields = ["status"]
 
 
-class ScreeningAnswerForm(forms.Form):
-    """Dynamically built from a job's ScreeningQuestion set."""
+class RecruiterNoteForm(forms.ModelForm):
+    class Meta:
+        model = RecruiterNote
+        fields = ["text"]
+        widgets = {
+            "text": forms.Textarea(attrs={"rows": 3, "placeholder": "Private note - only your company's recruiters can see this"}),
+        }
 
-    def __init__(self, *args, questions=None, **kwargs):
+
+class InterviewForm(forms.ModelForm):
+    class Meta:
+        model = Interview
+        fields = ["interview_type", "scheduled_at", "location", "meeting_link", "interviewer", "notes"]
+        widgets = {
+            "scheduled_at": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
+            "notes": forms.Textarea(attrs={"rows": 2}),
+        }
+
+    def __init__(self, *args, company=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.questions = list(questions or [])
-        for question in self.questions:
-            self.fields[f"question_{question.pk}"] = forms.CharField(
-                label=question.question,
-                required=question.is_required,
-                widget=forms.Textarea(attrs={"rows": 2}),
-            )
+        self.fields["scheduled_at"].input_formats = ["%Y-%m-%dT%H:%M"]
+        if company is not None:
+            from django.contrib.auth import get_user_model
 
-    def save(self, application):
-        for question in self.questions:
-            value = self.cleaned_data.get(f"question_{question.pk}", "").strip()
-            if value:
-                ScreeningAnswer.objects.update_or_create(
-                    application=application, question=question, defaults={"answer_text": value}
-                )
+            User = get_user_model()
+            self.fields["interviewer"].queryset = User.objects.filter(
+                Q(pk=company.owner_id) | Q(recruiter_profile__company=company)
+            ).distinct()
+
+
+class InterviewResultForm(forms.ModelForm):
+    class Meta:
+        model = Interview
+        fields = ["result", "feedback"]
+        widgets = {"feedback": forms.Textarea(attrs={"rows": 3})}

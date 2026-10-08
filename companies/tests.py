@@ -15,6 +15,7 @@ from core.constants import (
     APPLICATION_STATUS_INTERVIEW,
     APPLICATION_STATUS_REJECTED,
     APPLICATION_STATUS_SHORTLISTED,
+    JOB_STATUS_DRAFT,
     JOB_STATUS_PUBLISHED,
     ROLE_EMPLOYER,
     ROLE_JOB_SEEKER,
@@ -173,6 +174,45 @@ class CompanyManagementTests(TestCase):
         self.client.login(username="student1", password="pass12345")
         response = self.client.get(reverse("companies:manage"))
         self.assertEqual(response.status_code, 403)
+
+    def test_hr_can_set_industry_and_company_type_via_edit_form(self):
+        """spec sections 25-27/75: the HR-reachable edit form must expose
+        company_type/sub_industry/technologies, and saving them must
+        immediately change which companies:list filters the company appears
+        under - no separate untouchable classification system."""
+        self.client.login(username="hr1", password="pass12345")
+        response = self.client.post(
+            reverse("companies:edit", kwargs={"slug": self.company.slug}),
+            {
+                "name": "ABC Technologies", "description": "A software company.",
+                "industry": "IT", "sub_industry": "SaaS", "company_type": "startup",
+                "technologies": "Python, Django, AWS", "location": "Chennai",
+                "size": "", "founded_year": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.company.refresh_from_db()
+        self.assertEqual(self.company.company_type, "startup")
+        self.assertEqual(self.company.industry, "IT")
+        self.assertEqual(self.company.sub_industry, "SaaS")
+
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup"})
+        self.assertIn(self.company.pk, {c.pk for c in response.context["companies"]})
+        response = self.client.get(reverse("companies:list"), {"industry": "IT"})
+        self.assertIn(self.company.pk, {c.pk for c in response.context["companies"]})
+
+        # Changing away from startup removes it from that filter.
+        self.client.post(
+            reverse("companies:edit", kwargs={"slug": self.company.slug}),
+            {
+                "name": "ABC Technologies", "description": "A software company.",
+                "industry": "IT", "sub_industry": "SaaS", "company_type": "product",
+                "technologies": "Python, Django, AWS", "location": "Chennai",
+                "size": "", "founded_year": "",
+            },
+        )
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup"})
+        self.assertNotIn(self.company.pk, {c.pk for c in response.context["companies"]})
 
     def test_hr_can_update_overview_and_culture(self):
         self.client.login(username="hr1", password="pass12345")
@@ -544,6 +584,181 @@ class CompanyReviewAggregationTests(TestCase):
         self.assertEqual(breakdown[5], 2)
         self.assertEqual(breakdown[1], 1)
         self.assertEqual(breakdown[3], 0)
+
+
+class CompanyListFilterTests(TestCase):
+    """spec sections 12-21/28/70-71: every companies:list filter must narrow
+    the real queryset (never a label-only distinction), never silently fall
+    back to the unfiltered list, and the heading/empty-state must reflect
+    whichever filter is actually active."""
+
+    def _make_company(self, username, **kwargs):
+        owner = User.objects.create_user(username=username, password="pass12345")
+        owner.profile.role = ROLE_EMPLOYER
+        owner.profile.save()
+        defaults = {"owner": owner, "name": username.title()}
+        defaults.update(kwargs)
+        return Company.objects.create(**defaults)
+
+    def setUp(self):
+        self.mnc = self._make_company("mncco", company_type="mnc", industry="IT")
+        self.startup = self._make_company("startupco", company_type="startup", industry="Fintech")
+        self.product = self._make_company("productco", company_type="product", industry="IT")
+        self.service = self._make_company("serviceco", company_type="service", industry="Healthcare")
+        self.plain = self._make_company("plainco")
+
+    def test_company_type_filter_returns_only_that_type(self):
+        for company_type in ["mnc", "startup", "product", "service"]:
+            response = self.client.get(reverse("companies:list"), {"company_type": company_type})
+            returned = response.context["companies"]
+            self.assertGreater(len(returned), 0, company_type)
+            for company in returned:
+                self.assertEqual(company.company_type, company_type)
+
+    def test_industry_filter_returns_only_matching_industry(self):
+        response = self.client.get(reverse("companies:list"), {"industry": "IT"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertEqual(returned_ids, {self.mnc.pk, self.product.pk})
+
+    def test_fintech_industry_filter(self):
+        response = self.client.get(reverse("companies:list"), {"industry": "Fintech"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertEqual(returned_ids, {self.startup.pk})
+
+    def test_unfiltered_list_includes_every_company(self):
+        response = self.client.get(reverse("companies:list"))
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertIn(self.plain.pk, returned_ids)
+        self.assertIn(self.mnc.pk, returned_ids)
+
+    def test_empty_filter_never_falls_back_to_all_companies(self):
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup", "industry": "Healthcare"})
+        self.assertEqual(len(response.context["companies"]), 0)
+        self.assertContains(response, "No")
+
+    def test_heading_and_empty_message_reflect_active_filter(self):
+        response = self.client.get(reverse("companies:list"), {"company_type": "mnc"})
+        self.assertEqual(response.context["heading"], "MNC Companies")
+        self.assertContains(response, "MNC Companies")
+
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup", "industry": "Healthcare"})
+        self.assertIn("no startup companies found", response.context["empty_message"].lower())
+
+    def test_changing_company_type_moves_company_between_filters(self):
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup"})
+        self.assertIn(self.startup.pk, {c.pk for c in response.context["companies"]})
+
+        self.startup.company_type = "product"
+        self.startup.save()
+
+        response = self.client.get(reverse("companies:list"), {"company_type": "startup"})
+        self.assertNotIn(self.startup.pk, {c.pk for c in response.context["companies"]})
+        response = self.client.get(reverse("companies:list"), {"company_type": "product"})
+        self.assertIn(self.startup.pk, {c.pk for c in response.context["companies"]})
+
+
+class CompanyHiringFilterTests(TestCase):
+    """spec sections 18/19: hiring/hiring_freshers must reflect real, active jobs."""
+
+    def setUp(self):
+        self.employer = User.objects.create_user(username="hiringemp", password="pass12345")
+        self.employer.profile.role = ROLE_EMPLOYER
+        self.employer.profile.save()
+        self.hiring_co = Company.objects.create(owner=self.employer, name="Hiring Co")
+
+        self.other_employer = User.objects.create_user(username="quietemp", password="pass12345")
+        self.other_employer.profile.role = ROLE_EMPLOYER
+        self.other_employer.profile.save()
+        self.quiet_co = Company.objects.create(owner=self.other_employer, name="Quiet Co")
+
+    def test_hiring_filter_excludes_companies_with_no_published_jobs(self):
+        Job.objects.create(
+            employer=self.employer, company=self.hiring_co, title="Engineer",
+            location="Remote", description="...", status=JOB_STATUS_PUBLISHED,
+        )
+        Job.objects.create(
+            employer=self.other_employer, company=self.quiet_co, title="Draft Role",
+            location="Remote", description="...", status=JOB_STATUS_DRAFT,
+        )
+        response = self.client.get(reverse("companies:list"), {"hiring": "1"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertIn(self.hiring_co.pk, returned_ids)
+        self.assertNotIn(self.quiet_co.pk, returned_ids)
+
+    def test_hiring_freshers_filter_requires_freshers_badge(self):
+        Job.objects.create(
+            employer=self.employer, company=self.hiring_co, title="Fresher Role",
+            location="Remote", description="...", status=JOB_STATUS_PUBLISHED,
+            badges="freshers_can_apply",
+        )
+        Job.objects.create(
+            employer=self.other_employer, company=self.quiet_co, title="Senior Role",
+            location="Remote", description="...", status=JOB_STATUS_PUBLISHED,
+        )
+        response = self.client.get(reverse("companies:list"), {"hiring_freshers": "1"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertIn(self.hiring_co.pk, returned_ids)
+        self.assertNotIn(self.quiet_co.pk, returned_ids)
+
+
+class CompanyReviewsSalariesTabTests(TestCase):
+    """spec sections 20/21: ?tab=reviews/?tab=salaries must actually filter
+    to companies with real review/salary data, not silently render the same
+    full company list."""
+
+    def setUp(self):
+        self.employer = User.objects.create_user(username="tabemp", password="pass12345")
+        self.employer.profile.role = ROLE_EMPLOYER
+        self.employer.profile.save()
+        self.reviewed_co = Company.objects.create(owner=self.employer, name="Reviewed Co")
+
+        self.salaried_employer = User.objects.create_user(username="salaryemp", password="pass12345")
+        self.salaried_employer.profile.role = ROLE_EMPLOYER
+        self.salaried_employer.profile.save()
+        self.salaried_co = Company.objects.create(owner=self.salaried_employer, name="Salaried Co")
+
+        self.bare_employer = User.objects.create_user(username="bareemp", password="pass12345")
+        self.bare_employer.profile.role = ROLE_EMPLOYER
+        self.bare_employer.profile.save()
+        self.bare_co = Company.objects.create(owner=self.bare_employer, name="Bare Co")
+
+        job = Job.objects.create(
+            employer=self.employer, company=self.reviewed_co, title="Engineer",
+            location="Remote", description="...", status=JOB_STATUS_PUBLISHED,
+        )
+        seeker = User.objects.create_user(username="reviewer_tab", password="pass12345")
+        application = Application.objects.create(
+            job=job, applicant=seeker, resume=make_resume(), status=APPLICATION_STATUS_HIRED,
+        )
+        CompanyReview.objects.create(
+            company=self.reviewed_co, applicant=seeker, application=application,
+            rating=5, content="Great place, genuinely learned a lot here.",
+        )
+        CompanySalary.objects.create(company=self.salaried_co, role="Engineer", salary_range="4-8 LPA")
+
+    def test_reviews_tab_only_returns_companies_with_active_reviews(self):
+        response = self.client.get(reverse("companies:list"), {"tab": "reviews"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertEqual(returned_ids, {self.reviewed_co.pk})
+
+    def test_salaries_tab_only_returns_companies_with_salary_entries(self):
+        response = self.client.get(reverse("companies:list"), {"tab": "salaries"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertEqual(returned_ids, {self.salaried_co.pk})
+
+    def test_reviews_tab_empty_state_when_no_company_has_reviews(self):
+        CompanyReview.objects.all().delete()
+        response = self.client.get(reverse("companies:list"), {"tab": "reviews"})
+        self.assertEqual(len(response.context["companies"]), 0)
+        self.assertContains(response, "No companies with student reviews yet.")
+
+    def test_inactive_review_excluded_from_reviews_tab(self):
+        review = CompanyReview.objects.get(company=self.reviewed_co)
+        review.is_active = False
+        review.save(update_fields=["is_active"])
+        response = self.client.get(reverse("companies:list"), {"tab": "reviews"})
+        returned_ids = {c.pk for c in response.context["companies"]}
+        self.assertNotIn(self.reviewed_co.pk, returned_ids)
 
 
 class CompanyReviewModerationTests(TestCase):

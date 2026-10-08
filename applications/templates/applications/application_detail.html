@@ -7,9 +7,9 @@
 
 <style>
     /* =========================================================
-       NAMMACAREER APPLICATION DETAILS — UI ONLY
-       CONTENT + FUNCTIONALITY UNCHANGED
-    ========================================================= */
+       NAMMACAREER APPLICATION DETAILS
+       UI / LAYOUT ONLY
+       ========================================================= */
 
     .nc-application-page {
         --app-green: var(--nc-primary);
@@ -29,7 +29,7 @@
 
     /* =========================================================
        COMMON CARD
-    ========================================================= */
+       ========================================================= */
 
     .nc-application-page .nc-app-card {
         border: 1px solid var(--app-border);
@@ -48,9 +48,10 @@
         box-shadow: 0 16px 38px rgba(23, 34, 53, .08);
     }
 
+
     /* =========================================================
        SUCCESS CARD
-    ========================================================= */
+       ========================================================= */
 
     .nc-submitted-card {
         position: relative;
@@ -133,9 +134,10 @@
         font-weight: 700;
     }
 
+
     /* =========================================================
        JOB HEADER
-    ========================================================= */
+       ========================================================= */
 
     .nc-job-header {
         display: flex;
@@ -173,9 +175,10 @@
         opacity: 1;
     }
 
+
     /* =========================================================
        SECTION HEADINGS
-    ========================================================= */
+       ========================================================= */
 
     .nc-app-section-title {
         display: flex;
@@ -191,13 +194,15 @@
         content: "";
         width: 4px;
         height: 17px;
+        flex: 0 0 4px;
         border-radius: 999px;
         background: var(--app-green);
     }
 
+
     /* =========================================================
        CANDIDATE OVERVIEW
-    ========================================================= */
+       ========================================================= */
 
     .nc-candidate-name {
         margin-bottom: 5px !important;
@@ -229,9 +234,94 @@
         font-weight: 700;
     }
 
+
+    /* =========================================================
+       CANDIDATE INFORMATION
+       ========================================================= */
+
+    .nc-candidate-info-card {
+        padding: 24px !important;
+    }
+
+    .nc-candidate-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .nc-candidate-info-item {
+        min-width: 0;
+        padding: 14px 15px;
+        border: 1px solid var(--app-border);
+        border-radius: 12px;
+        background: #fbfdfc;
+        transition:
+            border-color .2s ease,
+            background .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .nc-candidate-info-item:hover {
+        border-color: rgba(21, 154, 120, .18);
+        background: #ffffff;
+        box-shadow: 0 5px 16px rgba(23, 34, 53, .035);
+    }
+
+    .nc-candidate-info-label {
+        margin: 0 0 5px;
+        color: var(--app-muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .05em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    .nc-candidate-info-value {
+        min-width: 0;
+        margin: 0;
+        color: var(--app-heading);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .nc-candidate-info-value .text-muted {
+        font-weight: 500;
+    }
+
+    .nc-candidate-info-full {
+        grid-column: 1 / -1;
+    }
+
+    .nc-candidate-info-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .nc-candidate-info-skill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 5px 10px;
+        border: 1px solid rgba(21, 154, 120, .14);
+        border-radius: 999px;
+        background: var(--app-green-soft);
+        color: var(--app-green-dark);
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+
     /* =========================================================
        COVER LETTER
-    ========================================================= */
+       ========================================================= */
 
     .nc-cover-letter {
         color: var(--app-text);
@@ -243,9 +333,10 @@
         margin-bottom: 10px;
     }
 
+
     /* =========================================================
        RESUME BUTTONS
-    ========================================================= */
+       ========================================================= */
 
     .nc-resume-actions {
         display: flex;
@@ -271,9 +362,10 @@
         line-height: 1.6;
     }
 
+
     /* =========================================================
        MATCH ANALYSIS
-    ========================================================= */
+       ========================================================= */
 
     .nc-match-card {
         padding: 28px !important;
@@ -327,15 +419,15 @@
         font-weight: 800;
     }
 
-
     .nc-component-reason {
         font-size: 10px !important;
         line-height: 1.6;
     }
 
+
     /* =========================================================
        MATCH SKILLS
-    ========================================================= */
+       ========================================================= */
 
     .nc-match-skills {
         padding: 17px;
@@ -373,9 +465,10 @@
         line-height: 1.7;
     }
 
+
     /* =========================================================
        SOCIAL ANALYSIS CARDS
-    ========================================================= */
+       ========================================================= */
 
     .nc-social-card {
         height: 100%;
@@ -438,9 +531,10 @@
         line-height: 1.5;
     }
 
+
     /* =========================================================
        EMPLOYER SIDEBAR
-    ========================================================= */
+       ========================================================= */
 
     .nc-status-card {
         position: sticky;
@@ -475,12 +569,12 @@
         line-height: 1.7;
     }
 
+
     /* =========================================================
        RESPONSIVE
-    ========================================================= */
+       ========================================================= */
 
     @media (max-width: 991px) {
-
         .nc-status-card {
             position: static;
         }
@@ -532,6 +626,19 @@
         .nc-status-card {
             padding: 21px !important;
         }
+
+        /* Candidate information becomes one column */
+        .nc-candidate-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .nc-candidate-info-full {
+            grid-column: auto;
+        }
+
+        .nc-candidate-info-card {
+            padding: 20px !important;
+        }
     }
 
     @media (max-width: 575px) {
@@ -552,15 +659,21 @@
         .nc-match-score {
             min-height: 100px;
         }
+
+        .nc-candidate-info-item {
+            padding: 13px 14px;
+        }
     }
+
 
     /* =========================================================
        REDUCED MOTION
-    ========================================================= */
+       ========================================================= */
 
     @media (prefers-reduced-motion: reduce) {
 
-        .nc-application-page .nc-app-card {
+        .nc-application-page .nc-app-card,
+        .nc-candidate-info-item {
             transition: none !important;
         }
     }
@@ -578,7 +691,7 @@
         ================================================== -->
 
         <div
-            class="card nc-app-card nc-submitted-card mb-4 reveal text-center border-0"
+            class="card nc-app-card nc-submitted-card mb-4 reveal border-0 text-center"
         >
 
             <span class="nc-submitted-icon">
@@ -595,11 +708,9 @@
                 has been submitted successfully.
             </p>
 
-
             <div class="row justify-content-center g-3 nc-submitted-stats">
 
                 <div class="col-auto">
-
                     <div class="nc-submitted-stat">
 
                         <p class="text-muted small mb-0">
@@ -611,12 +722,9 @@
                         </p>
 
                     </div>
-
                 </div>
 
-
                 <div class="col-auto">
-
                     <div class="nc-submitted-stat">
 
                         <p class="text-muted small mb-0">
@@ -628,11 +736,9 @@
                         </p>
 
                     </div>
-
                 </div>
 
             </div>
-
 
             <div class="d-flex gap-2 justify-content-center nc-submitted-actions">
 
@@ -687,16 +793,13 @@
 
                         </div>
 
-
                         <span class="badge badge-status nc-status-badge bg-{{ application.badge_class }} fs-6">
                             {{ application.get_status_display }}
                         </span>
 
                     </div>
 
-
                     <hr class="nc-application-divider">
-
 
                     {% if is_employer_view %}
 
@@ -715,6 +818,7 @@
                         </p>
 
                         <p class="text-muted nc-candidate-meta mb-3">
+
                             {{ application.applicant.email }}
 
                             {% if application.applicant.profile.phone %}
@@ -729,8 +833,8 @@
                             {{ application.applicant.profile.experience_years }}
                             yr{{ application.applicant.profile.experience_years|pluralize }}
                             experience
-                        </p>
 
+                        </p>
 
                         {% if application.applicant.profile.skills %}
 
@@ -764,9 +868,11 @@
                         </h6>
 
                         <div class="nc-cover-letter">
+
                             <p>
                                 {{ application.cover_letter|linebreaks|default:"No cover letter provided." }}
                             </p>
+
                         </div>
 
                     </div>
@@ -779,7 +885,7 @@
                     <div class="nc-resume-actions">
 
                         <a
-                            href="{{ application.resume.url }}"
+                            href="{% url 'applications:resume' application.pk 'view' %}"
                             target="_blank"
                             class="btn btn-outline-secondary btn-sm"
                         >
@@ -788,8 +894,7 @@
                         </a>
 
                         <a
-                            href="{{ application.resume.url }}"
-                            download
+                            href="{% url 'applications:resume' application.pk 'download' %}"
                             class="btn btn-outline-secondary btn-sm"
                         >
                             <i class="bi bi-download"></i>
@@ -797,7 +902,6 @@
                         </a>
 
                     </div>
-
 
                     <p class="text-muted small nc-applied-date mt-3 mb-0">
                         Applied on
@@ -807,77 +911,181 @@
                     </p>
 
                     {% if can_review_company %}
-                        <a href="{% url 'companies:review_add' application.job.company.slug %}" class="btn btn-primary btn-sm mt-3">
-                            <i class="bi bi-star-fill me-1"></i> Review Company
+
+                        <a
+                            href="{% url 'companies:review_add' application.job.company.slug %}"
+                            class="btn btn-primary btn-sm mt-3"
+                        >
+                            <i class="bi bi-star-fill me-1"></i>
+                            Review Company
                         </a>
+
                     {% endif %}
 
                 </div>
 
 
                 <!-- =================================================
-                     SKILL MATCH SNAPSHOT (spec sections 6/13/14/15)
-                     Frozen at submission time - never recalculated from
-                     the candidate's current profile.
+                     SKILL MATCH SNAPSHOT
                 ================================================== -->
 
                 <div class="card nc-app-card mt-4 p-4 p-md-5 reveal">
-                    <h5 class="nc-app-section-title mb-3">Skill Match</h5>
+
+                    <h5 class="nc-app-section-title mb-3">
+                        Skill Match
+                    </h5>
+
                     {% with match=application.match_snapshot %}
+
                         {% include "applications/_skill_match.html" %}
+
                     {% endwith %}
+
                 </div>
 
 
                 {% if is_employer_view %}
 
                 <!-- =================================================
-                     CANDIDATE INFORMATION (spec section 18)
+                     CANDIDATE INFORMATION
                 ================================================== -->
 
-                <div class="card nc-app-card mt-4 reveal">
+                <div class="card nc-app-card nc-candidate-info-card mt-4 reveal">
 
                     <h5 class="nc-app-section-title mb-3">
                         Candidate Information
                     </h5>
 
-                    <div class="row g-3">
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Name</p>
-                            <p class="fw-semibold mb-0">{{ application.full_name }}</p>
+                    <div class="nc-candidate-info-grid">
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Name
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+                                {{ application.full_name|default:"—" }}
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Email</p>
-                            <p class="fw-semibold mb-0">{{ application.email }}</p>
+
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Email
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+                                {{ application.email|default:"—" }}
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Phone</p>
-                            <p class="fw-semibold mb-0">{{ application.phone|default:"—" }}</p>
+
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Phone
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+                                {{ application.phone|default:"—" }}
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Location</p>
-                            <p class="fw-semibold mb-0">{{ application.location|default:"—" }}</p>
+
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Location
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+                                {{ application.location|default:"—" }}
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Current Title / Company</p>
-                            <p class="fw-semibold mb-0">{{ application.current_title|default:"—" }}{% if application.current_company %} at {{ application.current_company }}{% endif %}</p>
+
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Current Title / Company
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+
+                                {{ application.current_title|default:"—" }}
+
+                                {% if application.current_company %}
+                                    <span class="fw-normal text-muted">
+                                        at {{ application.current_company }}
+                                    </span>
+                                {% endif %}
+
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Experience</p>
-                            <p class="fw-semibold mb-0">{{ application.experience_years }} year{{ application.experience_years|pluralize }}</p>
+
+
+                        <div class="nc-candidate-info-item">
+
+                            <p class="nc-candidate-info-label">
+                                Experience
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+
+                                {{ application.experience_years }}
+                                year{{ application.experience_years|pluralize }}
+
+                            </p>
+
                         </div>
-                        <div class="col-sm-6">
-                            <p class="text-muted small mb-1">Education</p>
-                            <p class="fw-semibold mb-0">{{ application.education_summary|default:"—" }}</p>
+
+
+                        <div class="nc-candidate-info-item nc-candidate-info-full">
+
+                            <p class="nc-candidate-info-label">
+                                Education
+                            </p>
+
+                            <p class="nc-candidate-info-value">
+                                {{ application.education_summary|default:"—" }}
+                            </p>
+
                         </div>
-                        <div class="col-12">
-                            <p class="text-muted small mb-1">Skills</p>
-                            {% for skill in application.skills_list %}
-                                <span class="badge bg-light text-dark border me-1 mb-1">{{ skill }}</span>
-                            {% empty %}
-                                <span class="text-muted small">Not provided.</span>
-                            {% endfor %}
+
+
+                        <div class="nc-candidate-info-item nc-candidate-info-full">
+
+                            <p class="nc-candidate-info-label">
+                                Skills
+                            </p>
+
+                            <div class="nc-candidate-info-skills">
+
+                                {% for skill in application.skills_list %}
+
+                                    <span class="nc-candidate-info-skill">
+                                        {{ skill }}
+                                    </span>
+
+                                {% empty %}
+
+                                    <span class="text-muted small">
+                                        Not provided.
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -890,36 +1098,101 @@
                 <div class="row g-4 mt-1">
 
                     <div class="col-md-4">
+
                         <div class="card nc-app-card nc-social-card reveal">
-                            <h6 class="nc-social-title"><i class="bi bi-linkedin"></i> LinkedIn</h6>
+
+                            <h6 class="nc-social-title">
+                                <i class="bi bi-linkedin"></i>
+                                LinkedIn
+                            </h6>
+
                             {% if application.linkedin_url %}
-                                <a href="{{ application.linkedin_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open LinkedIn ↗</a>
+
+                                <a
+                                    href="{{ application.linkedin_url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open LinkedIn ↗
+                                </a>
+
                             {% else %}
-                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    Not provided by candidate.
+                                </p>
+
                             {% endif %}
+
                         </div>
+
                     </div>
 
+
                     <div class="col-md-4">
+
                         <div class="card nc-app-card nc-social-card reveal">
-                            <h6 class="nc-social-title"><i class="bi bi-github"></i> GitHub</h6>
+
+                            <h6 class="nc-social-title">
+                                <i class="bi bi-github"></i>
+                                GitHub
+                            </h6>
+
                             {% if application.github_url %}
-                                <a href="{{ application.github_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open GitHub ↗</a>
+
+                                <a
+                                    href="{{ application.github_url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open GitHub ↗
+                                </a>
+
                             {% else %}
-                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    Not provided by candidate.
+                                </p>
+
                             {% endif %}
+
                         </div>
+
                     </div>
+
 
                     <div class="col-md-4">
+
                         <div class="card nc-app-card nc-social-card reveal">
-                            <h6 class="nc-social-title"><i class="bi bi-globe"></i> Portfolio</h6>
+
+                            <h6 class="nc-social-title">
+                                <i class="bi bi-globe"></i>
+                                Portfolio
+                            </h6>
+
                             {% if application.portfolio_url %}
-                                <a href="{{ application.portfolio_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm nc-social-button">Open Portfolio ↗</a>
+
+                                <a
+                                    href="{{ application.portfolio_url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="btn btn-outline-secondary btn-sm nc-social-button"
+                                >
+                                    Open Portfolio ↗
+                                </a>
+
                             {% else %}
-                                <p class="small text-muted nc-social-text mb-0">Not provided by candidate.</p>
+
+                                <p class="small text-muted nc-social-text mb-0">
+                                    Not provided by candidate.
+                                </p>
+
                             {% endif %}
+
                         </div>
+
                     </div>
 
                 </div>
@@ -927,32 +1200,57 @@
                 {% endif %}
 
 
-                {% if screening_answers %}
-                <div class="card nc-app-card mt-4 reveal">
-                    <h5 class="nc-app-section-title mb-3">Screening Questions</h5>
-                    {% for answer in screening_answers %}
-                        <div class="mb-3">
-                            <p class="text-muted small mb-1">{{ answer.question.question }}</p>
-                            <p class="fw-semibold mb-0">{{ answer.answer_text|default:"—" }}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
+                <!-- =================================================
+                     STATUS HISTORY
+                ================================================== -->
 
                 {% if status_history %}
+
                 <div class="card nc-app-card mt-4 reveal">
-                    <h5 class="nc-app-section-title mb-3">Status History</h5>
+
+                    <h5 class="nc-app-section-title mb-3">
+                        Status History
+                    </h5>
+
                     <ul class="list-unstyled mb-0">
+
                         {% for entry in status_history %}
+
                             <li class="small mb-2">
-                                {% if entry.old_status %}{{ entry.get_old_status_display }} &rarr; {% endif %}
-                                <strong>{{ entry.get_new_status_display }}</strong>
-                                <span class="text-muted">&middot; {{ entry.changed_at|date:"d M Y, H:i" }}{% if entry.changed_by %} &middot; by {{ entry.changed_by.get_username }}{% endif %}</span>
+
+                                {% if entry.old_status %}
+                                    {{ entry.get_old_status_display }}
+                                    &rarr;
+                                {% endif %}
+
+                                <strong>
+                                    {{ entry.get_new_status_display }}
+                                </strong>
+
+                                <span class="text-muted">
+                                    &middot;
+                                    {{ entry.changed_at|date:"d M Y, H:i" }}
+
+                                    {% if entry.changed_by %}
+                                        &middot;
+                                        by {{ entry.changed_by.get_username }}
+                                    {% endif %}
+                                </span>
+
+                                {% if entry.note %}
+                                    <div class="text-muted">
+                                        "{{ entry.note }}"
+                                    </div>
+                                {% endif %}
+
                             </li>
+
                         {% endfor %}
+
                     </ul>
+
                 </div>
+
                 {% endif %}
 
             </div>
@@ -966,12 +1264,13 @@
 
             <div class="col-lg-4">
 
+                <!-- UPDATE STATUS -->
+
                 <div class="card nc-app-card nc-status-card reveal">
 
                     <h6 class="nc-status-title">
                         Update Status
                     </h6>
-
 
                     <form
                         method="post"
@@ -982,7 +1281,7 @@
                         {% csrf_token %}
 
                         {{ status_form.status|add_class:"form-select mb-3" }}
-
+                       <!--- {{ status_form.note|add_class:"form-control mb-3" }} -->
 
                         <button
                             type="submit"
@@ -993,10 +1292,212 @@
 
                     </form>
 
-
                     <p class="text-muted small nc-status-note mt-3 mb-0">
                         Status changes notify the candidate automatically.
                     </p>
+
+                    <a
+                        href="{% url 'students:detail' application.applicant_id %}?source=application"
+                        class="btn btn-outline-primary w-100 mt-3"
+                    >
+                        <i class="bi bi-person-badge me-1"></i>
+                        View Student Profile
+                    </a>
+
+                </div>
+
+
+                <!-- =================================================
+                     ATS ANALYSIS
+                ================================================== -->
+
+                <div class="card nc-app-card mt-4 p-3">
+
+                    <h6 class="nc-status-title">
+                        ATS Analysis
+                    </h6>
+
+                    {% if application.ats_status == "complete" %}
+
+                        <div class="text-center mb-2">
+
+                            <span
+                                class="display-6 fw-bold"
+                                style="color: var(--nc-primary, #159a78);"
+                            >
+                                {{ application.ats_score }}%
+                            </span>
+
+                            <p class="text-muted small mb-0">
+                                NammaCareer ATS Compatibility
+                            </p>
+
+                        </div>
+
+                        {% with a=application.ats_breakdown %}
+
+                        <ul class="list-unstyled small mb-2">
+
+                            <li class="d-flex justify-content-between border-bottom py-1">
+                                <span>Required Skills</span>
+                                <strong>
+                                    {{ a.required_skills_percent|default:"N/A" }}
+                                    {% if a.required_skills_percent != None %}%{% endif %}
+                                </strong>
+                            </li>
+
+                            <li class="d-flex justify-content-between border-bottom py-1">
+                                <span>Preferred Skills</span>
+                                <strong>
+                                    {{ a.preferred_skills_percent|default:"N/A" }}
+                                    {% if a.preferred_skills_percent != None %}%{% endif %}
+                                </strong>
+                            </li>
+
+                            <li class="d-flex justify-content-between border-bottom py-1">
+                                <span>Experience</span>
+                                <strong>
+                                    {{ a.experience_match|title }}
+                                </strong>
+                            </li>
+
+                            <li class="d-flex justify-content-between border-bottom py-1">
+                                <span>Education</span>
+                                <strong>
+                                    {{ a.education_match|title }}
+                                </strong>
+                            </li>
+
+                            <li class="d-flex justify-content-between border-bottom py-1">
+                                <span>Keyword Coverage</span>
+                                <strong>
+                                    {{ a.keyword_coverage_percent }}%
+                                </strong>
+                            </li>
+
+                            <li class="d-flex justify-content-between py-1">
+                                <span>Project Relevance</span>
+                                <strong>
+                                    {{ a.project_relevance_percent }}%
+                                </strong>
+                            </li>
+
+                        </ul>
+
+                        {% if a.missing_required_skills %}
+
+                            <p class="small fw-bold mb-1">
+                                Missing Required Skills
+                            </p>
+
+                            <p class="small text-muted mb-0">
+                                {{ a.missing_required_skills|join:", " }}
+                            </p>
+
+                        {% endif %}
+
+                        {% endwith %}
+
+                    {% elif application.ats_status == "failed" %}
+
+                        <p class="text-muted small mb-0">
+                            ATS analysis could not be completed for this application.
+                            The application itself is unaffected.
+                        </p>
+
+                    {% else %}
+
+                        <p class="text-muted small mb-0">
+                            ATS analysis pending.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- =================================================
+                     RECRUITER NOTES
+                ================================================== -->
+
+                <div
+                    class="card nc-app-card mt-4 p-3"
+                    id="notes"
+                >
+
+                    <h6 class="nc-status-title">
+                        Recruiter Notes
+                    </h6>
+
+                    {% for note in recruiter_notes %}
+
+                        <div class="border-bottom py-2">
+
+                            <p class="small mb-1">
+                                {{ note.text }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <span
+                                    class="text-muted"
+                                    style="font-size:0.72rem;"
+                                >
+                                    {{ note.author.get_username }}
+                                    &middot;
+                                    {{ note.created_at|date:"d M Y, H:i" }}
+                                </span>
+
+                                {% if note.author_id == request.user.id %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'applications:note_delete' application.pk note.pk %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-link text-danger p-0"
+                                        style="font-size:0.72rem;"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-muted small">
+                            No notes yet.
+                        </p>
+
+                    {% endfor %}
+
+                    <form
+                        method="post"
+                        action="{% url 'applications:note_add' application.pk %}"
+                        class="mt-2"
+                    >
+
+                        {% csrf_token %}
+
+                        {{ note_form.text|add_class:"form-control mb-2" }}
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-primary btn-sm w-100"
+                        >
+                            Add Note
+                        </button>
+
+                    </form>
 
                 </div>
 

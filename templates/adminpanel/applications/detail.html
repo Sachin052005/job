@@ -40,20 +40,6 @@
 </div>
 {% endif %}
 
-<div class="np-section-title">Screening Answers</div>
-<div class="np-table-wrap">
-    <table class="table np-table mb-0">
-        <thead><tr><th>Question</th><th>Answer</th></tr></thead>
-        <tbody>
-            {% for answer in screening_answers %}
-                <tr><td>{{ answer.question.question }}</td><td>{{ answer.answer_text }}</td></tr>
-            {% empty %}
-                <tr><td colspan="2"><div class="np-empty">No screening answers.</div></td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
 <div class="np-section-title">Status History</div>
 <div class="np-table-wrap">
     <table class="table np-table mb-0">

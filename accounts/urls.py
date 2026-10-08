@@ -90,7 +90,6 @@ urlpatterns = [
         name="profile_skills_delete",
     ),
     path("performance/", views.StudentPerformanceView.as_view(), name="performance"),
-    path("recruiter/profile/", views.RecruiterProfileEditView.as_view(), name="recruiter_profile_edit"),
     path("recruiter/performance/", views.RecruiterPerformanceView.as_view(), name="recruiter_performance"),
     path(
         "password/change/",

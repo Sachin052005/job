@@ -17,9 +17,9 @@
         position: relative;
         overflow: hidden;
         background: var(--nc-white, #ffffff);
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 22px;
-        box-shadow: 0 14px 40px rgba(23, 34, 53, 0.07);
+        border: 1px solid var(--nc-border, #E2E8F0);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
     }
 
     .nc-login-card::before {
@@ -29,7 +29,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: var(--nc-primary, #159a78);
+        background: var(--nc-primary, #2563EB);
     }
 
     .nc-login-body {
@@ -43,23 +43,23 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto 17px;
-        border-radius: 15px;
-        background: var(--nc-primary-soft, #e8f6f1);
-        color: var(--nc-primary, #159a78);
+        border-radius: 14px;
+        background: var(--nc-primary-soft, #EFF6FF);
+        color: var(--nc-primary, #2563EB);
         font-size: 1.25rem;
     }
 
     .nc-login-title {
-        color: var(--nc-heading, #172235);
+        color: var(--nc-text-primary, #0F172A);
         font-size: 1.55rem;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: -0.025em;
         margin-bottom: 26px;
     }
 
     .nc-login-form .form-label {
-        color: var(--nc-heading, #172235);
-        font-size: 0.78rem;
+        color: var(--nc-text-heading, #172033);
+        font-size: 0.8rem;
         font-weight: 700;
         margin-bottom: 7px;
     }
@@ -67,9 +67,9 @@
     .nc-login-form .form-control {
         min-height: 44px;
         border-radius: 10px;
-        border-color: var(--nc-border, #e1e8e4);
-        color: var(--nc-heading, #172235);
-        font-size: 0.84rem;
+        border: 1px solid #DCE3EC;
+        color: var(--nc-text-heading, #172033);
+        font-size: 0.86rem;
         padding: 10px 13px;
         box-shadow: none;
         transition:
@@ -78,8 +78,8 @@
     }
 
     .nc-login-form .form-control:focus {
-        border-color: var(--nc-primary, #159a78);
-        box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
+        border-color: #93C5FD;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
     }
 
     .nc-password-group .form-control {
@@ -89,8 +89,9 @@
 
     .nc-password-toggle {
         min-width: 46px;
-        border-color: var(--nc-border, #e1e8e4);
-        color: var(--nc-muted, #8994a3);
+        border: 1px solid #DCE3EC;
+        border-left: 0;
+        color: var(--nc-text-light, #94A3B8);
         background: #ffffff;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
@@ -101,9 +102,9 @@
     }
 
     .nc-password-toggle:hover {
-        color: var(--nc-primary, #159a78);
-        background: var(--nc-primary-soft, #e8f6f1);
-        border-color: rgba(21, 154, 120, 0.25);
+        color: var(--nc-primary, #2563EB);
+        background: var(--nc-primary-soft, #EFF6FF);
+        border-color: #BFDBFE;
     }
 
     .nc-form-error {
@@ -115,9 +116,9 @@
     .nc-login-submit {
         min-height: 45px;
         border-radius: 10px;
-        font-size: 0.84rem;
+        font-size: 0.86rem;
         font-weight: 700;
-        box-shadow: 0 7px 18px rgba(21, 154, 120, 0.13);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
         transition:
             transform 0.2s ease,
             box-shadow 0.2s ease;
@@ -125,39 +126,41 @@
 
     .nc-login-submit:hover {
         transform: translateY(-1px);
-        box-shadow: 0 10px 22px rgba(21, 154, 120, 0.18);
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
     }
 
     .nc-forgot-link {
-        color: var(--nc-primary-dark, #08785d);
-        font-size: 0.76rem;
+        color: var(--nc-primary, #2563EB);
+        font-size: 0.8rem;
         font-weight: 600;
         text-decoration: none;
     }
 
     .nc-forgot-link:hover {
         text-decoration: underline;
+        color: var(--nc-primary-hover, #1D4ED8);
     }
 
     .nc-login-divider {
         margin: 23px 0 20px;
-        border-color: var(--nc-border, #e1e8e4);
+        border-color: var(--nc-border, #E2E8F0);
         opacity: 1;
     }
 
     .nc-register-text {
-        color: var(--nc-text, #586678);
-        font-size: 0.78rem;
+        color: var(--nc-text-secondary, #475569);
+        font-size: 0.84rem;
     }
 
     .nc-register-text a {
-        color: var(--nc-primary-dark, #08785d);
+        color: var(--nc-primary, #2563EB);
         font-weight: 700;
         text-decoration: none;
     }
 
     .nc-register-text a:hover {
         text-decoration: underline;
+        color: var(--nc-primary-hover, #1D4ED8);
     }
 
     .nc-login-alert {

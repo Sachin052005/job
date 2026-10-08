@@ -144,34 +144,13 @@
         color: var(--nc-primary-dark, #08785d);
     }
 
-    /* Resume Health */
+    /* ATS Resume Intelligence Center intro text */
 
     .nc-resume-intro {
         color: var(--nc-text, #586678);
         font-size: 0.86rem;
         line-height: 1.6;
         margin-bottom: 20px;
-    }
-
-    .nc-health-stat {
-        padding: 16px 10px;
-        border: 1px solid #edf2ef;
-        border-radius: 13px;
-        background: #fbfdfc;
-    }
-
-    .nc-health-label {
-        color: var(--nc-muted, #8994a3);
-        font-size: 0.72rem;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .nc-health-value {
-        color: var(--nc-heading, #172235);
-        font-size: 1.45rem;
-        font-weight: 800;
-        margin: 0;
     }
 
     .nc-connections {
@@ -204,6 +183,55 @@
         border-radius: 9px;
         font-weight: 650;
         padding: 8px 14px;
+    }
+
+    /* ATS Resume Intelligence Center */
+
+    .nc-ats-mode-card {
+        display: block;
+        height: 100%;
+        padding: 16px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 13px;
+        background: #fbfdfc;
+        text-decoration: none;
+        transition: border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .nc-ats-mode-card:hover {
+        border-color: var(--nc-primary, #159a78);
+        transform: translateY(-2px);
+    }
+
+    .nc-ats-mode-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--nc-heading, #172235);
+        font-weight: 800;
+        font-size: 0.92rem;
+        margin-bottom: 5px;
+    }
+
+    .nc-ats-mode-title i { color: var(--nc-primary, #159a78); }
+
+    .nc-ats-mode-desc {
+        display: block;
+        color: var(--nc-muted, #8994a3);
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .nc-ats-score-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--nc-primary-soft, #e8f6f1);
+        color: var(--nc-primary-dark, #08785d);
+        font-size: 0.82rem;
+        font-weight: 700;
     }
 
     /* Job Match */
@@ -323,14 +351,6 @@
             align-items: flex-start;
         }
 
-        .nc-health-stat {
-            padding: 13px 6px;
-        }
-
-        .nc-health-value {
-            font-size: 1.25rem;
-        }
-
         .nc-card-actions .btn {
             flex: 1 1 auto;
         }
@@ -447,7 +467,7 @@
 
             <div class="col-lg-7">
 
-                <!-- Resume Health -->
+                <!-- ATS Resume Intelligence Center -->
 
                 <div class="nc-dashboard-card reveal">
 
@@ -457,62 +477,36 @@
 
                             <h5 class="nc-card-title">
                                 <i class="bi bi-file-earmark-check"></i>
-                                Resume Health
+                                NammaCareer ATS Checker
                             </h5>
+
+                            {% if latest_resume.latest_scan %}
+                                <span class="nc-ats-score-pill">
+                                    <i class="bi bi-graph-up"></i>
+                                    {{ latest_resume.latest_scan.score }}/100
+                                </span>
+                            {% endif %}
 
                         </div>
 
+                        <p class="nc-resume-intro mb-3">
+                            Resume Intelligence Center - NammaCareer's own ATS analysis. No external ATS scores, no proprietary claims.
+                        </p>
 
-                        <div class="row g-3 text-center mb-4">
+                        <div class="row g-3 mb-4">
 
-                            <div class="col-4">
-
-                                <div class="nc-health-stat">
-
-                                    <p class="nc-health-label">
-                                        Profile
-                                    </p>
-
-                                    <p class="nc-health-value">
-                                        {{ profile_completion_percent }}%
-                                    </p>
-
-                                </div>
-
+                            <div class="col-sm-6">
+                                <a href="{% url 'resumes:list' %}" class="nc-ats-mode-card">
+                                    <span class="nc-ats-mode-title"><i class="bi bi-file-earmark-text"></i> Resume ATS Check</span>
+                                    <span class="nc-ats-mode-desc">Analyze your resume only - no job description required.</span>
+                                </a>
                             </div>
 
-
-                            <div class="col-4">
-
-                                <div class="nc-health-stat">
-
-                                    <p class="nc-health-label">
-                                        Applications
-                                    </p>
-
-                                    <p class="nc-health-value">
-                                        {{ total_applications }}
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="col-4">
-
-                                <div class="nc-health-stat">
-
-                                    <p class="nc-health-label">
-                                        Shortlisted
-                                    </p>
-
-                                    <p class="nc-health-value">
-                                        {{ shortlisted_count }}
-                                    </p>
-
-                                </div>
-
+                            <div class="col-sm-6">
+                                <a href="{% url 'resumes:list' %}?mode=job_match" class="nc-ats-mode-card">
+                                    <span class="nc-ats-mode-title"><i class="bi bi-bullseye"></i> Job Match ATS Check</span>
+                                    <span class="nc-ats-mode-desc">Compare your resume against a specific job description.</span>
+                                </a>
                             </div>
 
                         </div>

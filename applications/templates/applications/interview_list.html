@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}Interviews - NammaCareer{% endblock %}
+
+{% block content %}
+<style>
+    .nc-interviews-page { padding: 36px 0 70px; }
+    .nc-interviews-header { margin-bottom: 24px; }
+    .nc-interviews-title { font-weight: 800; color: var(--nc-heading, #172235); letter-spacing: -0.025em; }
+    .nc-interviews-sub { color: var(--nc-text, #586678); }
+    .nc-app-card { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 16px; background: #fff; padding: 22px; margin-bottom: 20px; }
+    .nc-interview-row { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .nc-interview-row:last-child { margin-bottom: 0; }
+    .nc-interview-candidate { font-weight: 700; color: var(--nc-heading, #172235); }
+    .nc-interview-meta { color: var(--nc-muted, #8994a3); font-size: 0.82rem; }
+    .nc-filter-banner { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-radius: 10px; background: var(--nc-primary-soft, #e8f6f1); margin-bottom: 16px; font-size: 0.85rem; }
+</style>
+
+<div class="nc-interviews-page">
+    <div class="container">
+
+        <div class="nc-interviews-header">
+            <h3 class="nc-interviews-title mb-1">Interviews</h3>
+            <p class="nc-interviews-sub mb-0">Schedule and manage interviews across every job you've posted.</p>
+        </div>
+
+        {% if filter_application_id %}
+        <div class="nc-filter-banner">
+            <span>Showing interviews for one candidate's application.</span>
+            <a href="{% url 'applications:interview_list' %}" class="fw-semibold">Show all interviews</a>
+        </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="nc-app-card">
+                    <h6 class="fw-bold mb-3">Scheduled Interviews</h6>
+                    {% for interview in interviews %}
+                        <div class="nc-interview-row">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="nc-interview-candidate mb-0">
+                                        {{ interview.application.full_name }}
+                                    </p>
+                                    <p class="nc-interview-meta mb-1">
+                                        {{ interview.application.job.title }} &middot; {{ interview.application.job.company.name }}
+                                    </p>
+                                </div>
+                                <span class="badge bg-{% if interview.result == 'passed' %}success{% elif interview.result == 'failed' %}danger{% elif interview.result == 'no_show' %}secondary{% else %}warning text-dark{% endif %}">
+                                    {{ interview.get_result_display }}
+                                </span>
+                            </div>
+                            <p class="small mb-1">
+                                <strong>{{ interview.get_interview_type_display }}</strong>
+                                &middot; {{ interview.scheduled_at|date:"d M Y, H:i" }}
+                            </p>
+                            {% if interview.location %}<p class="small text-muted mb-1">{{ interview.location }}</p>{% endif %}
+                            {% if interview.meeting_link %}<p class="small mb-1"><a href="{{ interview.meeting_link }}" target="_blank" rel="noopener">Meeting Link</a></p>{% endif %}
+                            <p class="small mb-2">Interviewer: {{ interview.interviewer.get_username|default:"Not assigned" }}</p>
+                            <div class="d-flex gap-2 align-items-center">
+                                <form method="post" action="{% url 'applications:interview_result' interview.application_id interview.pk %}" class="d-flex gap-1">
+                                    {% csrf_token %}
+                                    <select name="result" class="form-select form-select-sm">
+                                        <option value="pending" {% if interview.result == "pending" %}selected{% endif %}>Pending</option>
+                                        <option value="passed" {% if interview.result == "passed" %}selected{% endif %}>Passed</option>
+                                        <option value="failed" {% if interview.result == "failed" %}selected{% endif %}>Failed</option>
+                                        <option value="no_show" {% if interview.result == "no_show" %}selected{% endif %}>No Show</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                                </form>
+                                <a href="{% url 'applications:detail' interview.application_id %}" class="btn btn-sm btn-outline-primary">View Application</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No interviews scheduled yet.</p>
+                    {% endfor %}
+
+                    {% if is_paginated %}
+                    <nav class="mt-3">
+                        <ul class="pagination pagination-sm mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filter_application_id %}&application={{ filter_application_id }}{% endif %}">Previous</a></li>
+                            {% endif %}
+                            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filter_application_id %}&application={{ filter_application_id }}{% endif %}">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="nc-app-card">
+                    <h6 class="fw-bold mb-3">Schedule Interview</h6>
+                    {% if applications %}
+                        <form method="post" id="schedule-interview-form" action="">
+                            {% csrf_token %}
+                            <label class="small fw-bold mb-1 d-block">Candidate / Application</label>
+                            <select id="schedule-application-select" class="form-select mb-2" required>
+                                <option value="">Select a candidate...</option>
+                                {% for app in applications %}
+                                    <option value="{% url 'applications:interview_add' app.pk %}" {% if filter_application_id == app.pk|stringformat:"s" %}selected{% endif %}>
+                                        {{ app.full_name }} &mdash; {{ app.job.title }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {{ interview_form.interview_type|add_class:"form-select mb-2" }}
+                            {{ interview_form.scheduled_at|add_class:"form-control mb-2" }}
+                            {{ interview_form.interviewer|add_class:"form-select mb-2" }}
+                            {{ interview_form.location|add_class:"form-control mb-2" }}
+                            {{ interview_form.meeting_link|add_class:"form-control mb-2" }}
+                            {{ interview_form.notes|add_class:"form-control mb-2" }}
+                            <button type="submit" class="btn btn-primary w-100">Schedule Interview</button>
+                        </form>
+                        <script>
+                            (function () {
+                                var select = document.getElementById("schedule-application-select");
+                                var form = document.getElementById("schedule-interview-form");
+                                function syncAction() { if (select.value) { form.action = select.value; } }
+                                select.addEventListener("change", syncAction);
+                                syncAction();
+                            })();
+                        </script>
+                    {% else %}
+                        <p class="text-muted small mb-0">Post a job and receive applications before scheduling interviews.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -95,7 +95,6 @@ class JobDetailView(AdminDetailView):
         job = self.object
         ctx.update(
             {
-                "screening_questions": job.screening_questions.all(),
                 "applications": job.applications.select_related("applicant")[:10],
                 "application_count": job.application_count(),
             }

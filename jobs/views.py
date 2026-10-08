@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from applications.models import Application
@@ -10,7 +10,7 @@ from companies.models import Company
 from core.constants import JOB_STATUS_CHOICES, JOB_STATUS_PUBLISHED, PAGE_SIZE
 from core.permissions import EmployerRequiredMixin, OwnerRequiredMixin
 from jobs.forms import JobForm, JobSearchForm
-from jobs.models import Category, Job
+from jobs.models import Job, JobDomain
 from jobs.services import notify_job_published, record_job_view
 from saved_jobs.models import SavedJob
 from services.search_service import filter_jobs
@@ -20,13 +20,23 @@ class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
+        from django.db.models import Prefetch
+
+        from jobs.models import JobSubdomain
+
         context = super().get_context_data(**kwargs)
-        published = Job.objects.filter(status=JOB_STATUS_PUBLISHED).select_related("company", "category")
+        published = Job.objects.filter(status=JOB_STATUS_PUBLISHED).select_related("company", "domain", "subdomain")
         context["featured_jobs"] = published[:6]
-        context["categories"] = Category.objects.all()[:8]
         context["total_jobs"] = published.count()
         context["total_companies"] = Company.objects.count()
         context["search_form"] = JobSearchForm()
+
+        # Three fixed main domains, each with its active subdomains shown
+        # horizontally (spec section 17) - not category cards, and not job
+        # cards grouped by category.
+        context["domains"] = JobDomain.objects.filter(is_active=True).prefetch_related(
+            Prefetch("subdomains", queryset=JobSubdomain.objects.filter(is_active=True))
+        )
 
         job_sections = []
         if self.request.user.is_authenticated and getattr(self.request.user, "profile", None):
@@ -42,13 +52,22 @@ class HomeView(TemplateView):
                 if recommended:
                     job_sections.append({"title": "Jobs based on your profile", "jobs": recommended})
 
-        categories_with_jobs = Category.objects.filter(jobs__status=JOB_STATUS_PUBLISHED).distinct()[:6]
-        for category in categories_with_jobs:
-            jobs = published.filter(category=category)[:10]
-            if jobs:
-                job_sections.append({"title": f"Jobs in {category.name}", "jobs": jobs})
-
         context["job_sections"] = job_sections
+
+        # IT -> Non-IT -> Medical Coding rows (spec: homepage domain sections)
+        # - only a domain that actually has published jobs gets a row, in the
+        # fixed domain display order, each linking to the real jobs:list
+        # domain filter rather than a generic "view all" link.
+        domain_sections = []
+        for domain in context["domains"]:
+            domain_jobs = published.filter(domain=domain)[:PAGE_SIZE]
+            if domain_jobs:
+                domain_sections.append({
+                    "title": f"{domain.name} Jobs",
+                    "jobs": domain_jobs,
+                    "view_all_url": f"{reverse('jobs:list')}?domain={domain.slug}",
+                })
+        context["domain_job_sections"] = domain_sections
         return context
 
 
@@ -65,19 +84,20 @@ class JobListView(ListView):
             params = {
                 "keyword": self.form.cleaned_data.get("keyword"),
                 "location": self.form.cleaned_data.get("location"),
-                "category": self.form.cleaned_data.get("category").slug if self.form.cleaned_data.get("category") else "",
+                "domain": self.form.cleaned_data.get("domain").slug if self.form.cleaned_data.get("domain") else "",
+                "subdomain": self.form.cleaned_data.get("subdomain").slug if self.form.cleaned_data.get("subdomain") else "",
                 "employment_type": self.form.cleaned_data.get("employment_type"),
                 "experience": self.form.cleaned_data.get("experience"),
                 "salary_min": self.form.cleaned_data.get("salary_min"),
                 "freshers_only": self.form.cleaned_data.get("freshers_only"),
                 "remote_only": self.form.cleaned_data.get("remote_only"),
                 "urgent_only": self.form.cleaned_data.get("urgent_only"),
-                "walkin_only": self.request.GET.get("walkin_only"),
+                "walkin_only": self.form.cleaned_data.get("walkin_only"),
                 "work_mode": self.request.GET.get("work_mode"),
             }
             queryset = filter_jobs(queryset, params)
         else:
-            queryset = queryset.filter(status=JOB_STATUS_PUBLISHED).select_related("company", "category")
+            queryset = queryset.filter(status=JOB_STATUS_PUBLISHED).select_related("company", "domain", "subdomain")
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -102,7 +122,7 @@ class JobDetailView(DetailView):
     context_object_name = "job"
 
     def get_queryset(self):
-        return Job.objects.select_related("company", "category", "employer")
+        return Job.objects.select_related("company", "domain", "subdomain", "employer")
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
@@ -119,8 +139,9 @@ class JobDetailView(DetailView):
             profile = getattr(self.request.user, "profile", None)
             context["easy_apply_ready"] = bool(profile and profile.is_easy_apply_ready())
             context["missing_easy_apply_fields"] = profile.missing_easy_apply_fields() if profile else []
+        similar_filter = {"subdomain": job.subdomain} if job.subdomain_id else {"domain": job.domain}
         context["similar_jobs"] = (
-            Job.objects.filter(status=JOB_STATUS_PUBLISHED, category=job.category)
+            Job.objects.filter(status=JOB_STATUS_PUBLISHED, **similar_filter)
             .exclude(pk=job.pk)
             .select_related("company")[:4]
         )

@@ -165,7 +165,7 @@ class CategoryForm(forms.ModelForm):
 
 
 class AdminJobForm(JobForm):
-    """JobForm already handles badges + screening-question sync (spec
+    """JobForm already handles badges + domain/subdomain validation (spec
     section 45: reuse, don't duplicate) - this only adds employer/company,
     which the recruiter-facing form fixes to request.user/request.user.company
     but an admin must be able to reassign."""

@@ -4,204 +4,807 @@
 
     <div class="container">
 
-        <!-- BRAND -->
+        <!-- =====================================================
+             BRAND
+        ====================================================== -->
+
         <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="NammaCareer" class="brand-logo">
-            <span class="brand-name">NammaCareer</span>
+
+            <img
+                src="{% static 'images/logo.png' %}"
+                alt="NammaCareer"
+                class="brand-logo"
+            >
+
+            <span class="brand-name">
+                NammaCareer
+            </span>
+
         </a>
 
-        <!-- MOBILE TOGGLE -->
-        <button class="navbar-toggler nc-mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+
+        <!-- =====================================================
+             MOBILE TOGGLE
+        ====================================================== -->
+
+        <button
+            class="navbar-toggler nc-mobile-toggle"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNav"
+            aria-controls="mainNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+
             <i class="bi bi-list"></i>
+
         </button>
+
 
         <div class="navbar-collapse collapse" id="mainNav">
 
-            <!-- LEFT NAVIGATION -->
+
+            <!-- =================================================
+                 LEFT NAVIGATION
+            ================================================== -->
+
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <!-- JOBS MEGA MENU -->
+
+                <!-- =================================================
+                     JOBS MEGA MENU
+                ================================================== -->
+
                 <li class="nav-item nc-mega-item">
-                    <button type="button" class="nav-link nc-mega-trigger{% if request.resolver_match.app_name == 'jobs' %} active{% endif %}" data-mega-toggle="jobsMega" aria-expanded="false">
-                        <span class="nav-text">Jobs</span>
+
+                    <button
+                        type="button"
+                        class="nav-link nc-mega-trigger{% if request.resolver_match.app_name == 'jobs' %} active{% endif %}"
+                        data-mega-toggle="jobsMega"
+                        aria-expanded="false"
+                    >
+
+                        <span class="nav-text">
+                            Jobs
+                        </span>
+
                         <i class="bi bi-chevron-down nc-mega-caret"></i>
+
                     </button>
 
-                    <div class="nc-mega-panel" id="jobsMega">
+
+                    <div
+                        class="nc-mega-panel"
+                        id="jobsMega"
+                    >
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Jobs</p>
-                            {% if user.is_authenticated and user.profile.role == "job_seeker" %}
-                                <a class="nc-mega-link" href="{% url 'jobs:list' %}">Recommended Jobs</a>
-                            {% endif %}
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}">Search Jobs</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}">Jobs by Domain</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}">Jobs by Location</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?experience=2">Jobs by Experience</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?salary_min=500000">Jobs by Salary</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?freshers_only=1">Fresher Jobs</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?remote_only=1">Remote Jobs</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?walkin_only=1">Walk-in Jobs</a>
-                            <a class="nc-mega-link" href="{% url 'jobs:list' %}?urgent_only=1">Urgent Hiring</a>
+
+                            <p class="nc-mega-heading">
+                                Jobs
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:list' %}"
+                            >
+                                Search Jobs
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:list' %}?freshers_only=1"
+                            >
+                                Fresher Jobs
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:list' %}?remote_only=1"
+                            >
+                                Remote Jobs
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:list' %}?walkin_only=1"
+                            >
+                                Walk-in Jobs
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:list' %}?urgent_only=1"
+                            >
+                                Urgent Hiring
+                            </a>
+
                         </div>
+
+
                         {% if user.is_authenticated %}
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">My Jobs</p>
+
+                            <p class="nc-mega-heading">
+                                My Jobs
+                            </p>
+
+
                             {% if user.profile.role == "job_seeker" %}
-                                <a class="nc-mega-link" href="{% url 'saved_jobs:list' %}">Saved Jobs</a>
-                                <a class="nc-mega-link" href="{% url 'job_alerts:list' %}">Job Alerts</a>
-                                <a class="nc-mega-link" href="{% url 'applications:mine' %}">My Applications</a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'saved_jobs:list' %}"
+                                >
+                                    Saved Jobs
+                                </a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'applications:mine' %}"
+                                >
+                                    My Applications
+                                </a>
+
+
                             {% else %}
-                                <a class="nc-mega-link" href="{% url 'jobs:create' %}">Post a Job</a>
-                                <a class="nc-mega-link" href="{% url 'dashboard:home' %}">Manage Jobs</a>
-                                <a class="nc-mega-link" href="{% url 'students:search' %}">Search Candidates</a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'jobs:create' %}"
+                                >
+                                    Post a Job
+                                </a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'dashboard:home' %}"
+                                >
+                                    Manage Jobs
+                                </a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'students:search' %}"
+                                >
+                                    Search Candidates
+                                </a>
+
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'applications:interview_list' %}"
+                                >
+                                    Interviews
+                                </a>
+
+
                             {% endif %}
+
                         </div>
+
                         {% endif %}
+
                     </div>
+
                 </li>
 
-                <!-- COMPANIES MEGA MENU -->
+
+
+                <!-- =================================================
+                     COMPANIES MEGA MENU
+                ================================================== -->
+
                 <li class="nav-item nc-mega-item">
-                    <button type="button" class="nav-link nc-mega-trigger{% if request.resolver_match.app_name == 'companies' %} active{% endif %}" data-mega-toggle="companiesMega" aria-expanded="false">
-                        <span class="nav-text">Companies</span>
+
+                    <button
+                        type="button"
+                        class="nav-link nc-mega-trigger{% if request.resolver_match.app_name == 'companies' %} active{% endif %}"
+                        data-mega-toggle="companiesMega"
+                        aria-expanded="false"
+                    >
+
+                        <span class="nav-text">
+                            Companies
+                        </span>
+
                         <i class="bi bi-chevron-down nc-mega-caret"></i>
+
                     </button>
 
-                    <div class="nc-mega-panel" id="companiesMega">
+
+                    <div
+                        class="nc-mega-panel"
+                        id="companiesMega"
+                    >
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Companies</p>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}">Explore Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}">Top Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?industry=IT">IT Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?company_type=mnc">MNC Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?company_type=startup">Startups</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?company_type=product">Product Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?company_type=service">Service Companies</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?industry=Fintech">Fintech Companies</a>
+
+                            <p class="nc-mega-heading">
+                                Companies
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}"
+                            >
+                                Explore Companies
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?industry=IT"
+                            >
+                                IT Companies
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?company_type=mnc"
+                            >
+                                MNC Companies
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?company_type=startup"
+                            >
+                                Startups
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?company_type=product"
+                            >
+                                Product Companies
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?company_type=service"
+                            >
+                                Service Companies
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?industry=Fintech"
+                            >
+                                Fintech Companies
+                            </a>
+
                         </div>
+
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">&nbsp;</p>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?hiring=1">Companies Hiring</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?hiring_freshers=1">Companies Hiring Freshers</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?tab=reviews">Company Reviews</a>
-                            <a class="nc-mega-link" href="{% url 'companies:list' %}?tab=salaries">Company Salaries</a>
+
+                            <p class="nc-mega-heading">
+                                &nbsp;
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?hiring=1"
+                            >
+                                Companies Hiring
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?hiring_freshers=1"
+                            >
+                                Companies Hiring Freshers
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?tab=reviews"
+                            >
+                                Companies with Reviews
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'companies:list' %}?tab=salaries"
+                            >
+                                Companies with Salary Info
+                            </a>
+
+
                             {% if user.is_authenticated %}
-                                <a class="nc-mega-link" href="{% url 'companies:followed' %}">Followed Companies</a>
+
+                                <a
+                                    class="nc-mega-link"
+                                    href="{% url 'companies:followed' %}"
+                                >
+                                    Followed Companies
+                                </a>
+
                             {% endif %}
+
                         </div>
+
                     </div>
+
                 </li>
 
-                <!-- SERVICES MEGA MENU -->
+
+
+                <!-- =================================================
+                     SERVICES MEGA MENU
+                ================================================== -->
+
                 <li class="nav-item nc-mega-item">
-                    <button type="button" class="nav-link nc-mega-trigger" data-mega-toggle="servicesMega" aria-expanded="false">
-                        <span class="nav-text">Services</span>
+
+                    <button
+                        type="button"
+                        class="nav-link nc-mega-trigger"
+                        data-mega-toggle="servicesMega"
+                        aria-expanded="false"
+                    >
+
+                        <span class="nav-text">
+                            Services
+                        </span>
+
                         <i class="bi bi-chevron-down nc-mega-caret"></i>
+
                     </button>
 
-                    <div class="nc-mega-panel nc-mega-panel-wide" id="servicesMega">
+
+                    <div
+                        class="nc-mega-panel nc-mega-panel-wide"
+                        id="servicesMega"
+                    >
+
+
+                        <!-- RESUME RESOURCES -->
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Resume Resources</p>
-                            <a class="nc-mega-link" href="{% url 'accounts:profile_edit' %}">Resume Templates</a>
-                            <a class="nc-mega-link" href="{% url 'accounts:profile_edit' %}">Resume Samples</a>
-                            <a class="nc-mega-link" href="{% url 'accounts:profile_edit' %}">Resume Formats</a>
+
+                            <p class="nc-mega-heading">
+                                Resume Resources
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'resumes:list' %}"
+                            >
+                                ATS Resume Scanner
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=resume"
+                            >
+                                Resume Format &amp; Tips
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'accounts:profile_edit' %}"
+                            >
+                                Update My Resume
+                            </a>
+
                         </div>
+
+
+                        <!-- JOB SEEKER HELP -->
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Interview Resources</p>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">HR Interview Questions</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">Technical Questions</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">Aptitude Questions</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">Interview Guide</a>
+
+                            <p class="nc-mega-heading">
+                                Job Seeker Help
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=job_seeker"
+                            >
+                                Applying &amp; Job Search Help
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=jobs"
+                            >
+                                Job Search Guide
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=applications"
+                            >
+                                Application Status Help
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=account"
+                            >
+                                Account &amp; Settings Help
+                            </a>
+
                         </div>
+
+
+                        <!-- EMPLOYER SERVICES -->
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Career Resources</p>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=account">Career Guidance</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">Fresher Guide</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=job_seeker">Career Change Guide</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=jobs">Job Search Guide</a>
+
+                            <p class="nc-mega-heading">
+                                Employer Services
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'jobs:create' %}"
+                            >
+                                Post a Job
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=recruiter"
+                            >
+                                Recruiter Help
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}?tab=company"
+                            >
+                                Company Profile Help
+                            </a>
+
                         </div>
+
+
+                        <!-- HELP -->
+
                         <div class="nc-mega-col">
-                            <p class="nc-mega-heading">Employer Services</p>
-                            <a class="nc-mega-link" href="{% url 'jobs:create' %}">Post a Job</a>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}?tab=recruiter">Recruitment Resources</a>
-                            <p class="nc-mega-heading mt-3">Help</p>
-                            <a class="nc-mega-link" href="{% url 'help:faq' %}">FAQs</a>
-                            <a class="nc-mega-link" href="{% url 'help:chat' %}">Chat for Help</a>
+
+                            <p class="nc-mega-heading">
+                                Help
+                            </p>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:faq' %}"
+                            >
+                                All FAQs
+                            </a>
+
+
+                            <a
+                                class="nc-mega-link"
+                                href="{% url 'help:chat' %}"
+                            >
+                                Chat for Help
+                            </a>
+
                         </div>
+
                     </div>
+
                 </li>
 
             </ul>
 
 
-            <!-- RIGHT NAVIGATION -->
+
+            <!-- =====================================================
+                 RIGHT NAVIGATION
+            ====================================================== -->
+
             <ul class="navbar-nav align-items-lg-center nc-right-nav">
+
+                <!-- =================================================
+                     JOB SEARCH
+
+                     Always visible — logged in AND logged out.
+                     Only "keyword". No location field.
+                ================================================== -->
+
+                <li class="nav-item nc-search-item">
+
+                    <form
+                        class="nc-search-box"
+                        method="GET"
+                        action="{% url 'jobs:list' %}#job-results"
+                        id="jobSearchForm"
+                    >
+
+                        <div class="nc-search-field">
+
+                            <i class="bi bi-search nc-search-icon"></i>
+
+                            <input
+                                type="text"
+                                name="keyword"
+                                id="jobSearchInput"
+                                placeholder="Job title, skills, or company"
+                                aria-label="Job title, skills, or company"
+                                autocomplete="off"
+                                value="{{ request.GET.keyword|default:'' }}"
+                            >
+
+                        </div>
+
+
+                        <!-- TEXT SEARCH BUTTON -->
+
+                        <button
+                            type="submit"
+                            class="nc-search-button"
+                            id="jobSearchButton"
+                        >
+                            Search
+                        </button>
+
+                    </form>
+
+                </li>
+
 
                 {% if user.is_authenticated %}
 
-                    <!-- NOTIFICATIONS -->
+
+                    <!-- =================================================
+                         NOTIFICATIONS
+                    ================================================== -->
+
                     <li class="nav-item nc-mega-item">
-                        <button type="button" class="nav-link nc-bell-trigger" data-mega-toggle="notifMega" aria-expanded="false" aria-label="Notifications">
+
+                        <button
+                            type="button"
+                            class="nav-link nc-bell-trigger"
+                            data-mega-toggle="notifMega"
+                            aria-expanded="false"
+                            aria-label="Notifications"
+                        >
+
                             <i class="bi bi-bell"></i>
+
+
                             {% if unread_notification_count %}
-                                <span class="nc-bell-badge">{{ unread_notification_count }}</span>
+
+                                <span class="nc-bell-badge">
+                                    {{ unread_notification_count }}
+                                </span>
+
                             {% endif %}
+
                         </button>
 
-                        <div class="nc-mega-panel nc-notif-panel" id="notifMega">
+
+                        <div
+                            class="nc-mega-panel nc-notif-panel"
+                            id="notifMega"
+                        >
+
+
+                            <!-- NOTIFICATION HEADER -->
+
                             <div class="nc-notif-panel-header">
-                                <span>Notifications</span>
+
+                                <span>
+                                    Notifications
+                                </span>
+
+
                                 {% if unread_notification_count %}
-                                <form method="post" action="{% url 'notifications:mark_all_read' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button type="submit" class="btn btn-link btn-sm p-0">Mark all read</button>
-                                </form>
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'notifications:mark_all_read' %}"
+                                    >
+
+                                        {% csrf_token %}
+
+
+                                        <input
+                                            type="hidden"
+                                            name="next"
+                                            value="{{ request.path }}"
+                                        >
+
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-link btn-sm p-0"
+                                        >
+                                            Mark all read
+                                        </button>
+
+                                    </form>
+
                                 {% endif %}
+
                             </div>
 
+
+                            <!-- NOTIFICATIONS -->
+
                             {% for notification in recent_notifications %}
-                                <form method="post" action="{% url 'notifications:open' notification.pk %}" class="nc-notif-panel-item {% if not notification.is_read %}unread{% endif %}">
+
+                                <form
+                                    method="post"
+                                    action="{% url 'notifications:open' notification.pk %}"
+                                    class="nc-notif-panel-item {% if not notification.is_read %}unread{% endif %}"
+                                >
+
                                     {% csrf_token %}
-                                    <button type="submit" class="nc-notif-panel-btn">
-                                        <span class="fw-semibold d-block">{{ notification.title }}</span>
-                                        <span class="small text-muted">{{ notification.created_at|timesince }} ago</span>
+
+
+                                    <button
+                                        type="submit"
+                                        class="nc-notif-panel-btn"
+                                    >
+
+                                        <span class="fw-semibold d-block">
+                                            {{ notification.title }}
+                                        </span>
+
+
+                                        <span class="small text-muted">
+
+                                            {{ notification.created_at|timesince }}
+                                            ago
+
+                                        </span>
+
                                     </button>
+
                                 </form>
+
+
                             {% empty %}
-                                <p class="text-muted small text-center py-3 mb-0">No notifications yet.</p>
+
+                                <p class="text-muted small text-center py-3 mb-0">
+
+                                    No notifications yet.
+
+                                </p>
+
                             {% endfor %}
 
-                            <a href="{% url 'notifications:list' %}" class="nc-notif-view-all">View all</a>
+
+                            <!-- VIEW ALL -->
+
+                            <a
+                                href="{% url 'notifications:list' %}"
+                                class="nc-notif-view-all"
+                            >
+                                View all
+                            </a>
+
                         </div>
+
                     </li>
 
-                    <!-- PROFILE DRAWER TRIGGER -->
+
+
+                    <!-- =================================================
+                         PROFILE DRAWER TRIGGER
+                    ================================================== -->
+
                     <li class="nav-item">
-                        <button type="button" class="nav-link user-nav-link" id="profileDrawerTrigger" aria-haspopup="dialog" aria-controls="profileDrawer">
+
+                        <button
+                            type="button"
+                            class="nav-link user-nav-link"
+                            id="profileDrawerTrigger"
+                            aria-haspopup="dialog"
+                            aria-controls="profileDrawer"
+                        >
+
+
                             {% if user.profile.photo %}
+
                                 <span class="avatar-circle avatar-image">
-                                    <img src="{{ user.profile.photo.url }}" alt="{{ user.first_name|default:user.username }}">
+
+                                    <img
+                                        src="{{ user.profile.photo.url }}"
+                                        alt="{{ user.first_name|default:user.username }}"
+                                    >
+
                                 </span>
+
+
                             {% else %}
-                                <span class="avatar-circle">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+
+                                <span class="avatar-circle">
+
+                                    {{ user.first_name|default:user.username|slice:":1"|upper }}
+
+                                </span>
+
                             {% endif %}
-                            <span class="user-name">{{ user.first_name|default:user.username }}</span>
+
+
+                            <span class="user-name">
+
+                                {{ user.first_name|default:user.username }}
+
+                            </span>
+
                         </button>
+
                     </li>
+
 
                 {% else %}
 
-                    <li class="nav-item">
-                        <a class="nav-link login-link" href="{% url 'accounts:login' %}">
-                            <span class="nav-text">Login</span>
-                        </a>
-                    </li>
+
+                    <!-- =================================================
+                         LOGIN
+                    ================================================== -->
 
                     <li class="nav-item">
-                        <a class="btn btn-primary btn-sm btn-nav-cta" href="{% url 'accounts:register' %}">
+
+                        <a
+                            class="nav-link login-link"
+                            href="{% url 'accounts:login' %}"
+                        >
+
+                            <span class="nav-text">
+                                Login
+                            </span>
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- =================================================
+                         REGISTER
+                    ================================================== -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="btn btn-primary btn-sm btn-nav-cta"
+                            href="{% url 'accounts:register' %}"
+                        >
                             Register
                         </a>
+
                     </li>
 
                 {% endif %}
@@ -216,61 +819,115 @@
 
 
 {% if user.is_authenticated %}
-{% include "components/profile_drawer.html" %}
+
+    {% include "components/profile_drawer.html" %}
+
 {% endif %}
+
 
 
 <style>
 
 /* =========================================================
-   NAMMACAREER NAVBAR
+   NAMMACAREER NAVBAR — CLEAN MODERN SAAS DESIGN
+   Structure & functionality 100% preserved
 ========================================================= */
 
 .app-navbar {
-    min-height: 72px;
-    background: #172235 !important;
-    color: #ffffff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-    box-shadow: 0 5px 24px rgba(0, 0, 0, 0.14);
+    min-height: 70px;
+    background: #FFFFFF !important;
+    color: var(--nc-text-primary, #0F172A);
+    border-bottom: 1px solid var(--nc-border, #E2E8F0);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
     z-index: 1030;
 }
 
-.app-navbar .container { min-height: 72px; }
+.app-navbar .container {
+    min-height: 70px;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
 
 .app-navbar .navbar-brand {
     display: inline-flex !important;
     align-items: center;
-    gap: 11px;
-    margin-right: 30px;
+    gap: 10px;
+    margin-right: 28px;
     padding-top: 0;
     padding-bottom: 0;
-    color: #ffffff !important;
+    color: var(--nc-dark-navy, #08182E) !important;
     font-family: "Manrope", sans-serif;
-    font-size: 1.12rem;
+    font-size: 1.15rem;
     font-weight: 800 !important;
     line-height: 1.2;
-    letter-spacing: -0.025em;
+    letter-spacing: -.025em;
     text-decoration: none !important;
     white-space: nowrap;
 }
 
-.app-navbar .brand-name { color: #ffffff !important; font-family: "Manrope", sans-serif; font-size: 1.12rem; font-weight: 800 !important; white-space: nowrap; }
-.app-navbar .navbar-brand:hover .brand-name { color: #20b88f !important; }
+.app-navbar .brand-name {
+    color: var(--nc-dark-navy, #08182E) !important;
+    font-family: "Manrope", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800 !important;
+    letter-spacing: -.025em;
+    white-space: nowrap;
+    transition: color 0.18s ease;
+}
+
+.app-navbar .navbar-brand:hover .brand-name {
+    color: var(--nc-primary, #2563EB) !important;
+}
 
 .app-navbar .brand-logo {
-    width: 48px; height: 48px; min-width: 48px; min-height: 48px;
-    display: block !important; object-fit: cover; object-position: center;
-    border-radius: 50%; background: transparent !important; padding: 0 !important;
-    border: none !important; box-shadow: none !important; flex: 0 0 48px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    display: block !important;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    flex: 0 0 40px;
 }
+
+/* =========================================================
+   MOBILE TOGGLE
+========================================================= */
 
 .app-navbar .nc-mobile-toggle {
-    color: #fff; border-color: rgba(255,255,255,.3); font-size: 1.3rem; line-height: 1;
+    color: var(--nc-text-primary, #0F172A);
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-sm, 8px);
+    background: var(--nc-surface-soft, #F1F5F9);
+    padding: 6px 10px;
+    font-size: 1.25rem;
+    line-height: 1;
 }
-.app-navbar .nc-mobile-toggle:focus { box-shadow: none; }
 
-.app-navbar .navbar-collapse { display: flex !important; align-items: center; flex-grow: 1; }
-.app-navbar .navbar-nav { gap: 3px; }
+.app-navbar .nc-mobile-toggle:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.app-navbar .navbar-collapse {
+    display: flex !important;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.app-navbar .navbar-nav {
+    gap: 4px;
+}
 
 .app-navbar .nav-link,
 .app-navbar .nc-mega-trigger {
@@ -278,136 +935,729 @@
     display: inline-flex !important;
     align-items: center;
     gap: 5px;
-    min-height: 42px;
-    padding: 8px 13px !important;
+    min-height: 38px;
+    padding: 8px 12px !important;
     margin: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--nc-radius-sm, 8px);
     background: transparent !important;
-    color: #aeb8c5 !important;
+    color: var(--nc-text-secondary, #475569) !important;
     font-family: "DM Sans", sans-serif;
-    font-size: 0.89rem;
-    font-weight: 700 !important;
+    font-size: .89rem;
+    font-weight: 600 !important;
     white-space: nowrap;
     text-decoration: none !important;
+    transition: color 0.18s ease, background-color 0.18s ease;
 }
 
 .app-navbar .nav-link:hover,
 .app-navbar .nc-mega-trigger:hover,
-.app-navbar .nc-mega-trigger[aria-expanded="true"] { color: #ffffff !important; }
-.app-navbar .nav-link.active, .app-navbar .nc-mega-trigger.active { color: #ffffff !important; font-weight: 800 !important; }
-.app-navbar .nc-mega-caret { font-size: .7rem; transition: transform .2s ease; }
-.app-navbar .nc-mega-trigger[aria-expanded="true"] .nc-mega-caret { transform: rotate(180deg); }
+.app-navbar .nc-mega-trigger[aria-expanded="true"] {
+    color: var(--nc-primary, #2563EB) !important;
+    background-color: var(--nc-primary-soft, #EFF6FF) !important;
+}
 
-.app-navbar .login-link { color: #aeb8c5 !important; font-weight: 700 !important; }
-.app-navbar .login-link:hover { color: #ffffff !important; }
+.app-navbar .nav-link.active,
+.app-navbar .nc-mega-trigger.active {
+    color: var(--nc-primary, #2563EB) !important;
+    background-color: var(--nc-primary-soft, #EFF6FF) !important;
+    font-weight: 700 !important;
+}
 
-/* MEGA MENU PANELS */
-.nc-mega-item { position: relative; }
+.app-navbar .nc-mega-caret {
+    font-size: .7rem;
+    color: var(--nc-text-light, #94A3B8);
+    transition: transform .2s ease, color .18s ease;
+}
+
+.app-navbar .nc-mega-trigger:hover .nc-mega-caret,
+.app-navbar .nc-mega-trigger[aria-expanded="true"] .nc-mega-caret {
+    color: var(--nc-primary, #2563EB);
+}
+
+.app-navbar .nc-mega-trigger[aria-expanded="true"] .nc-mega-caret {
+    transform: rotate(180deg);
+}
+
+.app-navbar .login-link {
+    color: var(--nc-text-secondary, #475569) !important;
+    font-weight: 600 !important;
+}
+
+.app-navbar .login-link:hover {
+    color: var(--nc-primary, #2563EB) !important;
+    background-color: var(--nc-primary-soft, #EFF6FF) !important;
+}
+
+/* =========================================================
+   MEGA MENU
+========================================================= */
+
+.nc-mega-item {
+    position: relative;
+}
+
 .nc-mega-panel {
     display: none;
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     left: 0;
     min-width: 620px;
-    padding: 22px;
+    padding: 22px 24px;
     gap: 30px;
-    border-radius: 16px;
-    background: var(--nc-card-bg, #fff);
-    border: 1px solid var(--nc-border, #e1e8e4);
-    box-shadow: 0 20px 50px rgba(15, 23, 42, .18);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
     z-index: 1050;
+    animation: fadeIn 0.18s ease;
 }
-.nc-mega-panel.show { display: flex; }
-.nc-mega-panel-wide { min-width: 820px; }
-.nc-mega-col { flex: 1; min-width: 170px; }
+
+.nc-mega-panel.show {
+    display: flex;
+}
+
+.nc-mega-panel-wide {
+    min-width: 820px;
+}
+
+.nc-mega-col {
+    flex: 1;
+    min-width: 170px;
+}
+
 .nc-mega-heading {
-    color: var(--nc-primary, #159a78); font-size: .74rem; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+    color: var(--nc-primary, #2563EB);
+    font-size: .74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 12px;
 }
+
 .nc-mega-link {
-    display: block; padding: 7px 0; color: var(--nc-text, #586678);
-    font-size: .87rem; font-weight: 600; text-decoration: none;
+    display: block;
+    padding: 6px 0;
+    color: var(--nc-text-secondary, #475569);
+    font-size: .87rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.18s ease, transform 0.18s ease;
 }
-.nc-mega-link:hover { color: var(--nc-primary, #159a78); }
 
-/* NOTIFICATIONS BELL */
-.nc-bell-trigger { position: relative; font-size: 1.1rem; padding: 8px 11px !important; }
+.nc-mega-link:hover {
+    color: var(--nc-primary, #2563EB);
+    transform: translateX(3px);
+}
+
+/* =========================================================
+   JOB SEARCH
+========================================================= */
+
+.nc-search-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.nc-search-box {
+    display: flex;
+    align-items: center;
+    width: 275px;
+    height: 38px;
+    margin: 0 6px;
+    padding: 3px 4px 3px 10px;
+    background: var(--nc-surface, #FFFFFF);
+    border: 1px solid var(--nc-border-light, #DCE3EC);
+    border-radius: var(--nc-radius-md, 10px);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.nc-search-box:focus-within {
+    border-color: #93C5FD;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.nc-search-field {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    padding: 0 6px;
+}
+
+.nc-search-icon {
+    flex: 0 0 auto;
+    margin-right: 6px;
+    color: var(--nc-text-muted, #64748B);
+    font-size: .8rem;
+}
+
+.nc-search-field input {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 0;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    color: var(--nc-text-primary, #0F172A) !important;
+    font-family: "DM Sans", sans-serif;
+    font-size: .8rem;
+    font-weight: 500;
+    box-shadow: none !important;
+}
+
+.nc-search-field input::placeholder {
+    color: var(--nc-text-light, #94A3B8);
+    opacity: 1;
+    font-weight: 400;
+}
+
+/* =========================================================
+   SEARCH TEXT BUTTON
+========================================================= */
+
+.nc-search-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    height: 30px;
+    min-width: 60px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: var(--nc-radius-sm, 8px);
+    background: var(--nc-primary, #2563EB);
+    color: #FFFFFF;
+    font-family: "DM Sans", sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+}
+
+.nc-search-button:hover {
+    background: var(--nc-primary-hover, #1D4ED8);
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.nc-search-button:active {
+    transform: translateY(1px);
+}
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+.nc-bell-trigger {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-sm, 8px);
+    background: #FFFFFF !important;
+    color: var(--nc-text-secondary, #475569) !important;
+    font-size: 1.05rem;
+    transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.nc-bell-trigger:hover,
+.nc-bell-trigger[aria-expanded="true"] {
+    color: var(--nc-primary, #2563EB) !important;
+    background: var(--nc-primary-soft, #EFF6FF) !important;
+    border-color: #BFDBFE;
+}
+
 .nc-bell-badge {
-    position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px;
-    padding: 0 4px; border-radius: 999px; background: #ef4444; color: #fff;
-    font-size: .62rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center;
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #EF4444;
+    color: #FFFFFF;
+    font-size: .62rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #FFFFFF;
 }
-.nc-notif-panel { right: 0; left: auto; min-width: 340px; max-width: 360px; flex-direction: column; padding: 10px; gap: 0; max-height: 420px; overflow-y: auto; }
-.nc-notif-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; font-weight: 800; color: var(--nc-heading, #172235); }
-.nc-notif-panel-item { border-radius: 10px; margin-bottom: 2px; }
-.nc-notif-panel-item.unread { background: var(--nc-primary-soft, #e8f6f1); }
-.nc-notif-panel-btn { width: 100%; text-align: left; background: transparent; border: 0; padding: 10px; border-radius: 10px; color: var(--nc-heading, #172235); }
-.nc-notif-view-all { display: block; text-align: center; padding: 10px; margin-top: 4px; border-top: 1px solid var(--nc-border, #e1e8e4); color: var(--nc-primary, #159a78); font-weight: 700; text-decoration: none; font-size: .85rem; }
 
-/* PROFILE TRIGGER */
-.app-navbar .user-nav-link { display: inline-flex !important; align-items: center; gap: 9px; min-height: 42px; padding: 3px 9px !important; color: #fff !important; font-weight: 800 !important; }
-.app-navbar .user-name { max-width: 180px; white-space: nowrap; color: #fff !important; font-size: 0.89rem; font-weight: 800 !important; }
-.app-navbar .avatar-circle {
-    width: 38px; height: 38px; min-width: 38px; display: inline-flex; align-items: center; justify-content: center;
-    overflow: hidden; border-radius: 50%; background: linear-gradient(135deg, #159a78, #08785d);
-    color: #fff; font-family: "Manrope", sans-serif; font-size: 0.82rem; font-weight: 800;
-    border: 2px solid rgba(255, 255, 255, 0.20);
+.nc-notif-panel {
+    right: 0;
+    left: auto;
+    min-width: 340px;
+    max-width: 360px;
+    flex-direction: column;
+    padding: 12px;
+    gap: 0;
+    max-height: 420px;
+    overflow-y: auto;
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
 }
-.app-navbar .avatar-circle.avatar-image { background: #fff; padding: 0 !important; }
-.app-navbar .avatar-circle img { width: 100% !important; height: 100% !important; object-fit: cover; }
+
+.nc-notif-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px 10px;
+    font-weight: 800;
+    font-size: .92rem;
+    color: var(--nc-text-primary, #0F172A);
+    border-bottom: 1px solid var(--nc-border, #E2E8F0);
+    margin-bottom: 8px;
+}
+
+.nc-notif-panel-item {
+    border-radius: var(--nc-radius-sm, 8px);
+    margin-bottom: 3px;
+    transition: background 0.15s ease;
+}
+
+.nc-notif-panel-item:hover {
+    background: var(--nc-surface-soft, #F1F5F9);
+}
+
+.nc-notif-panel-item.unread {
+    background: var(--nc-primary-soft, #EFF6FF);
+}
+
+.nc-notif-panel-btn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    padding: 9px 10px;
+    border-radius: var(--nc-radius-sm, 8px);
+    color: var(--nc-text-primary, #0F172A);
+}
+
+.nc-notif-view-all {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    margin-top: 6px;
+    border-top: 1px solid var(--nc-border, #E2E8F0);
+    color: var(--nc-primary, #2563EB);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: .85rem;
+    transition: color 0.18s ease;
+}
+
+.nc-notif-view-all:hover {
+    color: var(--nc-primary-hover, #1D4ED8);
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.app-navbar .user-nav-link {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 9px;
+    min-height: 40px;
+    padding: 3px 10px !important;
+    border-radius: var(--nc-radius-md, 10px);
+    color: var(--nc-text-primary, #0F172A) !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+    transition: background-color 0.18s ease;
+}
+
+.app-navbar .user-nav-link:hover {
+    background-color: var(--nc-surface-soft, #F1F5F9) !important;
+}
+
+.app-navbar .user-name {
+    max-width: 180px;
+    white-space: nowrap;
+    color: var(--nc-text-primary, #0F172A) !important;
+    font-size: .89rem;
+    font-weight: 700 !important;
+}
+
+.app-navbar .avatar-circle {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--nc-primary, #2563EB), var(--nc-primary-dark, #174EA6));
+    color: #FFFFFF;
+    font-family: "Manrope", sans-serif;
+    font-size: .82rem;
+    font-weight: 800;
+    border: 2px solid #DBEAFE;
+}
+
+.app-navbar .avatar-circle.avatar-image {
+    background: #FFFFFF;
+    padding: 0 !important;
+}
+
+.app-navbar .avatar-circle img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+/* =========================================================
+   REGISTER BUTTON
+========================================================= */
 
 .app-navbar .btn-nav-cta {
-    min-width: 92px; padding: 9px 18px; border: 0; border-radius: 10px;
-    background: #159a78 !important; color: #fff !important; font-weight: 800 !important; text-decoration: none;
+    min-width: 90px;
+    padding: 8px 18px;
+    border: 0;
+    border-radius: var(--nc-radius-md, 10px);
+    background: var(--nc-primary, #2563EB) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: .89rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.20);
+    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
 }
-.app-navbar .btn-nav-cta:hover { background: #08785d !important; }
+
+.app-navbar .btn-nav-cta:hover {
+    background: var(--nc-primary-hover, #1D4ED8) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1199.98px) {
+    .nc-search-box {
+        width: 240px;
+    }
+}
 
 @media (max-width: 991.98px) {
-    .app-navbar { padding: 10px 0; }
-    .app-navbar .container { flex-wrap: wrap; min-height: auto; }
-    .app-navbar .navbar-collapse { flex-direction: column; align-items: stretch; width: 100%; margin-top: 12px; padding: 12px; border-radius: 15px; background: #172235 !important; }
-    .app-navbar .navbar-nav { width: 100%; }
-    .app-navbar .nav-link, .app-navbar .nc-mega-trigger { width: 100%; justify-content: space-between; }
-    .nc-mega-panel { position: static; min-width: 100%; box-shadow: none; margin-top: 6px; flex-direction: column; }
-    .nc-mega-panel-wide { min-width: 100%; }
-    .nc-right-nav { flex-direction: row; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
-    .nc-notif-panel { position: fixed; top: 70px; left: 12px; right: 12px; min-width: auto; max-width: none; }
-}
-</style>
-
-<script>
-(function () {
-    function closeAllMega(except) {
-        document.querySelectorAll(".nc-mega-panel.show").forEach(function (panel) {
-            if (panel !== except) {
-                panel.classList.remove("show");
-                var trigger = document.querySelector('[data-mega-toggle="' + panel.id + '"]');
-                if (trigger) trigger.setAttribute("aria-expanded", "false");
-            }
-        });
+    .app-navbar {
+        padding: 8px 0;
     }
 
-    document.querySelectorAll("[data-mega-toggle]").forEach(function (trigger) {
-        trigger.addEventListener("click", function (event) {
-            event.preventDefault();
-            var panel = document.getElementById(trigger.getAttribute("data-mega-toggle"));
-            if (!panel) return;
-            var isOpen = panel.classList.contains("show");
-            closeAllMega(isOpen ? null : panel);
-            panel.classList.toggle("show", !isOpen);
-            trigger.setAttribute("aria-expanded", String(!isOpen));
+    .app-navbar .container {
+        flex-wrap: wrap;
+        min-height: auto;
+    }
+
+    .app-navbar .navbar-collapse {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 10px;
+        padding: 14px;
+        border-radius: var(--nc-radius-lg, 14px);
+        background: #FFFFFF !important;
+        border: 1px solid var(--nc-border, #E2E8F0);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .app-navbar .navbar-nav {
+        width: 100%;
+    }
+
+    .app-navbar .nav-link,
+    .app-navbar .nc-mega-trigger {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .nc-mega-panel {
+        position: static;
+        min-width: 100%;
+        box-shadow: none;
+        margin-top: 6px;
+        flex-direction: column;
+        padding: 14px;
+        background: var(--nc-surface-soft, #F1F5F9);
+    }
+
+    .nc-mega-panel-wide {
+        min-width: 100%;
+    }
+
+    .nc-right-nav {
+        flex-direction: row;
+        align-items: center;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--nc-border, #E2E8F0);
+    }
+
+    .nc-search-item {
+        flex: 1;
+    }
+
+    .nc-search-box {
+        width: 100%;
+        margin: 0;
+    }
+
+    .nc-notif-panel {
+        position: fixed;
+        top: 70px;
+        left: 12px;
+        right: 12px;
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .nc-right-nav {
+        flex-wrap: wrap;
+    }
+
+    .nc-search-item {
+        width: 100%;
+        order: -1;
+        margin-bottom: 8px;
+    }
+
+    .nc-search-box {
+        width: 100%;
+    }
+
+    .nc-search-button {
+        min-width: 60px;
+        padding: 0 11px;
+    }
+}
+
+</style>
+
+
+
+<script>
+
+(function () {
+
+
+    /* =========================================================
+       CLOSE ALL MEGA MENUS
+    ========================================================= */
+
+    function closeAllMega(except) {
+
+        document
+            .querySelectorAll(".nc-mega-panel.show")
+            .forEach(function (panel) {
+
+                if (panel !== except) {
+
+                    panel.classList.remove("show");
+
+
+                    var trigger = document.querySelector(
+                        '[data-mega-toggle="' +
+                        panel.id +
+                        '"]'
+                    );
+
+
+                    if (trigger) {
+
+                        trigger.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+
+                }
+
+            });
+
+    }
+
+
+    /* =========================================================
+       MEGA MENU TOGGLE
+    ========================================================= */
+
+    document
+        .querySelectorAll("[data-mega-toggle]")
+        .forEach(function (trigger) {
+
+            trigger.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    var panel =
+                        document.getElementById(
+                            trigger.getAttribute(
+                                "data-mega-toggle"
+                            )
+                        );
+
+
+                    if (!panel) {
+
+                        return;
+
+                    }
+
+
+                    var isOpen =
+                        panel.classList.contains("show");
+
+
+                    closeAllMega(
+                        isOpen ? null : panel
+                    );
+
+
+                    panel.classList.toggle(
+                        "show",
+                        !isOpen
+                    );
+
+
+                    trigger.setAttribute(
+                        "aria-expanded",
+                        String(!isOpen)
+                    );
+
+                }
+            );
+
         });
-    });
 
-    document.addEventListener("click", function (event) {
-        if (!event.target.closest(".nc-mega-item")) {
-            closeAllMega(null);
+
+    /* =========================================================
+       CLOSE MEGA MENU WHEN CLICKING OUTSIDE
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !event.target.closest(
+                    ".nc-mega-item"
+                )
+            ) {
+
+                closeAllMega(null);
+
+            }
+
         }
-    });
+    );
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") closeAllMega(null);
-    });
+
+    /* =========================================================
+       ESCAPE KEY
+    ========================================================= */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+
+                closeAllMega(null);
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       JOB SEARCH
+       
+       Press ENTER -> native GET form submission.
+
+       Search button also submits the same form.
+
+       There is NO location field.
+       There is NO location JavaScript.
+    ========================================================= */
+
+    var jobSearchForm =
+        document.getElementById(
+            "jobSearchForm"
+        );
+
+
+    var jobSearchInput =
+        document.getElementById(
+            "jobSearchInput"
+        );
+
+
+    if (jobSearchForm) {
+
+        jobSearchForm.addEventListener(
+            "submit",
+            function (event) {
+
+                var keyword =
+                    jobSearchInput
+                        ? jobSearchInput.value.trim()
+                        : "";
+
+
+                /*
+                 * Prevent completely empty searches.
+                 */
+
+                if (!keyword) {
+
+                    event.preventDefault();
+
+
+                    if (jobSearchInput) {
+
+                        jobSearchInput.focus();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
 })();
+
 </script>

@@ -363,6 +363,52 @@
 
         </div>
 
+        <!-- ATS pipeline summary - real counts, not hardcoded (spec: Recruiter ATS Dashboard) -->
+        <div class="row g-2 mb-4 text-center">
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ total_applicant_count }}</div><div class="small text-muted">Applications</div></div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ status_counts.applied }}</div><div class="small text-muted">New</div></div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ status_counts.under_review }}</div><div class="small text-muted">Under Review</div></div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ status_counts.shortlisted }}</div><div class="small text-muted">Shortlisted</div></div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ status_counts.interview }}</div><div class="small text-muted">Interview</div></div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="nc-quick-card py-3"><div class="h5 mb-0">{{ status_counts.rejected }}</div><div class="small text-muted">Rejected</div></div>
+            </div>
+        </div>
+
+        <!-- ATS analytics - only real, calculated metrics; "Not enough data yet" when a stage has no history rows -->
+        <div class="nc-filter-card mb-4">
+            <div class="row g-3 text-center">
+                <div class="col-6 col-md-3">
+                    <div class="h5 mb-0">{% if analytics.avg_ats_score %}{{ analytics.avg_ats_score|floatformat:0 }}%{% else %}—{% endif %}</div>
+                    <div class="small text-muted">Avg. ATS Score</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="h5 mb-0">{% if analytics.time_to_shortlist_hours %}{{ analytics.time_to_shortlist_hours }}h{% else %}Not enough data yet{% endif %}</div>
+                    <div class="small text-muted">Time to Shortlist</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="h5 mb-0">{% if analytics.time_to_interview_hours %}{{ analytics.time_to_interview_hours }}h{% else %}Not enough data yet{% endif %}</div>
+                    <div class="small text-muted">Time to Interview</div>
+                </div>
+                <!---
+                <div class="col-6 col-md-3">
+                    <div class="h5 mb-0">{% if analytics.time_to_hire_hours %}{{ analytics.time_to_hire_hours }}h{% else %}Not enough data yet{% endif %}</div>
+                    <div class="small text-muted">Time to Hire</div>
+                </div>
+                ---->
+            </div>
+        </div>
+
 
         <!-- Filters -->
 
@@ -406,6 +452,25 @@
                         value="{{ request.GET.min_experience }}"
                         class="form-control"
                         placeholder="Years"
+                    >
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <label class="form-label">
+                        Min. ATS Score
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        name="ats_min"
+                        value="{{ request.GET.ats_min }}"
+                        class="form-control"
+                        placeholder="e.g. 60"
                     >
 
                 </div>
@@ -465,6 +530,18 @@
                             {% if sort == "oldest" %}selected{% endif %}
                         >
                             Oldest application
+                        </option>
+
+                        <option value="ats_score" {% if sort == "ats_score" %}selected{% endif %}>
+                            ATS Score (high to low)
+                        </option>
+
+                        <option value="experience" {% if sort == "experience" %}selected{% endif %}>
+                            Experience (high to low)
+                        </option>
+
+                        <option value="name" {% if sort == "name" %}selected{% endif %}>
+                            Candidate Name
                         </option>
 
                     </select>
@@ -563,6 +640,27 @@
 
                         </div>
 
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="fresher_only"
+                                value="1"
+                                id="fresherOnly"
+                                {% if request.GET.fresher_only %}checked{% endif %}
+                            >
+
+                            <label
+                                class="form-check-label small"
+                                for="fresherOnly"
+                            >
+                                Freshers only
+                            </label>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -601,6 +699,10 @@
 
                             <th>
                                 Skill Match
+                            </th>
+
+                            <th>
+                                ATS Score
                             </th>
 
                             <th>
@@ -673,6 +775,20 @@
                                     <span class="text-muted small">Skill match unavailable</span>
                                 {% endif %}
 
+                            </td>
+
+
+                            <!-- ATS Score - real, calculated at application time (spec: no fake scores) -->
+                            <td>
+                                {% if application.ats_status == "complete" %}
+                                    <span class="badge bg-{% if application.ats_score >= 70 %}success{% elif application.ats_score >= 40 %}warning text-dark{% else %}secondary{% endif %}">
+                                        {{ application.ats_score }}%
+                                    </span>
+                                {% elif application.ats_status == "failed" %}
+                                    <span class="badge bg-light text-dark border" title="{{ application.ats_error }}">Unavailable</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark border">Pending</span>
+                                {% endif %}
                             </td>
 
 

@@ -114,7 +114,6 @@ class ApplicationDetailView(AdminDetailView):
         application = self.object
         ctx.update(
             {
-                "screening_answers": application.screening_answers.select_related("question"),
                 "status_history": application.status_history.select_related("changed_by"),
                 "match_snapshot": application.match_snapshot,
                 "status_update_url": reverse("adminpanel:application_status", kwargs={"pk": application.pk}),

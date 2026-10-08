@@ -1,0 +1,17 @@
+Dear {{ candidate_name }},
+
+{% for paragraph in body_paragraphs %}{{ paragraph }}
+
+{% endfor %}Job:
+{{ job_title }}
+
+Company:
+{{ company_name }}
+
+Application Status:
+{{ status_display }}
+{% if cta_text %}
+{{ cta_text }}: {{ cta_url }}
+{% endif %}
+Regards,
+NammaCareer Team

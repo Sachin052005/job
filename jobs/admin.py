@@ -1,11 +1,6 @@
 from django.contrib import admin
 
-from jobs.models import Category, Job, JobDomain, JobSubdomain, JobView, ScreeningQuestion
-
-
-class ScreeningQuestionInline(admin.TabularInline):
-    model = ScreeningQuestion
-    extra = 0
+from jobs.models import Category, Job, JobDomain, JobSubdomain, JobView
 
 
 @admin.register(Category)
@@ -47,7 +42,6 @@ class JobAdmin(admin.ModelAdmin):
     autocomplete_fields = ["employer", "company", "category", "domain", "subdomain"]
     readonly_fields = ["views_count", "published_at", "created_at", "updated_at"]
     ordering = ["-created_at"]
-    inlines = [ScreeningQuestionInline]
 
 
 @admin.register(JobView)

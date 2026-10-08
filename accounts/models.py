@@ -505,7 +505,7 @@ class JobAlert(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="job_alerts")
     name = models.CharField(max_length=150)
     keywords = models.CharField(max_length=300, blank=True, help_text="Comma-separated keywords")
-    domain = models.ForeignKey("jobs.Category", on_delete=models.SET_NULL, null=True, blank=True, related_name="job_alerts")
+    domain = models.ForeignKey("jobs.JobDomain", on_delete=models.SET_NULL, null=True, blank=True, related_name="job_alerts")
     location = models.CharField(max_length=150, blank=True)
     experience_max = models.PositiveSmallIntegerField(null=True, blank=True)
     salary_min = models.PositiveIntegerField(null=True, blank=True)
@@ -532,7 +532,7 @@ class JobAlert(models.Model):
             haystack = f"{job.title} {job.skills} {job.description}".lower()
             if not any(kw.lower() in haystack for kw in self.keywords_list()):
                 return False
-        if self.domain_id and job.category_id != self.domain_id:
+        if self.domain_id and job.domain_id != self.domain_id:
             return False
         if self.location and self.location.lower() not in (job.location or "").lower():
             return False

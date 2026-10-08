@@ -14,12 +14,10 @@
 ========================================================= */
 
 .nc-home {
-    /* Brand tokens (--nc-green, --nc-bg, ...) come from the sitewide
-       :root in style.css — this scope only adds what's unique to it. */
-    --nc-shadow-hover: 0 20px 45px rgba(23, 34, 53, .11);
-
-    color: var(--nc-text);
-    background: var(--nc-bg);
+    --nc-shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04);
+    --nc-shadow-hover: 0 8px 20px rgba(15, 23, 42, 0.08);
+    color: var(--nc-text-secondary, #475569);
+    background: var(--nc-page-bg, #F8FAFC);
     overflow: hidden;
 }
 
@@ -28,32 +26,21 @@
 .nc-home h3,
 .nc-home h4,
 .nc-home h5 {
-    color: var(--nc-heading);
+    color: var(--nc-text-primary, #0F172A);
     font-family: "Manrope", sans-serif;
 }
 
-
 /* =========================================================
    HERO SECTION
+   Linear gradient #EFF6FF to #EEF2FF, 16px radius, subtle border
 ========================================================= */
 
 .nc-hero {
     position: relative;
     overflow: hidden;
-    padding: 70px 0 75px;
-
-    background:
-        radial-gradient(
-            circle at 10% 20%,
-            rgba(21, 154, 120, .10),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 90% 80%,
-            rgba(21, 154, 120, .08),
-            transparent 30%
-        ),
-        #ffffff;
+    padding: 60px 0 65px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #EEF2FF 100%);
+    border-bottom: 1px solid #E0E7FF;
 }
 
 .nc-hero::before {
@@ -61,22 +48,22 @@
     position: absolute;
     width: 420px;
     height: 420px;
-    left: -220px;
-    top: -170px;
+    left: -200px;
+    top: -160px;
     border-radius: 50%;
-    background: rgba(21, 154, 120, .045);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.06), transparent 70%);
     pointer-events: none;
 }
 
 .nc-hero::after {
     content: "";
     position: absolute;
-    width: 330px;
-    height: 330px;
-    right: -170px;
-    bottom: -180px;
+    width: 350px;
+    height: 350px;
+    right: -150px;
+    bottom: -160px;
     border-radius: 50%;
-    background: rgba(21, 154, 120, .055);
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.05), transparent 70%);
     pointer-events: none;
 }
 
@@ -91,7 +78,7 @@
     display: grid;
     grid-template-columns: .95fr 1.05fr;
     align-items: center;
-    gap: 65px;
+    gap: 60px;
 }
 
 .nc-hero-visual {
@@ -99,15 +86,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 430px;
+    min-height: 420px;
 }
 
 .nc-image-circle {
     position: absolute;
-    width: 390px;
-    height: 390px;
+    width: 380px;
+    height: 380px;
     border-radius: 50%;
-    background: var(--nc-green-soft);
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.7), rgba(224, 231, 255, 0.6));
+    border: 1px solid rgba(224, 231, 255, 0.8);
     animation: circleFloat 5s ease-in-out infinite;
 }
 
@@ -115,9 +103,8 @@
     0%, 100% {
         transform: translateY(0);
     }
-
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 }
 
@@ -125,8 +112,8 @@
     position: relative;
     z-index: 2;
     display: block;
-    width: min(100%, 470px);
-    max-height: 440px;
+    width: min(100%, 460px);
+    max-height: 430px;
     object-fit: contain;
     animation: personFloat 4s ease-in-out infinite;
 }
@@ -135,28 +122,25 @@
     0%, 100% {
         transform: translateY(0);
     }
-
     50% {
-        transform: translateY(-8px);
+        transform: translateY(-6px);
     }
 }
 
 .nc-hero-content {
-    animation: contentEnter .7s ease both;
+    animation: contentEnter .6s ease both;
 }
 
 @keyframes contentEnter {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(16px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
-
 
 /* =========================================================
    BRAND PILL
@@ -165,46 +149,44 @@
 .nc-brand-pill {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
     margin-bottom: 18px;
-    padding: 8px 14px;
-    border: 1px solid rgba(21, 154, 120, .16);
+    padding: 7px 14px;
+    border: 1px solid #DBEAFE;
     border-radius: 999px;
-    background: var(--nc-green-soft);
-    color: var(--nc-green-dark);
+    background: #FFFFFF;
+    color: var(--nc-primary, #2563EB);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.06);
 }
 
 .nc-brand-logo {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
     border-radius: 50%;
     display: block;
 }
 
 .nc-brand-pill i {
-    color: var(--nc-green);
-    font-size: 14px;
+    color: var(--nc-primary, #2563EB);
+    font-size: 13px;
 }
-
 
 /* =========================================================
    HERO TITLE
 ========================================================= */
 
 .nc-hero-title {
-    margin: 0 0 18px;
-    font-size: clamp(42px, 5vw, 68px);
+    margin: 0 0 16px;
+    font-size: clamp(38px, 4.5vw, 60px);
     font-weight: 800;
-    line-height: 1.08;
-    letter-spacing: -.045em;
+    line-height: 1.1;
+    letter-spacing: -.035em;
+    color: var(--nc-text-primary, #0F172A);
 }
 
-/* IMPORTANT:
-   Each intended line stays together.
-*/
 .nc-hero-title .hero-line {
     display: block;
     white-space: nowrap;
@@ -214,173 +196,16 @@
 
 .nc-hero-title .green-text {
     display: block;
-    color: var(--nc-green);
+    color: var(--nc-primary, #2563EB);
 }
 
 .nc-hero-description {
-    max-width: 570px;
-    margin: 0 0 28px;
-    color: var(--nc-text);
+    max-width: 560px;
+    margin: 0 0 26px;
+    color: var(--nc-text-secondary, #475569);
     font-size: 16px;
-    line-height: 1.75;
+    line-height: 1.7;
 }
-
-
-/* =========================================================
-   SEARCH BOX
-========================================================= */
-
-.nc-search-box {
-    display: grid;
-    grid-template-columns: 1.15fr .85fr auto;
-    align-items: stretch;
-    gap: 8px;
-    max-width: 720px;
-    padding: 8px;
-    border: 1px solid var(--nc-border);
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 12px 30px rgba(23, 34, 53, .08);
-}
-
-.nc-search-field {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    padding: 0 14px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    background: #f8faf9;
-
-    transition:
-        border-color .2s ease,
-        background .2s ease;
-}
-
-.nc-search-field.job {
-    border-right: 1px solid var(--nc-border);
-    border-radius: 10px;
-}
-
-.nc-search-field.location {
-    border-right: 1px solid var(--nc-border);
-    border-radius: 10px;
-}
-
-.nc-search-field:hover {
-    background: #f3f8f6;
-}
-
-.nc-search-field:focus-within {
-    border-color: rgba(21, 154, 120, .35);
-    background: #ffffff;
-}
-
-.nc-search-icon {
-    flex: 0 0 auto;
-    margin-right: 9px;
-    color: var(--nc-green);
-    font-size: 16px;
-}
-
-.nc-search-field input {
-    width: 100%;
-    min-width: 0;
-    padding: 13px 0;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: var(--nc-heading);
-    font-size: 13px;
-}
-
-.nc-search-field input::placeholder {
-    color: var(--nc-muted);
-}
-
-
-/* =========================================================
-   SEARCH BUTTON
-========================================================= */
-
-.nc-search-button {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-width: 125px;
-    padding: 13px 20px;
-    overflow: hidden;
-    border: 0;
-    border-radius: 10px;
-    background: var(--nc-green);
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 8px 18px rgba(21, 154, 120, .20);
-
-    transition:
-        background .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
-}
-
-.nc-search-button:hover {
-    background: var(--nc-green-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 11px 24px rgba(21, 154, 120, .25);
-}
-
-.nc-search-button:active {
-    transform: translateY(0);
-}
-
-.nc-search-button i {
-    font-size: 15px;
-    transition: transform .2s ease;
-}
-
-.nc-search-button:hover i {
-    transform: translateX(3px);
-}
-
-.nc-search-button::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: linear-gradient(
-        110deg,
-        transparent 30%,
-        rgba(255,255,255,.16) 50%,
-        transparent 70%
-    );
-
-    transform: translateX(-120%);
-    transition: transform .5s ease;
-}
-
-.nc-search-button:hover::after {
-    transform: translateX(120%);
-}
-
-.nc-search-button.loading {
-    pointer-events: none;
-    opacity: .85;
-}
-
-.nc-search-button.loading i {
-    animation: searchSpin 1s linear infinite;
-}
-
-@keyframes searchSpin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 
 /* =========================================================
    LETTER REVEAL
@@ -393,11 +218,10 @@
 .reveal-letter {
     display: inline-block;
     opacity: 0;
-    transform: translateY(20px);
-
+    transform: translateY(18px);
     transition:
-        opacity .45s ease var(--letter-delay),
-        transform .45s ease var(--letter-delay);
+        opacity .4s ease var(--letter-delay),
+        transform .4s ease var(--letter-delay);
 }
 
 .letter-reveal.is-visible .reveal-letter {
@@ -410,15 +234,14 @@
     width: .25em;
 }
 
-
 /* =========================================================
    MAIN CONTENT
 ========================================================= */
 
 .nc-home-content {
+    padding-top: 40px;
     padding-bottom: 70px;
 }
-
 
 /* =========================================================
    SECTION HEADER
@@ -438,33 +261,35 @@
     font-size: 21px;
     font-weight: 800;
     letter-spacing: -.025em;
+    color: var(--nc-text-primary, #0F172A);
 }
 
 .nc-section-header h4::before {
     content: "";
     display: inline-block;
     width: 4px;
-    height: 21px;
+    height: 20px;
     margin-right: 10px;
-    vertical-align: -3px;
-    border-radius: 5px;
-    background: var(--nc-green);
+    vertical-align: -2px;
+    border-radius: 4px;
+    background: var(--nc-primary, #2563EB);
 }
 
 .nc-view-all {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    color: var(--nc-green-dark) !important;
+    gap: 6px;
+    color: var(--nc-primary, #2563EB) !important;
     font-size: 13px;
     font-weight: 700;
-    transition: gap .2s ease;
+    text-decoration: none;
+    transition: gap .2s ease, color .18s ease;
 }
 
 .nc-view-all:hover {
-    gap: 11px;
+    gap: 10px;
+    color: var(--nc-primary-hover, #1D4ED8) !important;
 }
-
 
 /* =========================================================
    CATEGORY CARDS
@@ -473,17 +298,13 @@
 .nc-category-card {
     position: relative;
     height: 100%;
-    padding: 25px 18px;
+    padding: 24px 18px;
     overflow: hidden;
-    border: 1px solid var(--nc-border);
-    border-radius: 16px;
-    background: var(--nc-white);
-    box-shadow: 0 6px 22px rgba(23, 34, 53, .045);
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
 .nc-category-card::before {
@@ -494,18 +315,18 @@
     right: -45px;
     top: -45px;
     border-radius: 50%;
-    background: var(--nc-green-soft);
+    background: var(--nc-primary-soft, #EFF6FF);
     transition: transform .3s ease;
 }
 
 .nc-category-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(21, 154, 120, .22);
-    box-shadow: var(--nc-shadow-hover);
+    transform: translateY(-2px);
+    border-color: #BFDBFE;
+    box-shadow: var(--nc-shadow-hover, 0 8px 20px rgba(15, 23, 42, 0.08));
 }
 
 .nc-category-card:hover::before {
-    transform: scale(1.5);
+    transform: scale(1.4);
 }
 
 .nc-category-icon {
@@ -516,141 +337,128 @@
     justify-content: center;
     width: 48px;
     height: 48px;
-    margin-bottom: 13px;
-    border-radius: 13px;
-    background: var(--nc-green-soft);
-    color: var(--nc-green);
+    margin-bottom: 12px;
+    border-radius: var(--nc-radius-md, 10px);
+    background: var(--nc-primary-soft, #EFF6FF);
+    color: var(--nc-primary, #2563EB);
     font-size: 20px;
-
-    transition:
-        background .2s ease,
-        color .2s ease,
-        transform .2s ease;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 
 .nc-category-card:hover .nc-category-icon {
-    background: var(--nc-green);
-    color: #ffffff;
-    transform: rotate(-4deg) scale(1.05);
+    background: var(--nc-primary, #2563EB);
+    color: #FFFFFF;
+    transform: scale(1.05);
 }
 
 .nc-category-card p {
     position: relative;
     z-index: 2;
-    color: var(--nc-heading) !important;
+    color: var(--nc-text-primary, #0F172A) !important;
     font-size: 13px;
     font-weight: 700 !important;
+    margin: 0;
 }
-
 
 /* =========================================================
    FEATURED JOBS AREA
 ========================================================= */
 
 .nc-featured-section {
-    margin-top: 55px;
+    margin-top: 50px;
 }
 
 .nc-featured-section .row {
-    --bs-gutter-y: 22px;
+    --bs-gutter-y: 20px;
 }
 
 .nc-featured-section .card {
     height: 100%;
-    border: 1px solid var(--nc-border);
-    border-radius: 17px;
-    box-shadow: 0 7px 25px rgba(23, 34, 53, .055);
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
     overflow: hidden;
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
 .nc-featured-section .card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(21, 154, 120, .2);
-    box-shadow: var(--nc-shadow-hover);
+    transform: translateY(-2px);
+    border-color: #CBD5E1;
+    box-shadow: var(--nc-shadow-hover, 0 8px 20px rgba(15, 23, 42, 0.08));
 }
-
 
 /* =========================================================
    EMPTY STATE
 ========================================================= */
 
 .nc-empty-state {
-    padding: 65px 25px;
-    border: 1px dashed #cfdcd6;
-    border-radius: 18px;
-    background: rgba(255,255,255,.6);
+    padding: 60px 25px;
+    border: 1px dashed var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
     text-align: center;
 }
 
 .nc-empty-state i {
-    font-size: 52px !important;
-    opacity: .5;
+    font-size: 48px !important;
+    color: var(--nc-text-light, #94A3B8);
 }
 
 .nc-empty-state p {
-    color: var(--nc-muted);
+    color: var(--nc-text-muted, #64748B);
     font-size: 14px;
 }
-
 
 /* =========================================================
    HOW IT WORKS
 ========================================================= */
 
 .nc-steps-section {
-    margin-top: 60px;
+    margin-top: 55px;
 }
 
 .nc-step-card {
     position: relative;
     height: 100%;
-    padding: 30px 25px;
-    border: 1px solid var(--nc-border);
-    border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 7px 25px rgba(23, 34, 53, .045);
-
-    transition:
-        transform .25s ease,
-        box-shadow .25s ease;
+    padding: 28px 22px;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
+    transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .nc-step-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--nc-shadow-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--nc-shadow-hover, 0 8px 20px rgba(15, 23, 42, 0.08));
 }
 
 .nc-step-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 54px;
-    height: 54px;
-    margin-bottom: 17px;
-    border-radius: 15px;
-    background: var(--nc-green-soft);
-    color: var(--nc-green);
-    font-size: 22px;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 16px;
+    border-radius: var(--nc-radius-md, 10px);
+    background: var(--nc-primary-soft, #EFF6FF);
+    color: var(--nc-primary, #2563EB);
+    font-size: 20px;
 }
 
 .nc-step-card h5 {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-size: 16px;
     font-weight: 800;
+    color: var(--nc-text-primary, #0F172A);
 }
 
 .nc-step-card p {
     margin: 0;
-    color: var(--nc-muted) !important;
+    color: var(--nc-text-muted, #64748B) !important;
     font-size: 13px;
-    line-height: 1.65;
+    line-height: 1.6;
 }
-
 
 /* =========================================================
    CTA
@@ -660,95 +468,82 @@
     position: relative;
     overflow: hidden;
     margin-bottom: 30px !important;
-    padding: 55px 30px !important;
-    border: 1px solid rgba(21, 154, 120, .12);
-    border-radius: 22px !important;
-
-    background:
-        radial-gradient(
-            circle at 100% 0%,
-            rgba(21,154,120,.1),
-            transparent 35%
-        ),
-        #ffffff;
-
-    box-shadow: var(--nc-shadow);
+    padding: 50px 30px !important;
+    border: 1px solid #E0E7FF;
+    border-radius: var(--nc-radius-xl, 16px) !important;
+    background: linear-gradient(135deg, #EFF6FF 0%, #EEF2FF 100%);
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
 }
 
 .nc-cta::before {
     content: "";
     position: absolute;
-    width: 170px;
-    height: 170px;
-    left: -80px;
-    bottom: -100px;
+    width: 180px;
+    height: 180px;
+    left: -70px;
+    bottom: -90px;
     border-radius: 50%;
-    background: var(--nc-green-soft);
+    background: rgba(37, 99, 235, 0.06);
 }
 
 .nc-cta h3 {
     position: relative;
     margin-bottom: 10px;
-    font-size: 27px;
+    font-size: 26px;
     font-weight: 800;
+    color: var(--nc-text-primary, #0F172A);
 }
 
 .nc-cta p {
     position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
     font-size: 14px;
+    color: var(--nc-text-secondary, #475569);
 }
 
 .nc-cta .btn {
     position: relative;
-    padding: 12px 24px;
+    padding: 12px 26px;
     border: 0;
-    border-radius: 10px;
-    background: var(--nc-green);
-    color: #ffffff;
-    font-size: 13px;
+    border-radius: var(--nc-radius-md, 10px);
+    background: var(--nc-primary, #2563EB);
+    color: #FFFFFF;
+    font-size: 14px;
     font-weight: 700;
-    box-shadow: 0 8px 20px rgba(21, 154, 120, .18);
-
-    transition:
-        transform .2s ease,
-        background .2s ease,
-        box-shadow .2s ease;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+    transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
 }
 
 .nc-cta .btn:hover {
-    background: var(--nc-green-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(21, 154, 120, .23);
+    background: var(--nc-primary-hover, #1D4ED8);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.30);
+    color: #FFFFFF;
 }
-
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
 @media (max-width: 1050px) {
-
     .nc-hero-grid {
         grid-template-columns: .9fr 1.1fr;
         gap: 35px;
     }
 
     .nc-image-circle {
-        width: 330px;
-        height: 330px;
+        width: 320px;
+        height: 320px;
     }
 
     .nc-hero-title {
-        font-size: clamp(38px, 5vw, 56px);
+        font-size: clamp(34px, 4.5vw, 50px);
     }
 }
 
-
 @media (max-width: 800px) {
-
     .nc-hero {
-        padding: 50px 0 60px;
+        padding: 45px 0 50px;
     }
 
     .nc-hero-grid {
@@ -757,7 +552,7 @@
     }
 
     .nc-hero-visual {
-        min-height: 330px;
+        min-height: 300px;
         order: 1;
     }
 
@@ -771,19 +566,13 @@
         margin-right: auto;
     }
 
-    .nc-search-box {
-        margin: 0 auto;
-    }
-
     .nc-image-circle {
-        width: 300px;
-        height: 300px;
+        width: 280px;
+        height: 280px;
     }
 }
 
-
 @media (max-width: 767px) {
-
     .nc-section-header {
         align-items: flex-start;
     }
@@ -797,57 +586,46 @@
     }
 
     .nc-category-card {
-        padding: 21px 13px;
+        padding: 20px 14px;
     }
 
     .nc-step-card {
-        padding: 25px 20px;
+        padding: 24px 18px;
     }
 
     .nc-cta {
-        padding: 40px 22px !important;
+        padding: 38px 20px !important;
     }
 
     .nc-cta h3 {
-        font-size: 23px;
+        font-size: 22px;
     }
 }
 
-
-/* =========================================================
-   MOBILE — 600px
-========================================================= */
-
 @media (max-width: 600px) {
-
     .nc-hero {
-        padding: 35px 0 45px;
+        padding: 30px 0 40px;
     }
 
     .nc-hero-visual {
-        min-height: 260px;
+        min-height: 240px;
     }
 
     .nc-image-circle {
-        width: 245px;
-        height: 245px;
+        width: 230px;
+        height: 230px;
     }
 
     .nc-hero-image {
-        max-height: 290px;
+        max-height: 260px;
     }
 
     .nc-hero-title {
-        font-size: 39px;
+        font-size: 34px;
         line-height: 1.15;
         text-align: center;
     }
 
-    /*
-       Prevent words from breaking.
-       The JavaScript below also preserves
-       these two separate lines.
-    */
     .nc-hero-title .hero-line {
         display: block;
         white-space: nowrap;
@@ -858,37 +636,17 @@
     .nc-hero-description {
         font-size: 14px;
     }
-
-    .nc-search-box {
-        grid-template-columns: 1fr;
-        gap: 7px;
-    }
-
-    .nc-search-field.job,
-    .nc-search-field.location {
-        border-right: 0;
-    }
-
-    .nc-search-button {
-        width: 100%;
-    }
 }
 
-
-/* =========================================================
-   MOBILE — 575px
-========================================================= */
-
 @media (max-width: 575px) {
-
     .nc-featured-section,
     .nc-steps-section {
-        margin-top: 45px;
+        margin-top: 40px;
     }
 
     .nc-section-header {
         flex-direction: column;
-        gap: 9px;
+        gap: 8px;
     }
 
     .nc-view-all {
@@ -896,38 +654,26 @@
     }
 }
 
-
-/* =========================================================
-   SMALL MOBILE — 400px
-========================================================= */
-
 @media (max-width: 400px) {
-
     .nc-hero-title {
-        font-size: 34px;
+        font-size: 30px;
     }
 
     .nc-image-circle {
-        width: 215px;
-        height: 215px;
+        width: 200px;
+        height: 200px;
     }
 
     .nc-hero-image {
-        max-height: 255px;
+        max-height: 230px;
     }
 
     .nc-brand-pill {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
 }
 
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
-
 @media (prefers-reduced-motion: reduce) {
-
     .nc-category-card,
     .nc-category-icon,
     .nc-featured-section .card,
@@ -949,7 +695,7 @@
 }
 
 /* =========================================================
-   DOMAIN JOB SECTIONS - horizontal scroll (spec section 6)
+   DOMAIN JOB SECTIONS - horizontal scroll
 ========================================================= */
 
 .nc-scroll-row-wrap {
@@ -966,11 +712,17 @@
     -webkit-overflow-scrolling: touch;
 }
 
-.nc-scroll-row::-webkit-scrollbar { height: 6px; }
-.nc-scroll-row::-webkit-scrollbar-thumb { background: var(--nc-border, #e1e8e4); border-radius: 999px; }
+.nc-scroll-row::-webkit-scrollbar {
+    height: 6px;
+}
+
+.nc-scroll-row::-webkit-scrollbar-thumb {
+    background: var(--nc-border, #E2E8F0);
+    border-radius: 999px;
+}
 
 .nc-scroll-item {
-    flex: 0 0 300px;
+    flex: 0 0 310px;
     scroll-snap-align: start;
 }
 
@@ -982,24 +734,161 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    border: 1px solid var(--nc-border, #e1e8e4);
-    background: var(--nc-white, #fff);
-    color: var(--nc-heading, #172235);
-    box-shadow: 0 8px 20px rgba(23,34,53,.1);
+    border: 1px solid var(--nc-border, #E2E8F0);
+    background: #FFFFFF;
+    color: var(--nc-text-secondary, #475569);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     z-index: 2;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
 }
 
-.nc-scroll-arrow-left { left: -14px; }
-.nc-scroll-arrow-right { right: -14px; }
+.nc-scroll-arrow:hover {
+    background: var(--nc-primary-soft, #EFF6FF);
+    color: var(--nc-primary, #2563EB);
+    border-color: #BFDBFE;
+}
+
+.nc-scroll-arrow-left {
+    left: -14px;
+}
+
+.nc-scroll-arrow-right {
+    right: -14px;
+}
+
+.nc-subdomain-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: var(--nc-text-secondary, #475569) !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.nc-subdomain-pill:hover {
+    background: var(--nc-primary-soft, #EFF6FF);
+    border-color: #BFDBFE;
+    color: var(--nc-primary, #2563EB) !important;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   3 MAIN DOMAIN CARDS + EXPANDABLE SUBDOMAIN PANEL
+========================================================= */
+
+.nc-domain-card {
+    width: 100%;
+    height: 100%;
+    padding: 26px 20px;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
+    text-align: center;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.nc-domain-card:hover {
+    transform: translateY(-2px);
+    border-color: #BFDBFE;
+    box-shadow: var(--nc-shadow-hover, 0 8px 20px rgba(15, 23, 42, 0.08));
+}
+
+.nc-domain-card[aria-expanded="true"] {
+    border-color: var(--nc-primary, #2563EB);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.nc-domain-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 12px;
+    border-radius: var(--nc-radius-md, 10px);
+    background: var(--nc-primary-soft, #EFF6FF);
+    color: var(--nc-primary, #2563EB);
+    font-size: 24px;
+    transition: background .18s ease, color .18s ease;
+}
+
+.nc-domain-card:hover .nc-domain-card-icon {
+    background: var(--nc-primary, #2563EB);
+    color: #FFFFFF;
+}
+
+.nc-domain-card-title {
+    color: var(--nc-text-primary, #0F172A);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -.01em;
+    margin-bottom: 6px;
+}
+
+.nc-domain-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--nc-primary, #2563EB);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.nc-domain-card-chevron {
+    transition: transform .2s ease;
+}
+
+.nc-domain-card[aria-expanded="true"] .nc-domain-card-chevron {
+    transform: rotate(180deg);
+}
+
+.nc-domain-panel {
+    padding: 22px 24px;
+    border: 1px solid var(--nc-border, #E2E8F0);
+    border-radius: var(--nc-radius-lg, 14px);
+    background: #FFFFFF;
+    box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
+    animation: domainPanelIn .22s ease both;
+}
+
+@keyframes domainPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nc-subdomain-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
 
 @media (min-width: 992px) {
-    .nc-scroll-arrow { display: flex; }
+    .nc-scroll-arrow {
+        display: flex;
+    }
 }
 
 @media (max-width: 575.98px) {
-    .nc-scroll-item { flex-basis: 260px; }
+    .nc-scroll-item {
+        flex-basis: 260px;
+    }
 }
 
 </style>
@@ -1064,67 +953,19 @@
 
 
                     <p class="nc-hero-description">
-
                         Discover meaningful career opportunities
                         and take the next step toward your future.
-
                     </p>
 
 
-                    <form
-                        class="nc-search-box"
-                        method="GET"
-                        action="{% url 'jobs:list' %}#job-results"
-                        id="jobSearchForm"
-                    >
+                    <!--
+                    HERO SEARCH REMOVED.
 
-                        <div class="nc-search-field job">
+                    Job search is handled by the compact navbar
+                    search beside the notification icon.
 
-                            <i class="bi bi-search nc-search-icon"></i>
-
-                            <input
-                                type="text"
-                                name="keyword"
-                                id="jobSearchInput"
-                                placeholder="Job title, skills, or company"
-                                autocomplete="off"
-                                value="{{ request.GET.keyword|default:'' }}"
-                            >
-
-                        </div>
-
-
-                        <div class="nc-search-field location">
-
-                            <i class="bi bi-geo-alt nc-search-icon"></i>
-
-                            <input
-                                type="text"
-                                name="location"
-                                id="locationSearchInput"
-                                placeholder="Location"
-                                autocomplete="off"
-                                value="{{ request.GET.location|default:'' }}"
-                            >
-
-                        </div>
-
-
-                        <button
-                            type="submit"
-                            class="nc-search-button"
-                            id="jobSearchButton"
-                        >
-
-                            <span>
-                                Search
-                            </span>
-
-                            <i class="bi bi-arrow-right"></i>
-
-                        </button>
-
-                    </form>
+                    Do not add another search form here.
+                    -->
 
                 </div>
 
@@ -1142,49 +983,124 @@
 
     <div class="container nc-home-content">
 
-        {% if categories %}
+        {% if domains %}
 
         <div class="section-header reveal nc-section-header">
 
             <h4 class="mb-0">
-                Popular Categories
+                Explore by Category
             </h4>
 
         </div>
 
 
-        <div class="row g-3 mb-5 stagger-grid">
+        <div class="row g-3 mb-4 stagger-grid">
 
-            {% for category in categories %}
+            {% for domain in domains %}
 
-            <div class="col-6 col-md-3">
+            <div class="col-md-4">
 
-                <a
-                    href="{% url 'jobs:list' %}?category={{ category.slug }}"
-                    class="text-decoration-none"
+                <button
+                    type="button"
+                    class="nc-domain-card"
+                    data-domain-toggle="domain-panel-{{ domain.slug }}"
+                    aria-expanded="false"
                 >
 
-                    <div class="stat-card nc-category-card text-center d-block">
+                    <span class="nc-domain-card-icon">
 
-                        <span class="nc-category-icon">
+                        {% if domain.slug == "it" %}
 
-                            <i class="bi bi-grid-fill"></i>
+                            <i class="bi bi-cpu"></i>
 
-                        </span>
+                        {% elif domain.slug == "non-it" %}
 
-                        <p class="mb-0 mt-2 text-dark fw-semibold">
-                            {{ category.name }}
-                        </p>
+                            <i class="bi bi-briefcase"></i>
 
-                    </div>
+                        {% else %}
 
-                </a>
+                            <i class="bi bi-heart-pulse"></i>
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <h5 class="nc-domain-card-title">
+                        {{ domain.name }}
+                    </h5>
+
+
+                    <span class="nc-domain-card-cta">
+
+                        Explore {{ domain.name }} Jobs
+
+                        <i class="bi bi-chevron-down nc-domain-card-chevron"></i>
+
+                    </span>
+
+                </button>
 
             </div>
 
             {% endfor %}
 
         </div>
+
+
+        {% for domain in domains %}
+
+        <div
+            class="nc-domain-panel mb-5"
+            id="domain-panel-{{ domain.slug }}"
+            hidden
+        >
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+                <h6 class="mb-0">
+                    {{ domain.name }} Subcategories
+                </h6>
+
+
+                <a
+                    href="{% url 'jobs:list' %}?domain={{ domain.slug }}"
+                    class="link-primary text-decoration-none fw-semibold nc-view-all"
+                >
+                    View All {{ domain.name }} Jobs
+
+                    <span class="icon-move-right">
+                        <i class="bi bi-arrow-right"></i>
+                    </span>
+                </a>
+
+            </div>
+
+
+            <div class="nc-subdomain-grid">
+
+                {% for sub in domain.subdomains.all %}
+
+                    <a
+                        href="{% url 'jobs:list' %}?subdomain={{ sub.slug }}"
+                        class="nc-subdomain-pill"
+                    >
+                        {{ sub.name }}
+                    </a>
+
+                {% empty %}
+
+                    <p class="text-muted small mb-0">
+                        No subdomains yet.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
 
         {% endif %}
 
@@ -1199,6 +1115,7 @@
                 Featured Jobs
             </h4>
 
+
             <a
                 href="{% url 'jobs:list' %}"
                 class="link-primary text-decoration-none fw-semibold nc-view-all"
@@ -1207,9 +1124,7 @@
                 View all jobs
 
                 <span class="icon-move-right">
-
                     <i class="bi bi-arrow-right"></i>
-
                 </span>
 
             </a>
@@ -1249,37 +1164,145 @@
 
 
         <!-- =====================================================
-             DOMAIN JOB SECTIONS (spec section 6)
+             PROFILE-BASED JOB SECTIONS (existing)
         ====================================================== -->
 
         {% for section in job_sections %}
 
         <div class="section-header reveal nc-section-header nc-featured-section">
-            <h4 class="mb-0">{{ section.title }}</h4>
-            <a href="{% url 'jobs:list' %}" class="link-primary text-decoration-none fw-semibold nc-view-all">
+
+            <h4 class="mb-0">
+                {{ section.title }}
+            </h4>
+
+
+            <a
+                href="{% url 'jobs:list' %}"
+                class="link-primary text-decoration-none fw-semibold nc-view-all"
+            >
+
                 View all
-                <span class="icon-move-right"><i class="bi bi-arrow-right"></i></span>
+
+                <span class="icon-move-right">
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
             </a>
+
         </div>
 
+
         <div class="nc-scroll-row-wrap mb-5">
-            <button type="button" class="nc-scroll-arrow nc-scroll-arrow-left" aria-label="Scroll left"><i class="bi bi-chevron-left"></i></button>
+
+            <button
+                type="button"
+                class="nc-scroll-arrow nc-scroll-arrow-left"
+                aria-label="Scroll left"
+            >
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+
             <div class="nc-scroll-row">
+
                 {% for job in section.jobs %}
+
                     <div class="nc-scroll-item">
+
                         {% include "components/job_card.html" %}
+
                     </div>
+
                 {% endfor %}
+
             </div>
-            <button type="button" class="nc-scroll-arrow nc-scroll-arrow-right" aria-label="Scroll right"><i class="bi bi-chevron-right"></i></button>
+
+
+            <button
+                type="button"
+                class="nc-scroll-arrow nc-scroll-arrow-right"
+                aria-label="Scroll right"
+            >
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
         </div>
 
         {% endfor %}
 
 
         <!-- =====================================================
-             HOW IT WORKS
+             IT -> NON-IT -> MEDICAL CODING DOMAIN SECTIONS
+             Only a domain with published jobs gets a row.
         ====================================================== -->
+
+        {% for section in domain_job_sections %}
+
+        <div class="section-header reveal nc-section-header nc-featured-section">
+
+            <h4 class="mb-0">
+                {{ section.title }}
+            </h4>
+
+
+            <a
+                href="{{ section.view_all_url }}"
+                class="link-primary text-decoration-none fw-semibold nc-view-all"
+            >
+
+                View all
+
+                <span class="icon-move-right">
+                    <i class="bi bi-arrow-right"></i>
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="nc-scroll-row-wrap mb-5">
+
+            <button
+                type="button"
+                class="nc-scroll-arrow nc-scroll-arrow-left"
+                aria-label="Scroll left"
+            >
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+
+            <div class="nc-scroll-row">
+
+                {% for job in section.jobs %}
+
+                    <div class="nc-scroll-item">
+
+                        {% include "components/job_card.html" %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <button
+                type="button"
+                class="nc-scroll-arrow nc-scroll-arrow-right"
+                aria-label="Scroll right"
+            >
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+
+        <!-- =================================================
+             HOW IT WORKS
+        ====================================================== 
 
         <div class="row g-4 mb-5 text-center reveal nc-steps-section">
 
@@ -1288,9 +1311,7 @@
                 <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
 
                     <span class="stat-icon nc-step-icon mb-2">
-
                         <i class="bi bi-person-plus"></i>
-
                     </span>
 
                     <h5 class="mt-1">
@@ -1311,9 +1332,7 @@
                 <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
 
                     <span class="stat-icon nc-step-icon mb-2">
-
                         <i class="bi bi-search"></i>
-
                     </span>
 
                     <h5 class="mt-1">
@@ -1334,9 +1353,7 @@
                 <div class="stat-card nc-step-card d-flex flex-column align-items-center text-center h-100">
 
                     <span class="stat-icon nc-step-icon mb-2">
-
                         <i class="bi bi-check-circle"></i>
-
                     </span>
 
                     <h5 class="mt-1">
@@ -1352,7 +1369,7 @@
             </div>
 
         </div>
-
+        --->
 
         <!-- =====================================================
              CTA
@@ -1388,116 +1405,49 @@
 
 <script>
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        const reducedMotion =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
+    const reducedMotion =
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
 
 
-        /* =====================================================
-           LETTER REVEAL
+    /* =====================================================
+       LETTER REVEAL
 
-           IMPORTANT FIX:
-           The animation is still exactly the same,
-           but each .hero-line is processed separately.
+       Each .hero-line is processed separately so that:
 
-           This prevents:
-           "Find the job that fi"
-           "ts your life"
+       Find the job that
+       fits your life
 
-           and keeps:
-           "Find the job that"
-           "fits your life"
-        ===================================================== */
+       remains on two fixed lines.
+    ===================================================== */
 
-        function prepareLetters(element) {
+    function prepareLetters(element) {
 
-            if (
-                element.dataset.lettersReady === "true"
-            ) {
-                return;
-            }
+        if (
+            element.dataset.lettersReady === "true"
+        ) {
+            return;
+        }
 
 
-            const heroLines =
-                element.querySelectorAll(".hero-line");
+        const heroLines =
+            element.querySelectorAll(".hero-line");
 
 
-            /* -------------------------------------------------
-               HERO TITLE WITH FIXED LINES
-            ------------------------------------------------- */
+        if (heroLines.length > 0) {
 
-            if (heroLines.length > 0) {
-
-                heroLines.forEach(
-                    function (line) {
-
-                        const text =
-                            line.textContent
-                                .replace(/\s+/g, " ")
-                                .trim();
-
-
-                        line.textContent = "";
-
-
-                        [...text].forEach(
-                            function (character, index) {
-
-                                const span =
-                                    document.createElement("span");
-
-
-                                if (character === " ") {
-
-                                    span.className =
-                                        "reveal-space";
-
-                                    span.innerHTML =
-                                        "&nbsp;";
-
-                                } else {
-
-                                    span.className =
-                                        "reveal-letter";
-
-                                    span.textContent =
-                                        character;
-                                }
-
-
-                                span.style.setProperty(
-                                    "--letter-delay",
-                                    `${index * 18}ms`
-                                );
-
-
-                                line.appendChild(span);
-
-                            }
-                        );
-
-                    }
-                );
-
-            } else {
-
-                /* -------------------------------------------------
-                   ORIGINAL BEHAVIOUR FOR OTHER LETTER-REVEAL
-                   ELEMENTS
-                ------------------------------------------------- */
+            heroLines.forEach(function (line) {
 
                 const text =
-                    element.textContent
+                    line.textContent
                         .replace(/\s+/g, " ")
                         .trim();
 
 
-                element.textContent = "";
+                line.textContent = "";
 
 
                 [...text].forEach(
@@ -1531,7 +1481,327 @@ document.addEventListener(
                         );
 
 
-                        element.appendChild(span);
+                        line.appendChild(span);
+
+                    }
+                );
+
+            });
+
+        } else {
+
+            const text =
+                element.textContent
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+
+            element.textContent = "";
+
+
+            [...text].forEach(
+                function (character, index) {
+
+                    const span =
+                        document.createElement("span");
+
+
+                    if (character === " ") {
+
+                        span.className =
+                            "reveal-space";
+
+                        span.innerHTML =
+                            "&nbsp;";
+
+                    } else {
+
+                        span.className =
+                            "reveal-letter";
+
+                        span.textContent =
+                            character;
+                    }
+
+
+                    span.style.setProperty(
+                        "--letter-delay",
+                        `${index * 18}ms`
+                    );
+
+
+                    element.appendChild(span);
+
+                }
+            );
+
+        }
+
+
+        element.dataset.lettersReady = "true";
+    }
+
+
+    document
+        .querySelectorAll(".letter-reveal")
+        .forEach(function (element) {
+
+            prepareLetters(element);
+
+        });
+
+
+    /* =====================================================
+       INTERSECTION OBSERVER
+    ===================================================== */
+
+    if (!reducedMotion) {
+
+        const observer =
+            new IntersectionObserver(
+                function (entries) {
+
+                    entries.forEach(
+                        function (entry) {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "is-visible"
+                                );
+
+                            } else {
+
+                                entry.target.classList.remove(
+                                    "is-visible"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.15,
+                    rootMargin:
+                        "0px 0px -40px 0px"
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                ".letter-reveal, .scroll-reveal"
+            )
+            .forEach(
+                function (element) {
+
+                    observer.observe(element);
+
+                }
+            );
+
+    } else {
+
+        document
+            .querySelectorAll(
+                ".letter-reveal, .scroll-reveal"
+            )
+            .forEach(
+                function (element) {
+
+                    element.classList.add(
+                        "is-visible"
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       HERO IMAGE ERROR
+    ===================================================== */
+
+    const heroImage =
+        document.querySelector(
+            ".nc-hero-image"
+        );
+
+
+    if (heroImage) {
+
+        heroImage.addEventListener(
+            "error",
+            function () {
+
+                this.style.display =
+                    "none";
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       DOMAIN EXPANSION
+    ===================================================== */
+
+    var domainCards =
+        document.querySelectorAll(
+            "[data-domain-toggle]"
+        );
+
+
+    domainCards.forEach(function (card) {
+
+        card.addEventListener("click", function () {
+
+            var targetId =
+                card.getAttribute(
+                    "data-domain-toggle"
+                );
+
+
+            var target =
+                document.getElementById(
+                    targetId
+                );
+
+
+            if (!target) {
+                return;
+            }
+
+
+            var wasOpen =
+                card.getAttribute(
+                    "aria-expanded"
+                ) === "true";
+
+
+            domainCards.forEach(
+                function (otherCard) {
+
+                    otherCard.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+
+                    var otherTarget =
+                        document.getElementById(
+                            otherCard.getAttribute(
+                                "data-domain-toggle"
+                            )
+                        );
+
+
+                    if (otherTarget) {
+                        otherTarget.hidden = true;
+                    }
+
+                }
+            );
+
+
+            if (!wasOpen) {
+
+                card.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+
+                target.hidden = false;
+
+
+                target.scrollIntoView({
+                    behavior: reducedMotion
+                        ? "auto"
+                        : "smooth",
+                    block: "nearest"
+                });
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       HORIZONTAL JOB SCROLL
+    ===================================================== */
+
+    document
+        .querySelectorAll(".nc-scroll-row-wrap")
+        .forEach(function (wrap) {
+
+            var row =
+                wrap.querySelector(
+                    ".nc-scroll-row"
+                );
+
+
+            var left =
+                wrap.querySelector(
+                    ".nc-scroll-arrow-left"
+                );
+
+
+            var right =
+                wrap.querySelector(
+                    ".nc-scroll-arrow-right"
+                );
+
+
+            if (!row) {
+                return;
+            }
+
+
+            var step = function () {
+
+                return Math.min(
+                    600,
+                    row.clientWidth * 0.8
+                );
+
+            };
+
+
+            if (left) {
+
+                left.addEventListener(
+                    "click",
+                    function () {
+
+                        row.scrollBy({
+                            left: -step(),
+                            behavior: "smooth"
+                        });
 
                     }
                 );
@@ -1539,251 +1809,26 @@ document.addEventListener(
             }
 
 
-            element.dataset.lettersReady =
-                "true";
-        }
+            if (right) {
 
+                right.addEventListener(
+                    "click",
+                    function () {
 
-        document
-            .querySelectorAll(".letter-reveal")
-            .forEach(
-                function (element) {
-                    prepareLetters(element);
-                }
-            );
-
-
-        /* =====================================================
-           INTERSECTION OBSERVER
-           ANIMATION UNCHANGED
-        ===================================================== */
-
-        if (!reducedMotion) {
-
-            const observer =
-                new IntersectionObserver(
-
-                    function (entries) {
-
-                        entries.forEach(
-                            function (entry) {
-
-                                if (
-                                    entry.isIntersecting
-                                ) {
-
-                                    entry.target.classList.add(
-                                        "is-visible"
-                                    );
-
-                                } else {
-
-                                    entry.target.classList.remove(
-                                        "is-visible"
-                                    );
-
-                                }
-
-                            }
-                        );
-
-                    },
-
-                    {
-                        threshold: 0.15,
-                        rootMargin:
-                            "0px 0px -40px 0px"
-                    }
-
-                );
-
-
-            document
-                .querySelectorAll(
-                    ".letter-reveal, .scroll-reveal"
-                )
-                .forEach(
-                    function (element) {
-                        observer.observe(element);
-                    }
-                );
-
-
-        } else {
-
-            document
-                .querySelectorAll(
-                    ".letter-reveal, .scroll-reveal"
-                )
-                .forEach(
-                    function (element) {
-
-                        element.classList.add(
-                            "is-visible"
-                        );
+                        row.scrollBy({
+                            left: step(),
+                            behavior: "smooth"
+                        });
 
                     }
                 );
 
-        }
+            }
 
+        });
 
-        /* =====================================================
-           SEARCH
-        ===================================================== */
-
-        const searchForm =
-            document.getElementById(
-                "jobSearchForm"
-            );
-
-
-        const searchButton =
-            document.getElementById(
-                "jobSearchButton"
-            );
-
-
-        const jobInput =
-            document.getElementById(
-                "jobSearchInput"
-            );
-
-
-        const locationInput =
-            document.getElementById(
-                "locationSearchInput"
-            );
-
-
-        if (searchForm && searchButton) {
-
-            searchForm.addEventListener(
-                "submit",
-                function () {
-
-                    searchButton.classList.add(
-                        "loading"
-                    );
-
-
-                    const icon =
-                        searchButton.querySelector(
-                            "i"
-                        );
-
-
-                    if (icon) {
-
-                        icon.className =
-                            "bi bi-arrow-repeat";
-
-                    }
-
-
-                    const text =
-                        searchButton.querySelector(
-                            "span"
-                        );
-
-
-                    if (text) {
-
-                        text.textContent =
-                            "Searching...";
-
-                    }
-
-                }
-            );
-
-
-            [jobInput, locationInput].forEach(
-                function (input) {
-
-                    if (!input) {
-                        return;
-                    }
-
-
-                    input.addEventListener(
-                        "keydown",
-                        function (event) {
-
-                            if (
-                                event.key ===
-                                "Enter"
-                            ) {
-
-                                event.preventDefault();
-
-                                searchForm.requestSubmit();
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           HERO IMAGE ERROR
-        ===================================================== */
-
-        const heroImage =
-            document.querySelector(
-                ".nc-hero-image"
-            );
-
-
-        if (heroImage) {
-
-            heroImage.addEventListener(
-                "error",
-                function () {
-
-                    this.style.display =
-                        "none";
-
-                }
-            );
-
-        }
-
-    }
-
-);
-
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".nc-scroll-row-wrap").forEach(function (wrap) {
-        var row = wrap.querySelector(".nc-scroll-row");
-        var left = wrap.querySelector(".nc-scroll-arrow-left");
-        var right = wrap.querySelector(".nc-scroll-arrow-right");
-        if (!row) return;
-        var step = function () { return Math.min(600, row.clientWidth * 0.8); };
-        if (left) left.addEventListener("click", function () { row.scrollBy({ left: -step(), behavior: "smooth" }); });
-        if (right) right.addEventListener("click", function () { row.scrollBy({ left: step(), behavior: "smooth" }); });
-    });
 });
+
 </script>
 
 {% endblock %}
-
-
-
-
-                                      
-
-
-
-
-
-

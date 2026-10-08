@@ -2,10 +2,10 @@
     .nc-profile-card {
         position: relative;
         overflow: hidden;
-        background: var(--nc-white, #ffffff);
-        border: 1px solid var(--nc-border, #e1e8e4);
-        border-radius: 18px;
-        box-shadow: 0 8px 25px rgba(23, 34, 53, 0.055);
+        background: var(--nc-surface, #ffffff);
+        border: 1px solid var(--nc-border, #E2E8F0);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
         transition:
             transform 0.2s ease,
             box-shadow 0.2s ease,
@@ -19,29 +19,29 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: var(--nc-primary, #159a78);
+        background: var(--nc-primary, #2563EB);
     }
 
     .nc-profile-card-body {
-        padding: 28px 22px 24px;
+        padding: 24px 20px 20px;
         text-align: center;
     }
 
     .nc-profile-avatar {
-        width: 88px;
-        height: 88px;
+        width: 80px;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        margin: 0 auto 17px;
-        border-radius: 22px;
-        background: var(--nc-primary-soft, #e8f6f1);
-        border: 1px solid rgba(21, 154, 120, 0.14);
-        color: var(--nc-primary, #159a78);
-        font-size: 2rem;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563EB, #174EA6);
+        border: 2px solid #FFFFFF;
+        color: #ffffff;
+        font-size: 1.8rem;
         font-weight: 800;
-        box-shadow: 0 8px 20px rgba(23, 34, 53, 0.07);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
     }
 
     .nc-profile-avatar img {
@@ -51,41 +51,48 @@
     }
 
     .nc-profile-name {
-        color: var(--nc-heading, #172235);
+        color: var(--nc-text-heading, #172033);
         font-size: 1rem;
-        font-weight: 800;
+        font-weight: 700;
         line-height: 1.4;
         margin-bottom: 5px;
     }
 
     .nc-profile-headline {
         min-height: 21px;
-        color: var(--nc-text, #586678);
-        font-size: 0.78rem;
+        color: var(--nc-text-secondary, #475569);
+        font-size: 0.8rem;
         line-height: 1.5;
-        margin-bottom: 17px;
+        margin-bottom: 16px;
     }
 
     .nc-profile-progress {
         margin-bottom: 9px;
+        height: 8px;
+        background: #F1F5F9;
+        border-radius: 999px;
+    }
+
+    .nc-profile-progress .progress-bar {
+        background: #10B981;
+        border-radius: 999px;
     }
 
     .nc-profile-completion {
-        color: var(--nc-muted, #8994a3);
-        font-size: 0.72rem;
+        color: var(--nc-text-muted, #64748B);
+        font-size: 0.75rem;
         margin: 0;
     }
 
     @media (max-width: 575.98px) {
         .nc-profile-card-body {
-            padding: 25px 20px 22px;
+            padding: 22px 18px 20px;
         }
 
         .nc-profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 19px;
-            font-size: 1.8rem;
+            width: 72px;
+            height: 72px;
+            font-size: 1.6rem;
         }
     }
 </style>

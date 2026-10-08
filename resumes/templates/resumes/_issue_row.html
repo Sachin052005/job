@@ -1,0 +1,21 @@
+<div class="nc-issue-item sev-{{ issue.severity }}">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+        <div>
+            <strong>{{ issue.message }}</strong>
+            <div class="text-muted small">{{ issue.category|title }}{% if issue.section %} &middot; {{ issue.section|title }}{% endif %}</div>
+        </div>
+        <span class="badge bg-{% if issue.severity == 'high' %}danger{% elif issue.severity == 'medium' %}warning text-dark{% else %}secondary{% endif %}">{{ issue.get_severity_display }}</span>
+    </div>
+    {% if issue.text %}<div class="nc-issue-quote">"{{ issue.text }}"</div>{% endif %}
+    {% if issue.suggestion %}<p class="small text-muted mb-2">{{ issue.suggestion }}</p>{% endif %}
+    <div class="nc-issue-actions">
+        <form method="post" action="{% url 'resumes:issue_status' resume.pk issue.pk %}">
+            {% csrf_token %}<input type="hidden" name="status" value="fixed">
+            <button type="submit" class="btn btn-sm btn-outline-success">Mark Fixed</button>
+        </form>
+        <form method="post" action="{% url 'resumes:issue_status' resume.pk issue.pk %}">
+            {% csrf_token %}<input type="hidden" name="status" value="ignored">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Ignore</button>
+        </form>
+    </div>
+</div>

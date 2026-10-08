@@ -28,7 +28,6 @@ from accounts.forms import (
     LanguageForm,
     ProfileForm,
     ProjectForm,
-    RecruiterProfileForm,
     RegisterForm,
     UserSettingsNotificationsForm,
     UserSettingsPrivacyForm,
@@ -46,7 +45,6 @@ from accounts.models import (
     Language,
     Profile,
     Project,
-    RecruiterProfile,
     UserSettings,
     WorkExperience,
 )
@@ -557,40 +555,246 @@ class SettingsApplicationPreferencesView(JobSeekerRequiredMixin, TemplateView):
 
 
 class StudentPerformanceView(JobSeekerRequiredMixin, TemplateView):
+    """Profile Performance dashboard. The chart and the activity list below
+    it are two views of the *same* filtered queryset for the *same*
+    timezone-aware [start, end) window - never two independently-computed
+    numbers that can drift apart (spec sections 23-26): whichever range the
+    student picks (Today/Yesterday/Last 7/30/90 Days/Custom) narrows both
+    together, and the summary tiles above them too."""
+
     template_name = "accounts/performance.html"
 
+    RANGE_CHOICES = {"today", "yesterday", "7d", "30d", "90d", "custom"}
+    RANGE_LABELS = {
+        "today": "Today", "yesterday": "Yesterday", "7d": "Last 7 Days",
+        "30d": "Last 30 Days", "90d": "Last 90 Days", "custom": "Custom Range",
+    }
+
+    def _resolve_range(self):
+        from datetime import datetime, time, timedelta
+
+        from django.utils import timezone
+        from django.utils.dateparse import parse_date
+
+        today = timezone.localdate()
+        range_key = self.request.GET.get("range", "30d")
+        if range_key not in self.RANGE_CHOICES:
+            range_key = "30d"
+
+        start_date = end_date = today
+        if range_key == "today":
+            start_date = end_date = today
+        elif range_key == "yesterday":
+            start_date = end_date = today - timedelta(days=1)
+        elif range_key == "7d":
+            start_date, end_date = today - timedelta(days=6), today
+        elif range_key == "90d":
+            start_date, end_date = today - timedelta(days=89), today
+        elif range_key == "custom":
+            start_date = parse_date(self.request.GET.get("start", "") or "") or (today - timedelta(days=29))
+            end_date = parse_date(self.request.GET.get("end", "") or "") or today
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+            if end_date > today:
+                end_date = today
+        else:  # "30d"
+            start_date, end_date = today - timedelta(days=29), today
+
+        tz = timezone.get_current_timezone()
+        start_dt = timezone.make_aware(datetime.combine(start_date, time.min), tz)
+        end_dt = timezone.make_aware(datetime.combine(end_date, time.max), tz)
+        return range_key, start_date, end_date, start_dt, end_dt
+
     def get_context_data(self, **kwargs):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from activity.models import StudentActivity, StudentProfileView, StudentSearchAppearance
         from applications.models import Application
+        from core.constants import (
+            ACTIVITY_PROFILE_UPDATE,
+            ACTIVITY_PROFILE_VIEW,
+            ACTIVITY_RESUME_DOWNLOAD,
+            ACTIVITY_RESUME_VIEW,
+            ACTIVITY_SEARCH_APPEARANCE,
+            RECRUITER_ACTION_EVENT_TYPES,
+        )
 
         context = super().get_context_data(**kwargs)
-        applications = Application.objects.filter(applicant=self.request.user)
-        context["applications_count"] = applications.count()
-        context["shortlisted_count"] = applications.filter(status="shortlisted").count()
-        # Search Appearances / Recruiter Actions / Profile Views require dedicated
-        # event tracking that doesn't exist in this codebase yet - reported as 0
-        # (real, not fabricated) rather than inventing numbers.
-        context["profile_views"] = 0
-        context["search_appearances"] = 0
-        context["recruiter_actions"] = 0
+        user = self.request.user
+        range_key, start_date, end_date, start_dt, end_dt = self._resolve_range()
+
+        applications = Application.objects.filter(applicant=user)
+        activities = StudentActivity.objects.filter(
+            student=user, created_at__gte=start_dt, created_at__lte=end_dt
+        )
+        window_applications = applications.filter(applied_at__gte=start_dt, applied_at__lte=end_dt)
+
+        context["range_key"] = range_key
+        context["range_label"] = self.RANGE_LABELS[range_key]
+        context["range_start"] = start_date
+        context["range_end"] = end_date
+        context["range_options"] = list(self.RANGE_LABELS.items())
+
+        context["applications_count"] = window_applications.count()
+        context["shortlisted_count"] = window_applications.filter(status="shortlisted").count()
+        context["profile_views"] = StudentProfileView.objects.filter(
+            student=user, viewed_at__gte=start_dt, viewed_at__lte=end_dt
+        ).count()
+        context["search_appearances"] = StudentSearchAppearance.objects.filter(
+            student=user, created_at__gte=start_dt, created_at__lte=end_dt
+        ).count()
+        context["recruiter_actions"] = activities.filter(event_type__in=RECRUITER_ACTION_EVENT_TYPES).count()
+        context["resume_views"] = activities.filter(event_type=ACTIVITY_RESUME_VIEW).count()
+        context["resume_downloads"] = activities.filter(event_type=ACTIVITY_RESUME_DOWNLOAD).count()
+        context["profile_updates"] = activities.filter(event_type=ACTIVITY_PROFILE_UPDATE).count()
+
+        # Activity Overview chart: 3 real series (Profile Views, Search
+        # Appearances, Recruiter Actions) built from the exact same
+        # `activities` queryset the timeline below uses - never a second,
+        # independently-computed number. Hourly buckets for a single-day
+        # range (Today/Yesterday), daily buckets otherwise. Bucketed in
+        # Python via timezone.localtime() (not a DB-side Trunc+tzinfo)
+        # since MySQL's CONVERT_TZ needs its timezone tables loaded, which
+        # isn't guaranteed on every deployment - this stays correct for
+        # Asia/Kolkata regardless of the DB server's own tz-table state.
+        # Only `event_type`/`created_at` are pulled per row (values()), not
+        # full model instances.
+        single_day = start_date == end_date
+        # Recruiter-driven events not already covered by their own line
+        # (Profile Views, Search Appearances) - avoids double-counting the
+        # same event on two series at once.
+        recruiter_action_types = {
+            t for t in RECRUITER_ACTION_EVENT_TYPES
+            if t not in (ACTIVITY_PROFILE_VIEW, ACTIVITY_SEARCH_APPEARANCE)
+        }
+        profile_view_counts, search_appearance_counts, recruiter_action_counts = {}, {}, {}
+        for row in activities.values("event_type", "created_at"):
+            local_dt = timezone.localtime(row["created_at"])
+            bucket_key = local_dt.hour if single_day else local_dt.date()
+            event_type = row["event_type"]
+            if event_type == ACTIVITY_PROFILE_VIEW:
+                target = profile_view_counts
+            elif event_type == ACTIVITY_SEARCH_APPEARANCE:
+                target = search_appearance_counts
+            elif event_type in recruiter_action_types:
+                target = recruiter_action_counts
+            else:
+                continue
+            target[bucket_key] = target.get(bucket_key, 0) + 1
+
+        if single_day:
+            chart_labels = [f"{h:02d}:00" for h in range(24)]
+            chart_tooltip_labels = [f"{start_date.strftime('%d %b %Y')}, {h:02d}:00" for h in range(24)]
+            bucket_keys = list(range(24))
+        else:
+            chart_labels, chart_tooltip_labels, bucket_keys = [], [], []
+            day = start_date
+            while day <= end_date:
+                chart_labels.append(day.strftime("%b %d"))
+                chart_tooltip_labels.append(day.strftime("%d %b %Y"))
+                bucket_keys.append(day)
+                day += timedelta(days=1)
+
+        chart_series = [
+            {
+                "key": "profile_views", "label": "Profile Views", "color": "#159a78",
+                "data": [profile_view_counts.get(key, 0) for key in bucket_keys],
+            },
+            {
+                "key": "search_appearances", "label": "Search Appearances", "color": "#08785d",
+                "data": [search_appearance_counts.get(key, 0) for key in bucket_keys],
+            },
+            {
+                "key": "recruiter_actions", "label": "Recruiter Actions", "color": "#172235",
+                "data": [recruiter_action_counts.get(key, 0) for key in bucket_keys],
+            },
+        ]
+        context["chart_series"] = chart_series
+        context["chart_labels"] = chart_labels
+        context["chart_has_data"] = any(any(series["data"]) for series in chart_series)
+        context["chart_json"] = {
+            "labels": chart_labels,
+            "tooltipLabels": chart_tooltip_labels,
+            "series": chart_series,
+        }
+
+        # Activity details list (spec section 24): the same `activities` +
+        # `window_applications` rows the chart/tiles above were computed
+        # from - selecting a range always narrows both together.
+        timeline = []
+        for activity in activities.select_related("company", "job", "application"):
+            timeline.append({"timestamp": activity.created_at, "text": self._activity_text(activity)})
+        for application in window_applications.select_related("job", "job__company"):
+            timeline.append(
+                {"timestamp": application.applied_at, "text": f"You applied for {application.job.title}"}
+            )
+        timeline.sort(key=lambda item: item["timestamp"], reverse=True)
+        context["timeline"] = self._group_timeline(timeline[:100])
         return context
 
+    @staticmethod
+    def _activity_text(activity):
+        from core.constants import (
+            ACTIVITY_APPLICATION_STATUS,
+            ACTIVITY_CONTACTED,
+            ACTIVITY_INTERVIEW,
+            ACTIVITY_PROFILE_UPDATE,
+            ACTIVITY_PROFILE_VIEW,
+            ACTIVITY_RESUME_DOWNLOAD,
+            ACTIVITY_RESUME_VIEW,
+            ACTIVITY_SEARCH_APPEARANCE,
+            ACTIVITY_SHORTLISTED,
+        )
 
-class RecruiterProfileEditView(EmployerRequiredMixin, UpdateView):
-    model = RecruiterProfile
-    form_class = RecruiterProfileForm
-    template_name = "accounts/recruiter_profile_form.html"
-    success_url = reverse_lazy("accounts:recruiter_profile_edit")
+        actor = activity.actor_label()
+        if activity.event_type == ACTIVITY_PROFILE_VIEW:
+            return f"{actor} viewed your profile"
+        if activity.event_type == ACTIVITY_SEARCH_APPEARANCE:
+            return f"You appeared in a search by {actor}"
+        if activity.event_type == ACTIVITY_RESUME_VIEW:
+            return f"{actor} viewed your resume"
+        if activity.event_type == ACTIVITY_RESUME_DOWNLOAD:
+            return f"{actor} downloaded your resume"
+        if activity.event_type == ACTIVITY_SHORTLISTED:
+            job_title = activity.job.title if activity.job_id else "a role"
+            return f"You were shortlisted for {job_title}"
+        if activity.event_type == ACTIVITY_CONTACTED:
+            return f"{actor} contacted you"
+        if activity.event_type == ACTIVITY_INTERVIEW:
+            job_title = activity.job.title if activity.job_id else "a role"
+            return f"Interview scheduled for {job_title}"
+        if activity.event_type == ACTIVITY_APPLICATION_STATUS:
+            job_title = activity.job.title if activity.job_id else "your application"
+            status = (activity.metadata or {}).get("new_status", "")
+            status_label = status.replace("_", " ").title() if status else "updated"
+            return f"Your application for {job_title} was updated to {status_label}"
+        if activity.event_type == ACTIVITY_PROFILE_UPDATE:
+            return "You updated your profile"
+        return activity.get_event_type_display()
 
-    def get_object(self, queryset=None):
-        profile, _ = RecruiterProfile.objects.get_or_create(user=self.request.user)
-        if not profile.company_id and hasattr(self.request.user, "company"):
-            profile.company = self.request.user.company
-            profile.save(update_fields=["company"])
-        return profile
+    @staticmethod
+    def _group_timeline(items):
+        from django.utils import timezone
 
-    def form_valid(self, form):
-        messages.success(self.request, "Recruiter profile updated successfully.")
-        return super().form_valid(form)
+        today = timezone.localdate()
+        groups = []
+        group_index = {}
+        for item in items:
+            day = timezone.localtime(item["timestamp"]).date()
+            delta = (today - day).days
+            if delta == 0:
+                label = "Today"
+            elif delta == 1:
+                label = "Yesterday"
+            else:
+                label = f"{delta} days ago"
+            if label not in group_index:
+                group_index[label] = {"label": label, "items": []}
+                groups.append(group_index[label])
+            group_index[label]["items"].append(item)
+        return groups
 
 
 class RecruiterPerformanceView(EmployerRequiredMixin, TemplateView):

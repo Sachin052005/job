@@ -1,17 +1,23 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 
-from applications.models import Application, ApplicationStatusHistory
+from activity.models import StudentActivity
+from applications.models import Application, ApplicationStatusHistory, Interview, RecruiterNote
 from companies.models import Company
 from core.constants import (
     APPLICATION_METHOD_APPLY,
     APPLICATION_METHOD_EASY_APPLY,
+    APPLICATION_STATUS_APPLIED,
     APPLICATION_STATUS_CHOICES,
     APPLICATION_STATUS_HIRED,
     APPLICATION_STATUS_INTERVIEW,
     APPLICATION_STATUS_REJECTED,
+    APPLICATION_STATUS_SELECTED,
     APPLICATION_STATUS_SHORTLISTED,
     APPLICATION_STATUS_UNDER_REVIEW,
     APPLIED_VIA_EASY_APPLY,
@@ -19,9 +25,9 @@ from core.constants import (
     JOB_STATUS_PUBLISHED,
     ROLE_EMPLOYER,
 )
-from jobs.models import Job, ScreeningQuestion
+from jobs.models import Job
 from notifications.models import Notification
-from notifications.services import notify_new_application
+from notifications.services import notify_new_application, send_application_status_email
 from services.skill_match_service import calculate_skill_match
 
 User = get_user_model()
@@ -229,17 +235,6 @@ class ApplicationWorkflowTests(TestCase):
         self.client.login(username="stranger", password="pass12345")
         response = self.client.get(reverse("applications:detail", kwargs={"pk": application.pk}))
         self.assertEqual(response.status_code, 403)
-
-    def test_screening_question_answer_saved(self):
-        question = ScreeningQuestion.objects.create(job=self.job, question="Notice period?", is_required=True)
-        self.client.login(username="seeker", password="pass12345")
-        payload = dict(_APPLY_PAYLOAD, resume=make_resume())
-        payload[f"question_{question.pk}"] = "Immediate"
-        self.client.post(reverse("applications:apply", kwargs={"job_id": self.job.pk}), payload)
-        response = self.client.post(reverse("applications:apply_confirm", kwargs={"job_id": self.job.pk}))
-        self.assertEqual(response.status_code, 302)
-        application = Application.objects.get(job=self.job, applicant=self.seeker)
-        self.assertEqual(application.screening_answers.get(question=question).answer_text, "Immediate")
 
     def test_manual_application_keeps_submitted_values_not_profile_values(self):
         """spec section 12: the application snapshot must contain what was submitted,
@@ -678,3 +673,363 @@ class NotificationRecipientTests(TestCase):
         self.client.login(username="notif_seeker", password="pass12345")
         response = self.client.get(reverse("notifications:list"))
         self.assertEqual(list(response.context["notifications"]), [])
+
+
+class ApplicationStatusEmailTests(TestCase):
+    """HR changing an application's status must email the student with
+    status-specific content (spec sections 1-9, 14-19), routed through the
+    single Application.record_status_change() choke point (spec sections
+    11-12), never duplicated, and never able to break the status update
+    itself even if sending fails (spec sections 10, 19-21)."""
+
+    def setUp(self):
+        self.employer = User.objects.create_user(username="mail_employer", password="pass12345")
+        self.employer.profile.role = ROLE_EMPLOYER
+        self.employer.profile.save()
+        self.company = Company.objects.create(owner=self.employer, name="Mail Co")
+
+        self.seeker = User.objects.create_user(
+            username="mail_seeker", password="pass12345", email="seeker@example.com",
+        )
+        self.job = Job.objects.create(
+            employer=self.employer, company=self.company, title="Python Django Developer",
+            location="Remote", description="Build APIs.", status=JOB_STATUS_PUBLISHED,
+        )
+
+    def _apply(self):
+        return Application.objects.create(job=self.job, applicant=self.seeker, resume=make_resume())
+
+    def _set_status(self, application, status):
+        self.client.login(username="mail_employer", password="pass12345")
+        response = self.client.post(
+            reverse("applications:update_status", kwargs={"pk": application.pk}), {"status": status}
+        )
+        self.client.logout()
+        return response
+
+    def test_manual_apply_sends_applied_confirmation_email(self):
+        self.client.login(username="mail_seeker", password="pass12345")
+        payload = dict(_APPLY_PAYLOAD, resume=make_resume())
+        self.client.post(reverse("applications:apply", kwargs={"job_id": self.job.pk}), payload)
+        self.client.post(reverse("applications:apply_confirm", kwargs={"job_id": self.job.pk}))
+        application = Application.objects.get(job=self.job, applicant=self.seeker)
+
+        self.assertEqual(len(mail.outbox), 1)
+        sent = mail.outbox[0]
+        self.assertIn(self.job.title, sent.subject)
+        self.assertIn(self.company.name, sent.subject)
+        self.assertEqual(sent.to, [self.seeker.email])
+        self.assertIn("successfully submitted", sent.body)
+
+    def test_under_review_email_is_reassuring_and_does_not_claim_shortlisted(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_UNDER_REVIEW)
+
+        self.assertEqual(len(mail.outbox), 1)
+        sent = mail.outbox[0]
+        self.assertEqual(sent.to, [self.seeker.email])
+        self.assertIn("Under Review", sent.subject)
+        self.assertIn("currently reviewing", sent.body)
+        self.assertNotIn("shortlisted", sent.body.lower())
+
+    def test_shortlisted_email_congratulates_without_promising_interview(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_SHORTLISTED)
+
+        sent = mail.outbox[0]
+        self.assertIn("Shortlisted", sent.subject)
+        self.assertIn("Congratulations", sent.body)
+        self.assertIn(self.job.title, sent.body)
+        self.assertNotIn("interview has been scheduled", sent.body.lower())
+
+    def test_interview_email_uses_real_interview_details_when_scheduled(self):
+        application = self._apply()
+        interview = Interview.objects.create(
+            application=application, interview_type="video",
+            scheduled_at="2026-10-01T10:00:00Z", meeting_link="https://meet.example.com/abc",
+        )
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_INTERVIEW)
+
+        sent = mail.outbox[0]
+        self.assertIn(self.job.title, sent.subject)
+        self.assertIn(interview.meeting_link, sent.body)
+        self.assertNotIn("shortly with the interview date", sent.body)
+
+    def test_interview_email_does_not_invent_details_when_none_scheduled(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_INTERVIEW)
+
+        sent = mail.outbox[0]
+        self.assertIn("contact you shortly", sent.body)
+
+    def test_selected_and_hired_are_distinct_emails(self):
+        application = self._apply()
+        self._set_status(application, APPLICATION_STATUS_SELECTED)
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_HIRED)
+
+        sent = mail.outbox[0]
+        self.assertIn("Hired", sent.subject)
+        self.assertIn("hired", sent.body.lower())
+
+    def test_selected_email_does_not_say_hired(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_SELECTED)
+
+        sent = mail.outbox[0]
+        self.assertIn("Selected", sent.subject)
+        self.assertNotIn("hired", sent.body.lower())
+
+    def test_rejected_email_is_respectful_and_links_to_jobs_page(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_REJECTED)
+
+        sent = mail.outbox[0]
+        self.assertIn("Thank you for your interest", sent.body)
+        self.assertIn("Explore More Jobs", sent.body)
+        self.assertIn(reverse("jobs:list"), sent.body)
+        self.assertNotIn("unfortunately", sent.body.lower())
+
+    def test_same_status_save_does_not_send_email(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, application.status)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_repeated_identical_status_post_does_not_duplicate_email(self):
+        application = self._apply()
+        mail.outbox.clear()
+        self._set_status(application, APPLICATION_STATUS_SHORTLISTED)
+        self._set_status(application, APPLICATION_STATUS_SHORTLISTED)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_email_failure_does_not_block_status_update(self):
+        application = self._apply()
+        with patch("notifications.services.send_mail", side_effect=Exception("SMTP down")):
+            response = self._set_status(application, APPLICATION_STATUS_SHORTLISTED)
+        self.assertEqual(response.status_code, 302)
+        application.refresh_from_db()
+        self.assertEqual(application.status, APPLICATION_STATUS_SHORTLISTED)
+        self.assertTrue(
+            ApplicationStatusHistory.objects.filter(application=application, new_status=APPLICATION_STATUS_SHORTLISTED).exists()
+        )
+
+    def test_missing_recipient_email_skips_send_without_raising(self):
+        self.seeker.email = ""
+        self.seeker.save()
+        application = self._apply()
+        application.email = ""
+        application.save(update_fields=["email"])
+        mail.outbox.clear()
+
+        sent = send_application_status_email(application, APPLICATION_STATUS_APPLIED, APPLICATION_STATUS_SHORTLISTED)
+
+        self.assertFalse(sent)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_falls_back_to_application_snapshot_email_when_account_email_missing(self):
+        self.seeker.email = ""
+        self.seeker.save()
+        application = self._apply()
+        application.email = "snapshot@example.com"
+        application.save(update_fields=["email"])
+        mail.outbox.clear()
+
+        self._set_status(application, APPLICATION_STATUS_SHORTLISTED)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["snapshot@example.com"])
+
+
+class InterviewManagementPageTests(TestCase):
+    """Interview scheduling/management lives on its own dedicated HR page,
+    not embedded in the application/candidate review page (spec: remove the
+    unwanted Interviews block from candidate review without breaking real
+    interview scheduling)."""
+
+    def setUp(self):
+        self.employer = User.objects.create_user(username="iv_employer", password="pass12345")
+        self.employer.profile.role = ROLE_EMPLOYER
+        self.employer.profile.save()
+        self.company = Company.objects.create(owner=self.employer, name="Interview Co")
+        self.seeker = User.objects.create_user(username="iv_seeker", password="pass12345", email="ivseeker@example.com")
+        self.job = Job.objects.create(
+            employer=self.employer, company=self.company, title="Backend Developer",
+            location="Remote", description="Build APIs.", status=JOB_STATUS_PUBLISHED,
+        )
+        self.application = Application.objects.create(job=self.job, applicant=self.seeker, resume=make_resume())
+
+    def test_application_detail_no_longer_embeds_interview_scheduling(self):
+        self.client.login(username="iv_employer", password="pass12345")
+        response = self.client.get(reverse("applications:detail", kwargs={"pk": self.application.pk}))
+        self.assertNotContains(response, "No interviews scheduled yet.")
+        self.assertContains(response, "Manage Interviews")
+
+    def test_interview_list_page_lists_applications_and_schedules_interview(self):
+        self.client.login(username="iv_employer", password="pass12345")
+        response = self.client.get(reverse("applications:interview_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.application.full_name())
+
+        response = self.client.post(
+            reverse("applications:interview_add", kwargs={"pk": self.application.pk}),
+            {
+                "interview_type": "video", "scheduled_at": "2026-11-01T10:00",
+                "location": "", "meeting_link": "", "notes": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Interview.objects.filter(application=self.application).exists())
+
+    def test_other_employer_cannot_see_interviews_for_a_different_company(self):
+        other = User.objects.create_user(username="iv_other", password="pass12345")
+        other.profile.role = ROLE_EMPLOYER
+        other.profile.save()
+        Company.objects.create(owner=other, name="Other Interview Co")
+        Interview.objects.create(
+            application=self.application, interview_type="phone", scheduled_at="2026-11-01T10:00:00Z",
+        )
+
+        self.client.login(username="iv_other", password="pass12345")
+        response = self.client.get(reverse("applications:interview_list"))
+        self.assertNotContains(response, self.application.full_name())
+
+
+def make_real_resume(name="resume.pdf"):
+    """A genuinely parseable PDF (unlike make_resume()'s magic-bytes-only
+    fake) - needed for tests that exercise the actual ATS pipeline rather
+    than just the upload validator."""
+    import pymupdf
+
+    doc = pymupdf.open()
+    page = doc.new_page()
+    page.insert_text(
+        (50, 50),
+        "Jane Doe\njane@example.com\nSKILLS\nPython, Django, REST API, MySQL\nEDUCATION\nB.Tech, 2024",
+        fontsize=10,
+    )
+    data = doc.tobytes()
+    doc.close()
+    return SimpleUploadedFile(name, data, content_type="application/pdf")
+
+
+class ApplicationATSProcessingTests(TestCase):
+    """spec: Application Created -> ATS Processing -> ATS Result Stored,
+    and ATS failure must never break a valid application."""
+
+    def setUp(self):
+        self.seeker = User.objects.create_user(username="ats_seeker", password="pass12345")
+        self.employer = User.objects.create_user(username="ats_employer", password="pass12345")
+        self.employer.profile.role = ROLE_EMPLOYER
+        self.employer.profile.save()
+        self.company = Company.objects.create(owner=self.employer, name="ATS Test Co")
+        self.job = Job.objects.create(
+            employer=self.employer, company=self.company, title="Python Developer",
+            location="Bengaluru", description="Django REST API role",
+            skills="Python, Django, REST API, MySQL", status=JOB_STATUS_PUBLISHED,
+        )
+        self.client.login(username="ats_seeker", password="pass12345")
+
+    def _apply_with(self, resume_file):
+        payload = dict(_APPLY_PAYLOAD, resume=resume_file)
+        self.client.post(reverse("applications:apply", kwargs={"job_id": self.job.pk}), payload)
+        return self.client.post(reverse("applications:apply_confirm", kwargs={"job_id": self.job.pk}))
+
+    def test_ats_processing_succeeds_with_a_real_parseable_resume(self):
+        self._apply_with(make_real_resume())
+        application = Application.objects.get(job=self.job, applicant=self.seeker)
+        self.assertEqual(application.ats_status, "complete")
+        self.assertIsNotNone(application.ats_score)
+        self.assertIn("required_skills_percent", application.ats_breakdown)
+
+    def test_application_still_created_when_resume_cannot_be_parsed(self):
+        """The existing make_resume() fixture is magic-bytes-only, not a
+        real PDF - PyMuPDF cannot parse it, so ATS processing must fail
+        gracefully while the application itself remains valid."""
+        self._apply_with(make_resume())
+        application = Application.objects.filter(job=self.job, applicant=self.seeker).first()
+        self.assertIsNotNone(application, "application must exist even when ATS parsing fails")
+        self.assertEqual(application.ats_status, "failed")
+        self.assertTrue(application.ats_error)
+        self.assertIsNone(application.ats_score)
+
+
+class RecruiterATSSecurityTests(TestCase):
+    """IDOR protection for resume access, recruiter notes, and interviews -
+    only the owning company's recruiter may reach these."""
+
+    def setUp(self):
+        self.seeker = User.objects.create_user(username="sec_seeker", password="pass12345")
+        self.owner_employer = User.objects.create_user(username="sec_owner", password="pass12345")
+        self.owner_employer.profile.role = ROLE_EMPLOYER
+        self.owner_employer.profile.save()
+        self.other_employer = User.objects.create_user(username="sec_other", password="pass12345")
+        self.other_employer.profile.role = ROLE_EMPLOYER
+        self.other_employer.profile.save()
+        self.company = Company.objects.create(owner=self.owner_employer, name="Owner Co")
+        Company.objects.create(owner=self.other_employer, name="Other Co")
+        self.job = Job.objects.create(
+            employer=self.owner_employer, company=self.company, title="Dev",
+            location="Remote", description="...", skills="Python", status=JOB_STATUS_PUBLISHED,
+        )
+        self.application = Application.objects.create(
+            job=self.job, applicant=self.seeker, resume=make_real_resume(), skills="Python",
+        )
+
+    def test_other_companys_recruiter_cannot_view_application(self):
+        self.client.login(username="sec_other", password="pass12345")
+        response = self.client.get(reverse("applications:detail", kwargs={"pk": self.application.pk}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_other_companys_recruiter_cannot_view_resume(self):
+        self.client.login(username="sec_other", password="pass12345")
+        response = self.client.get(reverse("applications:resume", kwargs={"pk": self.application.pk, "mode": "view"}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_other_companys_recruiter_cannot_add_note(self):
+        self.client.login(username="sec_other", password="pass12345")
+        response = self.client.post(
+            reverse("applications:note_add", kwargs={"pk": self.application.pk}), {"text": "sneaky note"}
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(RecruiterNote.objects.filter(application=self.application).exists())
+
+    def test_owning_recruiter_can_view_and_download_resume_and_it_is_tracked(self):
+        self.client.login(username="sec_owner", password="pass12345")
+        response = self.client.get(reverse("applications:resume", kwargs={"pk": self.application.pk, "mode": "view"}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(StudentActivity.objects.filter(student=self.seeker, event_type="resume_view").count(), 1)
+
+    def test_applicant_can_view_own_resume_without_being_tracked_as_recruiter_action(self):
+        self.client.login(username="sec_seeker", password="pass12345")
+        response = self.client.get(reverse("applications:resume", kwargs={"pk": self.application.pk, "mode": "view"}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(StudentActivity.objects.filter(student=self.seeker, event_type="resume_view").count(), 0)
+
+    def test_recruiter_note_hidden_from_applicant(self):
+        RecruiterNote.objects.create(application=self.application, author=self.owner_employer, text="Secret note")
+        self.client.login(username="sec_seeker", password="pass12345")
+        response = self.client.get(reverse("applications:detail", kwargs={"pk": self.application.pk}))
+        self.assertNotContains(response, "Secret note")
+
+    def test_interview_scheduling_notifies_candidate_and_logs_activity(self):
+        self.client.login(username="sec_owner", password="pass12345")
+        response = self.client.post(
+            reverse("applications:interview_add", kwargs={"pk": self.application.pk}),
+            {
+                "interview_type": "technical", "scheduled_at": "2026-10-05T10:00",
+                "location": "", "meeting_link": "https://meet.example.com/x", "notes": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Interview.objects.filter(application=self.application).exists())
+        self.assertEqual(StudentActivity.objects.filter(student=self.seeker, event_type="interview").count(), 1)
+        self.assertTrue(
+            Notification.objects.filter(recipient=self.seeker, title="Interview scheduled").exists()
+        )

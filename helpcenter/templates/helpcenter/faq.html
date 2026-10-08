@@ -4,12 +4,51 @@
 
 {% block content %}
 <style>
+    .nc-faq-search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        border: 1px solid var(--nc-border, #e1e8e4);
+        border-radius: 12px;
+        background: var(--nc-white, #fff);
+    }
+    .nc-faq-search-box i { color: var(--nc-muted, #8994a3); }
+    .nc-faq-search-box input {
+        flex: 1;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--nc-heading, #172235);
+        font-size: 0.95rem;
+    }
     .nc-faq-tab { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--nc-border, #e1e8e4); background: var(--nc-white,#fff); color: var(--nc-text,#586678); font-size: .82rem; font-weight: 700; text-decoration: none; }
     .nc-faq-tab.active { background: var(--nc-primary,#159a78); border-color: var(--nc-primary,#159a78); color: #fff; }
+    .nc-faq-group { display: none; }
+    .nc-faq-group.is-active-tab { display: block; }
+    body.nc-faq-searching .nc-faq-group { display: block; }
+    body.nc-faq-searching .nc-faq-item { display: none; }
+    body.nc-faq-searching .nc-faq-item.is-match { display: block; }
     .nc-faq-item { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: var(--nc-white,#fff); }
-    .nc-faq-question { width: 100%; text-align: left; padding: 14px 16px; background: transparent; border: 0; font-weight: 700; color: var(--nc-heading,#172235); display: flex; justify-content: space-between; align-items: center; }
+    .nc-faq-item-category {
+        display: none;
+        margin: 12px 16px 0;
+        color: var(--nc-primary, #159a78);
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+    body.nc-faq-searching .nc-faq-item-category { display: block; }
+    .nc-faq-question { width: 100%; text-align: left; padding: 14px 16px; background: transparent; border: 0; font-weight: 700; color: var(--nc-heading,#172235); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .nc-faq-question .bi { transition: transform .2s ease; flex-shrink: 0; }
+    .nc-faq-item.open .nc-faq-question .bi { transform: rotate(180deg); }
     .nc-faq-answer { display: none; padding: 0 16px 16px; color: var(--nc-text,#586678); }
     .nc-faq-item.open .nc-faq-answer { display: block; }
+    .nc-faq-answer .btn { margin-top: 8px; }
+    #faqNoResults { display: none; }
+    body.nc-faq-searching #faqNoResults.has-no-matches { display: block; }
 </style>
 
 <div class="container" style="padding: 42px 0 70px; max-width: 820px;">
@@ -18,25 +57,89 @@
         <i class="bi bi-question-circle me-2"></i> Frequently Asked Questions
     </h2>
 
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        {% for key, label in faq_data.items %}
-            <a class="nc-faq-tab {% if tab == key %}active{% endif %}" href="?tab={{ key }}">{{ key|title }}</a>
+    <div class="nc-faq-search-box">
+        <i class="bi bi-search"></i>
+        <input
+            type="text"
+            id="faqSearchInput"
+            placeholder="Search your question..."
+            aria-label="Search FAQs"
+            autocomplete="off"
+        >
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4" id="faqTabs">
+        {% for key, category in faq_data.items %}
+            <a class="nc-faq-tab {% if tab == key %}active{% endif %}" href="?tab={{ key }}">{{ category.label }}</a>
         {% endfor %}
     </div>
 
-    {% for key, qas in faq_data.items %}
-        {% if key == tab %}
-            {% for question, answer in qas %}
-                <div class="nc-faq-item">
-                    <button type="button" class="nc-faq-question" onclick="this.closest('.nc-faq-item').classList.toggle('open')">
-                        {{ question }}
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                    <div class="nc-faq-answer">{{ answer }}</div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
+    <div id="faqList">
+        {% for key, category in faq_data.items %}
+            <div class="nc-faq-group{% if tab == key %} is-active-tab{% endif %}" data-category-group="{{ key }}">
+                {% for item in category.items %}
+                    <div class="nc-faq-item" data-search="{{ item.q|lower }} {{ item.a|lower }}">
+                        <span class="nc-faq-item-category">{{ category.label }}</span>
+                        <button
+                            type="button"
+                            class="nc-faq-question"
+                            aria-expanded="false"
+                            onclick="var el=this.closest('.nc-faq-item'); var open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);"
+                        >
+                            <span>{{ item.q }}</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="nc-faq-answer">
+                            <p>{{ item.a }}</p>
+                            {% if item.action_url %}
+                                <a href="{% url item.action_url %}" class="btn btn-sm btn-outline-primary">
+                                    {{ item.action_label }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div id="faqNoResults" class="text-muted text-center py-4">
+            <p class="mb-1 fw-semibold">No matching questions found.</p>
+            <p class="mb-0 small">Try another search term such as: jobs, application, resume, ATS, recruiter, profile</p>
+        </div>
+    </div>
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var input = document.getElementById("faqSearchInput");
+    var items = document.querySelectorAll(".nc-faq-item");
+    var noResults = document.getElementById("faqNoResults");
+    var tabs = document.getElementById("faqTabs");
+
+    if (!input) return;
+
+    input.addEventListener("input", function () {
+        var query = input.value.trim().toLowerCase();
+
+        if (!query) {
+            document.body.classList.remove("nc-faq-searching");
+            noResults.classList.remove("has-no-matches");
+            if (tabs) tabs.hidden = false;
+            return;
+        }
+
+        document.body.classList.add("nc-faq-searching");
+        if (tabs) tabs.hidden = true;
+
+        var anyMatch = false;
+        items.forEach(function (item) {
+            var matches = item.getAttribute("data-search").indexOf(query) !== -1;
+            item.classList.toggle("is-match", matches);
+            if (matches) anyMatch = true;
+        });
+        noResults.classList.toggle("has-no-matches", !anyMatch);
+    });
+});
+</script>
 {% endblock %}

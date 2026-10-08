@@ -333,19 +333,6 @@
                             </div>
                         </div>
 
-                        {% if screening_form.questions %}
-                        <div class="nc-form-group">
-                            <h6 class="nc-form-label mb-3">Screening Questions</h6>
-                            {% for field in screening_form %}
-                                <div class="mb-3">
-                                    <label class="nc-form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-                                    {{ field|add_class:"form-control" }}
-                                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
                         <div class="nc-apply-actions">
                             <button
                                 type="submit"

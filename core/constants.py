@@ -28,6 +28,7 @@ APPLICATION_STATUS_APPLIED = "applied"
 APPLICATION_STATUS_UNDER_REVIEW = "under_review"
 APPLICATION_STATUS_SHORTLISTED = "shortlisted"
 APPLICATION_STATUS_INTERVIEW = "interview"
+APPLICATION_STATUS_SELECTED = "selected"
 APPLICATION_STATUS_REJECTED = "rejected"
 APPLICATION_STATUS_HIRED = "hired"
 
@@ -36,8 +37,9 @@ APPLICATION_STATUS_CHOICES = [
     (APPLICATION_STATUS_UNDER_REVIEW, "Under Review"),
     (APPLICATION_STATUS_SHORTLISTED, "Shortlisted"),
     (APPLICATION_STATUS_INTERVIEW, "Interview"),
-    (APPLICATION_STATUS_REJECTED, "Rejected"),
+    (APPLICATION_STATUS_SELECTED, "Selected"),
     (APPLICATION_STATUS_HIRED, "Hired"),
+    (APPLICATION_STATUS_REJECTED, "Rejected"),
 ]
 
 APPLICATION_STATUS_BADGE_CLASS = {
@@ -45,6 +47,7 @@ APPLICATION_STATUS_BADGE_CLASS = {
     APPLICATION_STATUS_UNDER_REVIEW: "info",
     APPLICATION_STATUS_SHORTLISTED: "primary",
     APPLICATION_STATUS_INTERVIEW: "warning",
+    APPLICATION_STATUS_SELECTED: "dark",
     APPLICATION_STATUS_REJECTED: "danger",
     APPLICATION_STATUS_HIRED: "success",
 }
@@ -392,6 +395,8 @@ PROFILE_VIEW_SOURCE_CHOICES = [
 JOB_VIEW_DEDUP_HOURS = 24
 PROFILE_VIEW_DEDUP_HOURS = 24
 SEARCH_APPEARANCE_DEDUP_HOURS = 24
+RESUME_VIEW_DEDUP_HOURS = 24
+RESUME_DOWNLOAD_DEDUP_HOURS = 24
 NOTIFICATION_DEDUP_HOURS = 24
 
 # ---------------------------------------------------------------------------
@@ -464,4 +469,82 @@ JOB_DOMAIN_SEED = [
             "Medical Coding QA",
         ],
     },
+]
+
+# ---------------------------------------------------------------------------
+# ATS engine (local/free - no paid APIs). See resumes/services/.
+# ---------------------------------------------------------------------------
+
+PARSE_STATUS_PENDING = "pending"
+PARSE_STATUS_PARSED = "parsed"
+PARSE_STATUS_FAILED = "failed"
+
+PARSE_STATUS_CHOICES = [
+    (PARSE_STATUS_PENDING, "Pending"),
+    (PARSE_STATUS_PARSED, "Parsed"),
+    (PARSE_STATUS_FAILED, "Failed"),
+]
+
+# Current resume parser/analyzer version. Bump when parsing or scoring logic
+# changes meaningfully, so cached Resume.parsed_* data is known-stale and
+# re-parsed rather than silently reused against new logic (spec: ATS
+# versioning).
+PARSER_VERSION = "1.0"
+ANALYZER_VERSION = "1.0"
+
+ATS_STATUS_PENDING = "pending"
+ATS_STATUS_PROCESSING = "processing"
+ATS_STATUS_COMPLETE = "complete"
+ATS_STATUS_FAILED = "failed"
+
+ATS_STATUS_CHOICES = [
+    (ATS_STATUS_PENDING, "Pending"),
+    (ATS_STATUS_PROCESSING, "Processing"),
+    (ATS_STATUS_COMPLETE, "Complete"),
+    (ATS_STATUS_FAILED, "Failed"),
+]
+
+ISSUE_PRIORITY_HIGH = "high"
+ISSUE_PRIORITY_MEDIUM = "medium"
+ISSUE_PRIORITY_LOW = "low"
+
+ISSUE_PRIORITY_CHOICES = [
+    (ISSUE_PRIORITY_HIGH, "High Priority"),
+    (ISSUE_PRIORITY_MEDIUM, "Medium Priority"),
+    (ISSUE_PRIORITY_LOW, "Low Priority"),
+]
+
+RESUME_SECTION_KEYS = [
+    "summary", "skills", "education", "experience", "projects",
+    "internships", "certifications", "achievements", "languages",
+]
+
+# ---------------------------------------------------------------------------
+# Interviews (spec: Interview Management)
+# ---------------------------------------------------------------------------
+
+INTERVIEW_TYPE_PHONE = "phone"
+INTERVIEW_TYPE_VIDEO = "video"
+INTERVIEW_TYPE_ONSITE = "onsite"
+INTERVIEW_TYPE_TECHNICAL = "technical"
+INTERVIEW_TYPE_HR = "hr"
+
+INTERVIEW_TYPE_CHOICES = [
+    (INTERVIEW_TYPE_PHONE, "Phone"),
+    (INTERVIEW_TYPE_VIDEO, "Video"),
+    (INTERVIEW_TYPE_ONSITE, "Onsite"),
+    (INTERVIEW_TYPE_TECHNICAL, "Technical"),
+    (INTERVIEW_TYPE_HR, "HR"),
+]
+
+INTERVIEW_RESULT_PENDING = "pending"
+INTERVIEW_RESULT_PASSED = "passed"
+INTERVIEW_RESULT_FAILED = "failed"
+INTERVIEW_RESULT_NO_SHOW = "no_show"
+
+INTERVIEW_RESULT_CHOICES = [
+    (INTERVIEW_RESULT_PENDING, "Pending"),
+    (INTERVIEW_RESULT_PASSED, "Passed"),
+    (INTERVIEW_RESULT_FAILED, "Failed"),
+    (INTERVIEW_RESULT_NO_SHOW, "No Show"),
 ]

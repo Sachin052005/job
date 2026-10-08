@@ -21,9 +21,13 @@ def filter_jobs(queryset, params):
     if location:
         queryset = queryset.filter(location__icontains=location)
 
-    category = (params.get("category") or "").strip()
-    if category:
-        queryset = queryset.filter(category__slug=category)
+    domain = (params.get("domain") or "").strip()
+    if domain:
+        queryset = queryset.filter(domain__slug=domain)
+
+    subdomain = (params.get("subdomain") or "").strip()
+    if subdomain:
+        queryset = queryset.filter(subdomain__slug=subdomain)
 
     employment_type = (params.get("employment_type") or "").strip()
     if employment_type:
@@ -59,7 +63,7 @@ def filter_jobs(queryset, params):
     if work_mode:
         queryset = queryset.filter(work_mode=work_mode)
 
-    return queryset.select_related("company", "category").distinct()
+    return queryset.select_related("company", "domain", "subdomain").distinct()
 
 
 def filter_applications(queryset, params):
@@ -99,6 +103,23 @@ def filter_applications(queryset, params):
         queryset = queryset.exclude(applicant__profile__linkedin_url="")
     if _truthy(params.get("has_github")):
         queryset = queryset.exclude(applicant__profile__github_url="")
+    if _truthy(params.get("fresher_only")):
+        queryset = queryset.filter(experience_years=0)
+
+    ats_min = params.get("ats_min")
+    if ats_min not in (None, ""):
+        try:
+            queryset = queryset.filter(ats_score__gte=int(ats_min))
+        except (TypeError, ValueError):
+            pass
+
+    location = (params.get("location") or "").strip()
+    if location:
+        queryset = queryset.filter(location__icontains=location)
+
+    skills = (params.get("skills") or "").strip()
+    if skills:
+        queryset = queryset.filter(skills__icontains=skills)
 
     return queryset.select_related("applicant", "applicant__profile").distinct()
 

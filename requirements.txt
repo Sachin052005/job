@@ -7,6 +7,13 @@ django-jazzmin==3.0.5
 django-filter==26.1
 django-htmx==1.29.0
 
+# Local/free ATS engine (resume parsing + analysis) - no paid APIs
+pymupdf==1.28.2
+python-docx==1.2.0
+rapidfuzz==3.14.6
+pyspellchecker==0.9.0
+scikit-learn==1.9.1
+
 # Activate the virtual environment with:
 #     .\venv\Scripts\Activate.ps1
-#  python manage.py runserver
+#  python manage.py runserver                                    

@@ -11,6 +11,7 @@ from core.constants import (
     ROLE_EMPLOYER,
 )
 from jobs.models import Job
+from resumes.models import Resume
 from saved_jobs.models import SavedJob
 
 
@@ -68,6 +69,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                     ).select_related("company")[:5],
                     "linkedin_connected": bool(profile.linkedin_url),
                     "github_connected": bool(profile.github_url),
+                    "resume_count": Resume.objects.filter(student=user).count(),
+                    "latest_resume": Resume.objects.filter(student=user).first(),
                 }
             )
         return context

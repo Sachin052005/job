@@ -15,7 +15,7 @@ from companies.forms import (
     CompanySalaryForm,
 )
 from companies.models import Company, CompanyFollow, CompanyOffice, CompanyProductService, CompanyReview, CompanySalary
-from core.constants import NOTIFICATION_TYPE_COMPANY, PAGE_SIZE, ROLE_JOB_SEEKER
+from core.constants import COMPANY_TYPE_CHOICES, NOTIFICATION_TYPE_COMPANY, PAGE_SIZE, ROLE_JOB_SEEKER
 from core.permissions import EmployerRequiredMixin, OwnerRequiredMixin
 from notifications.services import create_notification
 
@@ -38,6 +38,11 @@ def _hired_application_for_company(user, company):
 
 
 class CompanyListView(ListView):
+    """The single Company directory, filtered entirely through query
+    parameters - every filter here must narrow the real queryset (never a
+    label-only distinction) and never silently fall back to the unfiltered
+    list when a filter matches nothing (spec sections 10-21, 70-71)."""
+
     model = Company
     template_name = "companies/company_list.html"
     context_object_name = "companies"
@@ -61,6 +66,22 @@ class CompanyListView(ListView):
             queryset = queryset.filter(jobs__status="published").distinct()
         if self.request.GET.get("hiring_freshers") == "1":
             queryset = queryset.filter(jobs__status="published", jobs__badges__icontains="freshers_can_apply").distinct()
+
+        tab = self.request.GET.get("tab", "").strip()
+        if tab == "reviews":
+            from django.db.models import Avg, Count, Q
+
+            queryset = (
+                queryset.annotate(
+                    real_review_count=Count("reviews", filter=Q(reviews__is_active=True)),
+                    real_review_avg=Avg("reviews__rating", filter=Q(reviews__is_active=True)),
+                )
+                .filter(real_review_count__gt=0)
+                .order_by("-real_review_avg", "-real_review_count")
+            )
+        elif tab == "salaries":
+            queryset = queryset.filter(salaries__isnull=False).distinct()
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -69,7 +90,33 @@ class CompanyListView(ListView):
             context["followed_company_ids"] = set(
                 CompanyFollow.objects.filter(user=self.request.user).values_list("company_id", flat=True)
             )
+        context["heading"], context["empty_message"] = self._heading_and_empty_message()
         return context
+
+    def _heading_and_empty_message(self):
+        """Every active filter gets its own real heading/empty-state text -
+        never the generic "Companies Hiring Now" regardless of what's
+        actually being shown (spec section 70-71)."""
+        get = self.request.GET
+        company_type = get.get("company_type", "").strip()
+        industry = get.get("industry", "").strip()
+        tab = get.get("tab", "").strip()
+
+        company_type_labels = dict(COMPANY_TYPE_CHOICES)
+        if company_type and company_type in company_type_labels:
+            label = company_type_labels[company_type]
+            return f"{label} Companies", f"No {label.lower()} companies found."
+        if industry:
+            return f"{industry} Companies", f"No {industry} companies found."
+        if get.get("hiring_freshers") == "1":
+            return "Companies Hiring Freshers", "No companies currently hiring freshers found."
+        if get.get("hiring") == "1":
+            return "Companies Hiring Now", "No companies with active job openings found."
+        if tab == "reviews":
+            return "Companies with Reviews", "No companies with student reviews yet."
+        if tab == "salaries":
+            return "Companies with Salary Info", "No companies with salary information yet."
+        return "Explore Companies", "No companies found."
 
 
 class FollowedCompaniesListView(LoginRequiredMixin, ListView):
@@ -191,7 +238,7 @@ class CompanyUpdateView(EmployerRequiredMixin, OwnerRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, "Company profile updated.")
-        return reverse_lazy("companies:detail", kwargs={"slug": self.object.slug})
+        return reverse_lazy("companies:manage")
 
 
 class OwnedCompanyRecordMixin:

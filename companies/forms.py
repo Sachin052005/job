@@ -4,12 +4,24 @@ from companies.models import Company, CompanyOffice, CompanyProductService, Comp
 
 
 class CompanyForm(forms.ModelForm):
+    """Company classification/profile fields (spec sections 25-27) - industry
+    and company_type here are the single source of truth the companies:list
+    filters (?industry=, ?company_type=) query against, so this is the only
+    place HR needs to edit them for every "X Companies" filter to reflect
+    reality."""
+
     class Meta:
         model = Company
-        fields = ["name", "description", "industry", "website", "location", "founded_year", "size", "logo"]
+        fields = [
+            "name", "description", "industry", "sub_industry", "company_type",
+            "technologies", "website", "location", "founded_year", "size", "logo",
+        ]
         labels = {"description": "Company Overview"}
         widgets = {
             "description": forms.Textarea(attrs={"rows": 5, "placeholder": "Tell students what your company does..."}),
+            "industry": forms.TextInput(attrs={"placeholder": "e.g. IT, Fintech, Healthcare"}),
+            "sub_industry": forms.TextInput(attrs={"placeholder": "e.g. SaaS, EdTech"}),
+            "technologies": forms.TextInput(attrs={"placeholder": "e.g. Python, Django, AWS (comma-separated)"}),
         }
 
 
