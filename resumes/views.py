@@ -116,7 +116,7 @@ class ResumeScanView(OwnResumeMixin, View):
 
 class ResumeJobMatchView(OwnResumeMixin, View):
     """Runs Job Match ATS Check against whichever of the three JD sources the
-    student supplied (spec section 43): an existing NammaCareer job, pasted
+    student supplied (spec section 43): an existing TalentPanda job, pasted
     text, or an uploaded PDF/DOCX (parsed with the same resume text
     extractor - a job description is just another document to read text
     from)."""

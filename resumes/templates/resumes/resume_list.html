@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}My Resumes - NammaCareer{% endblock %}
+{% block title %}My Resumes - TalentPanda{% endblock %}
 
 {% block content %}
 <style>
     .nc-resume-page { padding: 42px 0 70px; }
     .nc-resume-card {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 16px;
         padding: 20px 22px;
@@ -35,7 +35,7 @@
                     {% if mode == "job_match" %}
                         Choose a resume to compare against a job description.
                     {% else %}
-                        Upload, version, and run NammaCareer ATS analysis on your resumes.
+                        Upload, version, and run TalentPanda ATS analysis on your resumes.
                     {% endif %}
                 </p>
             </div>
@@ -103,7 +103,7 @@
                     <p class="text-muted mt-3">No resumes yet. Upload one to match it against a job description.</p>
                     <a href="{% url 'resumes:upload' %}?mode=job_match" class="btn btn-primary">Upload Resume</a>
                 {% else %}
-                    <p class="text-muted mt-3">No resumes yet. Upload one to get your NammaCareer ATS analysis.</p>
+                    <p class="text-muted mt-3">No resumes yet. Upload one to get your TalentPanda ATS analysis.</p>
                     <a href="{% url 'resumes:upload' %}" class="btn btn-primary">Upload Resume</a>
                 {% endif %}
             </div>

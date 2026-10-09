@@ -53,7 +53,7 @@ from core.permissions import EmployerRequiredMixin, JobSeekerRequiredMixin
 logger = logging.getLogger(__name__)
 
 
-class NammaCareerLoginView(LoginView):
+class TalentPandaLoginView(LoginView):
     """The single login page for the whole site - students, HR, and the
     manual admin panel all authenticate here (there is no separate
     /admin-login/). After Django authenticates the user, a staff or
@@ -881,7 +881,7 @@ class GoogleCallbackView(View):
             messages.error(request, "Google sign-in could not be verified. Please try again.")
             return redirect("accounts:login")
         if SocialAccount.objects.filter(provider="google", provider_user_id=sub).exclude(user=request.user).exists():
-            messages.error(request, "This Google account is already linked to a different NammaCareer account.")
+            messages.error(request, "This Google account is already linked to a different TalentPanda account.")
             return redirect("settings:security_password")
         SocialAccount.objects.get_or_create(
             provider="google", provider_user_id=sub, defaults={"user": request.user, "email": email}
@@ -897,7 +897,7 @@ class GoogleCallbackView(View):
             login(request, social_account.user)
             return self._redirect_after_login(social_account.user)
 
-        # One Google identity must map to one NammaCareer user (spec section
+        # One Google identity must map to one TalentPanda user (spec section
         # 54) - if the email already belongs to a password account that
         # hasn't linked Google yet, don't silently create a duplicate user or
         # auto-link without the owner being authenticated first.
@@ -921,7 +921,7 @@ class GoogleCallbackView(View):
         SocialAccount.objects.create(provider="google", provider_user_id=sub, user=user, email=email)
 
         login(request, user)
-        messages.success(request, "Welcome to NammaCareer!")
+        messages.success(request, "Welcome to TalentPanda!")
         return redirect("accounts:google_welcome")
 
     @staticmethod

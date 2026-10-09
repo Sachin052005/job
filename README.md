@@ -1,10 +1,10 @@
-# NammaCareer - Job Portal
+# TalentPanda - Job Portal
 
 A Django-based job portal connecting job seekers with recruiters: job search
 and filtering with Easy Apply/Apply enforced per job, application status
 tracking with history, company profiles with following, saved jobs, job
 alerts, notifications, recruiter profiles, Google sign-in, an Ollama-backed
-"Chat for Help" assistant, and a full light/dark/system theme system.
+"Chat for Help" assistant, and a full Light/Dark theme system.
 
 There is no AI/ATS matching, resume scoring, or AI career advice anywhere in
 this project - the only AI-adjacent feature is the portal-usage-only
@@ -166,22 +166,33 @@ returns something unexpected, `/help/chat/` shows "Chat for Help is
 temporarily unavailable." instead of crashing - it never surfaces a raw
 error to the user.
 
-## Theme system (light / dark / system)
+## Theme system (Light / Dark)
 
-- Preference is stored per-user in `accounts.UserSettings.theme` for
-  authenticated users (`Settings > Appearance`), and in a `nc_theme` cookie/
-  `localStorage` entry for anonymous visitors.
-- `core/context_processors.py::theme_context` resolves the declared
-  preference into every template as `resolved_theme`.
-- An inline script at the top of `templates/base.html` sets
-  `data-theme="light|dark"` on `<html>` *before* the stylesheet paints (no
-  flash of the wrong theme), resolving `"system"` via
-  `prefers-color-scheme` and staying live if the OS theme changes mid-session.
+- Only two themes exist: Light and Dark. There is no OS/browser-driven
+  "system" option - a brand-new account always starts on Light
+  (`accounts.UserSettings.theme` defaults to `"light"`), and switches only
+  when the user explicitly picks Dark under `Settings > Appearance`. A
+  `accounts.0009_migrate_system_theme_to_light` data migration converted
+  every pre-existing `theme="system"` row to `"light"` when this changed.
+- For authenticated users, `accounts.UserSettings.theme` in the database is
+  the single source of truth, rendered server-side on every request via
+  `core/context_processors.py::theme_context` as `resolved_theme` - there is
+  never a mismatch between the database and what the page shows. Anonymous
+  visitors always get `"light"`, full stop.
+- An inline script at the top of `templates/base.html` (and
+  `templates/adminpanel/base.html`) sets `data-theme="light|dark"` on
+  `<html>` *before* the stylesheet paints (no flash of the wrong theme) and
+  mirrors it into a `tp_theme` localStorage entry. A `pageshow` listener
+  re-applies that value whenever the page is restored from the browser's
+  back/forward cache, which otherwise can show a stale snapshot's theme
+  after clicking Back/Forward.
 - All colors are defined as CSS custom properties in `static/css/style.css`
-  (`--nc-*`), with a single `:root[data-theme="dark"]` block overriding the
-  token *values* - components don't need separate dark-mode rules as long as
-  they reference the tokens, which the existing design system already does
-  throughout the site.
+  (`--nc-*`) and `static/css/adminpanel.css` (`--np-*`), with a single
+  `:root[data-theme="dark"]` block per file overriding the token *values* -
+  components don't need separate dark-mode rules as long as they reference
+  the tokens. This now also covers the manual admin panel (previously
+  hard-coded to light only) and every reusable component
+  (`templates/components/*.html`, the navbar, the profile drawer).
 
 ## Bulk-importing jobs
 
@@ -206,6 +217,14 @@ python scripts/import_jobs.py path\to\jobs.json --employer-username acme_hr
   via cooperative `dispatch()` chaining (a deliberate design choice - stacking
   two `UserPassesTestMixin`-based `test_func()` mixins would silently drop
   one check, since only the first `test_func()` in the MRO wins).
+- **A superuser/staff account is Admin only**, never Employer or Job Seeker,
+  even though its auto-created `Profile.role` defaults to `job_seeker` like
+  any other account's. `TalentPandaLoginView` routes `is_staff`/
+  `is_superuser` accounts straight to the admin panel at login;
+  `dashboard.DashboardHomeView` redirects them there too on direct/bookmarked
+  `/dashboard/` access; and `core/permissions.py::_role()` returns `None` for
+  admin accounts so `EmployerRequiredMixin`/`JobSeekerRequiredMixin` can
+  never match one, regardless of its `Profile.role` value.
 - **Search/filtering is centralized** in `services/search_service.py` rather
   than inlined in the view, since it combines several optional parameters
   (keyword, location, category, employment type, experience, salary).

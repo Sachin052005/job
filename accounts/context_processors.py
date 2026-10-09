@@ -7,6 +7,11 @@ def drawer_stats_context(request):
     """
     if not request.user.is_authenticated:
         return {}
+    # Admin accounts are Admin only (spec: superuser/staff never act as
+    # job seeker/employer) - skip the student/employer drawer stats
+    # entirely rather than falling through to the Profile.role default.
+    if request.user.is_staff or request.user.is_superuser:
+        return {}
     profile = getattr(request.user, "profile", None)
     if profile is None:
         return {}

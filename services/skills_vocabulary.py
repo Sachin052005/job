@@ -3,7 +3,7 @@ text (no NER model - deterministic keyword/phrase matching against this
 list, reusing core.utils.normalize_skill for the same alias table already
 used by CandidateSkill/Profile). Covers the site's own IT / Non-IT /
 Medical Coding domains so extraction stays relevant to the jobs actually
-posted on NammaCareer."""
+posted on TalentPanda."""
 import re
 
 from core.utils import SKILL_ALIASES, normalize_skill

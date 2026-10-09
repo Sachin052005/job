@@ -1,4 +1,4 @@
-"""Shared building blocks for the manual NammaCareer admin panel.
+"""Shared building blocks for the manual TalentPanda admin panel.
 
 Every list/detail/create/update/delete view in adminpanel/views/ is a thin
 subclass of the generic views below, configured with a handful of class
@@ -38,7 +38,7 @@ class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
             return redirect_to_login(self.request.get_full_path())
-        raise PermissionDenied("Only staff accounts can access the NammaCareer admin panel.")
+        raise PermissionDenied("Only staff accounts can access the TalentPanda admin panel.")
 
 
 def log_admin_action(request, obj, action_flag, message=""):

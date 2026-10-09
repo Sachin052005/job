@@ -10,7 +10,7 @@ urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register"),
     path(
         "login/",
-        views.NammaCareerLoginView.as_view(
+        views.TalentPandaLoginView.as_view(
             template_name="registration/login.html",
             extra_context={"google_oauth_configured": google_oauth_configured()},
         ),

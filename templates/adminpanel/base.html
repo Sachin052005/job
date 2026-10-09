@@ -1,9 +1,31 @@
 {% load static %}<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="{{ resolved_theme|default:'light' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}Dashboard{% endblock %} · NammaCareer Admin</title>
+<!-- THEME BOOTSTRAP - same source of truth and bfcache fix as templates/base.html
+     (see that file for the full explanation). Keeps the admin panel and the
+     public/dashboard site on one consistent theme system instead of two. -->
+<script>
+(function () {
+    var root = document.documentElement;
+    var STORAGE_KEY = "tp_theme";
+    function normalize(theme) { return theme === "dark" ? "dark" : "light"; }
+    function apply(theme) {
+        root.setAttribute("data-theme", theme);
+        try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) { /* ignore */ }
+    }
+    apply(normalize(root.getAttribute("data-theme")));
+    window.addEventListener("pageshow", function (event) {
+        if (!event.persisted) return;
+        try {
+            var saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) root.setAttribute("data-theme", normalize(saved));
+        } catch (e) { /* ignore */ }
+    });
+})();
+</script>
+<title>{% block title %}Dashboard{% endblock %} · TalentPanda Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">

@@ -1,22 +1,21 @@
-function ncApplyTheme(preference) {
+function tpApplyTheme(theme) {
+    // Instant client-side preview only (Light/Dark - no "system" option
+    // exists anymore). The actual saved preference always comes from the
+    // UserSettingsThemeForm POST that follows; this just avoids a visible
+    // delay between picking a radio and seeing the result on this page.
+    var resolved = theme === "dark" ? "dark" : "light";
     var root = document.documentElement;
-    var resolved = preference;
-    if (preference === "system" || !preference) {
-        resolved = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
     root.setAttribute("data-theme", resolved);
-    root.setAttribute("data-theme-preference", preference);
     try {
-        localStorage.setItem("nc_theme", preference);
+        localStorage.setItem("tp_theme", resolved);
     } catch (e) { /* private browsing / storage blocked - ignore */ }
-    document.cookie = "nc_theme=" + preference + ";path=/;max-age=31536000;samesite=lax";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".js-theme-radio").forEach(function (radio) {
         radio.addEventListener("change", function () {
             if (radio.checked) {
-                ncApplyTheme(radio.value);
+                tpApplyTheme(radio.value);
             }
         });
     });

@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import TemplateView
 
 from applications.models import Application
@@ -16,6 +18,17 @@ from saved_jobs.models import SavedJob
 
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        # A superuser/staff account is Admin only (spec: "superuser must act
+        # only as Admin") - TalentPandaLoginView already sends them straight
+        # to the admin panel at login, but this guards direct/bookmarked
+        # navigation to /dashboard/ too, so they can never fall through to
+        # the seeker/employer dashboard just because their Profile.role
+        # happens to default to job_seeker like any other account's.
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            return redirect(reverse("adminpanel:dashboard"))
+        return super().dispatch(request, *args, **kwargs)
+
     def get_template_names(self):
         if self.request.user.profile.role == ROLE_EMPLOYER:
             return ["dashboard/employer_dashboard.html"]

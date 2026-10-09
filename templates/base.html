@@ -15,37 +15,60 @@
 >
 
 <!-- =========================================================
-     THEME BOOTSTRAP (spec section 42-43)
+     THEME BOOTSTRAP
      Runs before CSS paints to avoid a flash of the wrong theme.
-     Resolves "system" -> light/dark via prefers-color-scheme and
-     keeps it live if the OS preference changes mid-session.
+
+     Only "light" and "dark" exist (no "system"/OS option). The server
+     already renders the authoritative data-theme attribute below from
+     UserSettings.theme (authenticated) / "light" (anonymous) - this script
+     never overrides that value on a normal load, it only:
+       1. Defends against an unexpected/missing attribute value.
+       2. Mirrors the authoritative value into localStorage, so it survives
+          a browser back/forward (bfcache) restore.
+       3. Re-applies that value on `pageshow` when the page comes back from
+          bfcache - bfcache restores the OLD snapshot of the DOM verbatim,
+          which is what caused Dark to revert to Light after clicking Back.
+          This keeps the restored page in sync with the latest known theme
+          instead of showing whatever it looked like when it was cached.
 ========================================================== -->
 <script>
 (function () {
     var root = document.documentElement;
-    function resolve(theme) {
-        if (theme === "system" || !theme) {
-            return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        }
-        return theme;
-    }
-    var declared = root.getAttribute("data-theme") || "system";
-    root.setAttribute("data-theme", resolve(declared));
-    root.setAttribute("data-theme-preference", declared);
+    var STORAGE_KEY = "tp_theme";
 
-    if (window.matchMedia) {
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
-            if (root.getAttribute("data-theme-preference") === "system") {
-                root.setAttribute("data-theme", resolve("system"));
-            }
-        });
+    function normalize(theme) {
+        return theme === "dark" ? "dark" : "light";
     }
+
+    function apply(theme) {
+        root.setAttribute("data-theme", theme);
+        try {
+            localStorage.setItem(STORAGE_KEY, theme);
+        } catch (e) { /* private browsing / storage blocked - ignore */ }
+    }
+
+    // Authoritative value for THIS response, rendered server-side from the
+    // database (authenticated) or "light" (anonymous). Normalize defensively
+    // and sync it to localStorage immediately.
+    apply(normalize(root.getAttribute("data-theme")));
+
+    // bfcache restore: reapply the last known theme as early as possible so
+    // Back/Forward never shows a stale snapshot's theme.
+    window.addEventListener("pageshow", function (event) {
+        if (!event.persisted) return;
+        try {
+            var saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                root.setAttribute("data-theme", normalize(saved));
+            }
+        } catch (e) { /* ignore */ }
+    });
 })();
 </script>
 
 <title>
     {% block title %}
-        NammaCareer - Find Your Next Job
+        TalentPanda - Find Your Next Job
     {% endblock %}
 </title>
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}Company Profile - NammaCareer{% endblock %}
+{% block title %}Company Profile - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -11,7 +11,7 @@
     }
 
     .nc-company-form-card {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 22px;
         box-shadow: 0 12px 35px rgba(23, 34, 53, 0.07);
@@ -50,7 +50,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 14px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         color: var(--nc-primary, #159a78);
         border: 1px solid rgba(21, 154, 120, 0.14);
         box-shadow: 0 6px 18px rgba(23, 34, 53, 0.06);
@@ -122,7 +122,7 @@
         border-radius: 10px;
         padding: 10px 13px;
         color: var(--nc-heading, #172235);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease,
@@ -137,7 +137,7 @@
     .nc-company-form-body .form-control:focus {
         border-color: var(--nc-primary, #159a78);
         box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.11);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-company-form-body .form-control::placeholder {
@@ -152,7 +152,7 @@
     }
 
     .nc-logo-field .form-control {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-form-actions {

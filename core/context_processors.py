@@ -1,20 +1,24 @@
 def theme_context(request):
-    """Resolves the "declared" theme for this request - the actual light/dark
-    render still happens client-side for 'system' via prefers-color-scheme,
-    but this gives the inline bootstrap script and templates a starting value
-    without waiting on JS (spec section 42-43).
+    """Resolves the single authoritative theme for this request/response.
+
+    The application supports exactly two themes - "light" and "dark" (the
+    old "system"/OS-preference option has been removed). The database is
+    the single source of truth for authenticated users: their saved
+    UserSettings.theme is rendered server-side on every request, so there is
+    never a mismatch between what's in the database and what the page shows.
 
     Anonymous visitors always get "light", full stop - never a leftover
-    nc_theme cookie, never "system" (which would let the inline bootstrap
-    script fall through to the OS's prefers-color-scheme). This is what keeps
-    every public page light regardless of browser/OS dark mode or a theme
-    cookie set during an earlier logged-in Dark session. Authenticated users
-    are unaffected: their saved Appearance preference (Light/Dark/System)
-    from UserSettings.theme is used exactly as before.
+    tp_theme cookie/localStorage value, never anything else. This keeps every
+    public page light regardless of browser/OS dark mode or a theme value
+    left over from an earlier logged-in Dark session.
     """
     if request.user.is_authenticated:
-        theme = getattr(request.user, "settings", None)
-        theme = theme.theme if theme else "system"
+        settings_obj = getattr(request.user, "settings", None)
+        theme = settings_obj.theme if settings_obj else "light"
     else:
         theme = "light"
-    return {"resolved_theme": theme}
+    # Defensive normalization: anything other than exactly "dark" (a stray
+    # legacy "system" value that predates the accounts.0009 data migration,
+    # a bad fixture, etc.) renders as "light" - the server must never emit
+    # a data-theme value outside the two themes the app actually supports.
+    return {"resolved_theme": "dark" if theme == "dark" else "light"}

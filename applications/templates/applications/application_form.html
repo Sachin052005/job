@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load form_tags %}
-{% block title %}Apply - {{ job.title }} - NammaCareer{% endblock %}
+{% block title %}Apply - {{ job.title }} - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -98,12 +98,12 @@
     }
 
     .nc-apply-body .form-control:hover {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border-color: #cbdad4;
     }
 
     .nc-apply-body .form-control:focus {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border-color: var(--nc-primary, #159a78);
         box-shadow: 0 0 0 4px rgba(21, 154, 120, 0.10);
         outline: none;
@@ -117,7 +117,7 @@
     }
 
     .nc-resume-box .form-control {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-resume-help {

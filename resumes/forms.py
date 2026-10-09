@@ -21,7 +21,7 @@ class ResumeRenameForm(forms.ModelForm):
 
 class JobMatchForm(forms.Form):
     """All three Job Description sources the spec requires (section 43): an
-    existing NammaCareer job, pasted text, or an uploaded PDF/DOCX. Exactly
+    existing TalentPanda job, pasted text, or an uploaded PDF/DOCX. Exactly
     one must be supplied - never guesses which the student meant."""
 
     job = forms.ModelChoiceField(queryset=None, required=False, empty_label="Select a job", widget=forms.Select(attrs={"class": "form-select"}))

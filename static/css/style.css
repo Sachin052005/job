@@ -1,11 +1,11 @@
 /* ==========================================================================
-   NammaCareer — Design System
+   TalentPanda — Design System
    Modern SaaS / Job Portal UI on top of Bootstrap 5.
    ========================================================================== */
 
 :root {
     /* ----------------------------------------------------------------
-       NammaCareer brand tokens — single source of truth for color.
+       TalentPanda brand tokens — single source of truth for color.
        ---------------------------------------------------------------- */
     --nc-primary: #2563EB;
     --nc-primary-hover: #1D4ED8;
@@ -185,6 +185,50 @@ body {
 :root[data-theme="dark"] .badge.bg-light {
     background-color: var(--nc-input-bg) !important;
     color: var(--nc-text) !important;
+}
+
+:root[data-theme="dark"] .badge.bg-success, :root[data-theme="dark"] .badge-status.bg-success { background-color: var(--success-light) !important; color: #6EE7B7 !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-warning, :root[data-theme="dark"] .badge-status.bg-warning { background-color: var(--warning-light) !important; color: #FCD34D !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-danger, :root[data-theme="dark"] .badge-status.bg-danger { background-color: var(--danger-light) !important; color: #FCA5A5 !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-secondary, :root[data-theme="dark"] .badge-status.bg-secondary { background-color: var(--nc-input-bg) !important; color: var(--nc-text) !important; border-color: var(--nc-border); }
+:root[data-theme="dark"] .badge.bg-primary, :root[data-theme="dark"] .badge-status.bg-primary { background-color: var(--nc-primary-soft) !important; color: #93C5FD !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-info, :root[data-theme="dark"] .badge-status.bg-info { background-color: var(--info-light) !important; color: #67E8F9 !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-purple { background-color: rgba(124, 58, 237, 0.18) !important; color: #C4B5FD !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-pink { background-color: rgba(236, 72, 153, 0.18) !important; color: #F9A8D4 !important; border-color: transparent; }
+:root[data-theme="dark"] .badge.bg-dark { background-color: #000814 !important; color: #F8FAFC !important; }
+:root[data-theme="dark"] .text-bg-light { background-color: var(--nc-input-bg) !important; color: var(--nc-text) !important; }
+
+:root[data-theme="dark"] .stat-icon.icon-success { background: var(--success-light); color: #6EE7B7; }
+:root[data-theme="dark"] .stat-icon.icon-warning { background: var(--warning-light); color: #FCD34D; }
+:root[data-theme="dark"] .stat-icon.icon-danger { background: var(--danger-light); color: #FCA5A5; }
+:root[data-theme="dark"] .stat-icon.icon-info { background: var(--info-light); color: #67E8F9; }
+
+:root[data-theme="dark"] .hero-section {
+    background: linear-gradient(135deg, var(--nc-surface) 0%, var(--nc-input-bg) 100%);
+    border-color: var(--nc-border);
+}
+
+:root[data-theme="dark"] .hero-search {
+    background: var(--nc-surface);
+    border-color: var(--nc-border);
+}
+
+:root[data-theme="dark"] .skill-badge {
+    border-color: transparent;
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+    background-color: transparent;
+}
+
+:root[data-theme="dark"] .btn-light {
+    background-color: var(--nc-input-bg);
+    color: var(--nc-text);
+    border-color: var(--nc-border);
+}
+
+:root[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, var(--nc-border) 0px, var(--nc-input-bg) 40px, var(--nc-border) 80px);
 }
 
 /* ==========================================================================

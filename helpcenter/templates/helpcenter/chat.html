@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}Chat for Help - NammaCareer{% endblock %}
+{% block title %}Chat for Help - TalentPanda{% endblock %}
 
 {% block content %}
 <style>
@@ -46,7 +46,7 @@
                     <div class="nc-chat-msg {{ turn.role }}">{{ turn.content }}</div>
                 {% endfor %}
             {% else %}
-                <div class="nc-chat-empty" id="chatEmptyState">Ask a question about using NammaCareer - e.g. "How do I apply?" or "How do I create a job alert?"</div>
+                <div class="nc-chat-empty" id="chatEmptyState">Ask a question about using TalentPanda - e.g. "How do I apply?" or "How do I create a job alert?"</div>
             {% endif %}
         </div>
 

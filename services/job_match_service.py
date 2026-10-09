@@ -88,7 +88,7 @@ def match_resume_to_job(*, resume_text, candidate_skills, candidate_experience_y
                          jd_education_required_display="", jd_location="", jd_is_remote=False):
     """Compare a resume against either a real `job` (jobs.Job instance) or a
     freeform job description (pasted text / uploaded JD file, spec section
-    43) - the two share this one engine so a NammaCareer job posting and an
+    43) - the two share this one engine so a TalentPanda job posting and an
     external JD are scored identically. For a freeform JD there is no
     reliable way to separate "required" from "preferred" skills from
     unstructured text, so every detected skill is treated as required and

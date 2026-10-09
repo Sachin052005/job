@@ -231,12 +231,15 @@ JOB_BADGE_CHOICES = [
 
 THEME_LIGHT = "light"
 THEME_DARK = "dark"
+# "system" is no longer a selectable application theme - the app only
+# supports Light/Dark now. The constant is kept (not deleted) solely so the
+# accounts.00XX_theme_light_default data migration can reference it when
+# converting legacy UserSettings.theme="system" rows to "light".
 THEME_SYSTEM = "system"
 
 THEME_CHOICES = [
     (THEME_LIGHT, "Light"),
     (THEME_DARK, "Dark"),
-    (THEME_SYSTEM, "System"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -338,7 +341,7 @@ FEEDBACK_CATEGORY_CHOICES = [
 ]
 
 # ---------------------------------------------------------------------------
-# Student activity / recruiter-action tracking (NammaCareer update spec
+# Student activity / recruiter-action tracking (TalentPanda update spec
 # sections 7, 10-13, 32-39, 78-80)
 # ---------------------------------------------------------------------------
 
@@ -400,7 +403,7 @@ RESUME_DOWNLOAD_DEDUP_HOURS = 24
 NOTIFICATION_DEDUP_HOURS = 24
 
 # ---------------------------------------------------------------------------
-# Job domain / subdomain taxonomy (NammaCareer update spec sections 17-21)
+# Job domain / subdomain taxonomy (TalentPanda update spec sections 17-21)
 # ---------------------------------------------------------------------------
 
 JOB_DOMAIN_IT = "it"

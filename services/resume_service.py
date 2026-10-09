@@ -139,7 +139,7 @@ def run_resume_scan(resume):
 
 
 def run_job_match(resume, job=None, jd_text="", jd_title=""):
-    """Match `resume` against either a real NammaCareer `job` posting or a
+    """Match `resume` against either a real TalentPanda `job` posting or a
     freeform job description (pasted text, or text already extracted from an
     uploaded JD file - spec section 43), and store the result as a new
     ResumeJobMatch (never overwrites a previous match - spec: analysis

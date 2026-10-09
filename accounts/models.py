@@ -31,7 +31,7 @@ from core.constants import (
     SHIFT_CHOICES,
     SKILL_PROFICIENCY_CHOICES,
     THEME_CHOICES,
-    THEME_SYSTEM,
+    THEME_LIGHT,
     VERIFICATION_STATUS_CHOICES,
     VERIFICATION_UNVERIFIED,
     WORK_MODE_CHOICES,
@@ -396,7 +396,7 @@ class UserSettings(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="settings")
 
-    theme = models.CharField(max_length=10, choices=THEME_CHOICES, default=THEME_SYSTEM)
+    theme = models.CharField(max_length=10, choices=THEME_CHOICES, default=THEME_LIGHT)
 
     notify_job_alerts = models.BooleanField(default=True)
     notify_application_updates = models.BooleanField(default=True)
@@ -426,7 +426,7 @@ class UserSettings(models.Model):
 
 
 class SocialAccount(models.Model):
-    """Links one external OAuth identity (Google) to one NammaCareer user (spec section 54)."""
+    """Links one external OAuth identity (Google) to one TalentPanda user (spec section 54)."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="social_accounts")
     provider = models.CharField(max_length=20, default="google")

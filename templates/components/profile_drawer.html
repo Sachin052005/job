@@ -113,7 +113,7 @@
 
     .nc-profile-drawer {
         position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100%;
-        background: #FFFFFF; z-index: 1061; padding: 26px 22px;
+        background: var(--nc-surface, #ffffff); z-index: 1061; padding: 26px 22px;
         transform: translateX(100%); transition: transform .28s ease; overflow-y: auto;
         box-shadow: -10px 0 35px rgba(15, 23, 42, 0.12);
         border-left: 1px solid var(--nc-border, #E2E8F0);
@@ -161,6 +161,17 @@
 
     @media (max-width: 480px) {
         .nc-profile-drawer { width: 100%; }
+    }
+
+    :root[data-theme="dark"] .nc-drawer-perf-card {
+        background: var(--nc-input-bg, #192640);
+    }
+    :root[data-theme="dark"] .nc-drawer-perf-card:hover {
+        border-color: var(--nc-primary, #3B82F6);
+        background: var(--nc-primary-soft);
+    }
+    :root[data-theme="dark"] .nc-drawer-logout button:hover {
+        background: var(--danger-light, #450A0A);
     }
 </style>
 

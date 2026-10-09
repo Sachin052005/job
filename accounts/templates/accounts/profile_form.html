@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load form_tags %}
-{% block title %}Edit Profile - NammaCareer{% endblock %}
+{% block title %}Edit Profile - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -21,7 +21,7 @@
 .profile-edit-card {
     border: 1px solid #e1e8e4;
     border-radius: 22px;
-    background: #ffffff;
+    background: var(--nc-surface, #ffffff);
     box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
     overflow: hidden;
 }
@@ -93,7 +93,7 @@
     padding: 10px 13px;
     border: 1px solid #dfe7e3;
     border-radius: 10px;
-    background: #ffffff;
+    background: var(--nc-surface, #ffffff);
     color: #172235;
     font-size: 0.88rem;
     box-shadow: none;
@@ -114,7 +114,7 @@
 
 .profile-edit-form .form-control:focus {
     border-color: #159a78;
-    background: #ffffff;
+    background: var(--nc-surface, #ffffff);
     box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
     outline: none;
 }
@@ -229,7 +229,7 @@
 .profile-form-actions .btn-outline-secondary {
     border-color: #d9e2de;
     color: #586678;
-    background: #ffffff;
+    background: var(--nc-surface, #ffffff);
 }
 
 .profile-form-actions .btn-outline-secondary:hover {

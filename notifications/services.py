@@ -299,7 +299,7 @@ def _status_email_body(application, new_status, job):
             f"Thank you for your interest in the {job_title} position at {company_name}. After "
             "careful consideration, the hiring team has decided not to move forward with your "
             "application at this time.",
-            "Please don't be discouraged. There are many opportunities available on NammaCareer, "
+            "Please don't be discouraged. There are many opportunities available on TalentPanda, "
             "and we encourage you to continue exploring roles that match your skills and experience.",
         ]
 

@@ -4,10 +4,10 @@
     <a class="np-sidebar-brand" href="{% url 'adminpanel:dashboard' %}">
         <img
             src="{% static 'images/job-hero.png' %}"
-            alt="NammaCareer"
+            alt="TalentPanda"
             class="nc-admin-logo"
         >
-        <span>NammaCareer Admin</span>
+        <span>TalentPanda Admin</span>
     </a>
 
     <a class="np-nav-link{% if current == 'dashboard' %} active{% endif %}" href="{% url 'adminpanel:dashboard' %}">
@@ -52,6 +52,7 @@
     <a class="np-nav-link{% if current == 'chatmessage_list' or current == 'chatmessage_detail' %} active{% endif %}" href="{% url 'adminpanel:chatmessage_list' %}"><i class="bi bi-chat-dots"></i> Chat Messages</a>
 
     <div class="np-nav-group">System</div>
+    <a class="np-nav-link{% if current == 'appearance' %} active{% endif %}" href="{% url 'settings:appearance' %}"><i class="bi bi-moon-stars"></i> Appearance</a>
     <a class="np-nav-link" href="/admin/"><i class="bi bi-shield-lock"></i> Django Admin</a>
     <form method="post" action="{% url 'accounts:logout' %}" class="np-logout-form">
         {% csrf_token %}

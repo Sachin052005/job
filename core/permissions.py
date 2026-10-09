@@ -7,7 +7,22 @@ from django.core.exceptions import PermissionDenied
 from core.constants import ROLE_EMPLOYER, ROLE_JOB_SEEKER
 
 
+def _is_admin_account(user):
+    """A superuser or staff account is Admin, full stop - never Employer or
+    Job Seeker, no matter what role value happens to sit on its Profile row
+    (every User gets one via the post_save signal, defaulting to job_seeker,
+    since Profile.role isn't normally set for admin-only accounts)."""
+    return bool(user.is_staff or user.is_superuser)
+
+
 def _role(user):
+    """Business-profile role (job_seeker/employer) - deliberately None for
+    admin accounts (see _is_admin_account) so EmployerRequiredMixin/
+    JobSeekerRequiredMixin below can never match a superuser/staff account,
+    even though its Profile.role defaults to job_seeker like anyone else's.
+    """
+    if _is_admin_account(user):
+        return None
     profile = getattr(user, "profile", None)
     return profile.role if profile is not None else None
 
@@ -22,13 +37,19 @@ def _redirect_to_login_with_next(request):
     return redirect_to_login(request.get_full_path())
 
 
+def _role_mismatch_message(user, label):
+    if _is_admin_account(user):
+        return f"Admin accounts only have access to the admin panel, not {label} pages."
+    return f"Only {label}s can access this page."
+
+
 def employer_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return _redirect_to_login_with_next(request)
         if _role(request.user) != ROLE_EMPLOYER:
-            raise PermissionDenied("Only employers can access this page.")
+            raise PermissionDenied(_role_mismatch_message(request.user, "employer"))
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -40,7 +61,7 @@ def job_seeker_required(view_func):
         if not request.user.is_authenticated:
             return _redirect_to_login_with_next(request)
         if _role(request.user) != ROLE_JOB_SEEKER:
-            raise PermissionDenied("Only job seekers can access this page.")
+            raise PermissionDenied(_role_mismatch_message(request.user, "job seeker"))
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -53,7 +74,7 @@ class EmployerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
             return _redirect_to_login_with_next(self.request)
-        raise PermissionDenied("Only employers can access this page.")
+        raise PermissionDenied(_role_mismatch_message(self.request.user, "employer"))
 
 
 class JobSeekerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -63,7 +84,7 @@ class JobSeekerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def handle_no_permission(self):
         if not self.request.user.is_authenticated:
             return _redirect_to_login_with_next(self.request)
-        raise PermissionDenied("Only job seekers can access this page.")
+        raise PermissionDenied(_role_mismatch_message(self.request.user, "job seeker"))
 
 
 def admin_required(view_func):
@@ -80,7 +101,7 @@ def admin_required(view_func):
         if not request.user.is_authenticated:
             return _redirect_to_login_with_next(request)
         if not (request.user.is_staff or request.user.is_superuser):
-            raise PermissionDenied("Only staff accounts can access the NammaCareer admin panel.")
+            raise PermissionDenied("Only staff accounts can access the TalentPanda admin panel.")
         return view_func(request, *args, **kwargs)
 
     return wrapper

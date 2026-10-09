@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}Application - {{ application.job.title }} - NammaCareer{% endblock %}
+{% block title %}Application - {{ application.job.title }} - TalentPanda{% endblock %}
 
 {% block content %}
 
 <style>
     /* =========================================================
-       NAMMACAREER APPLICATION DETAILS
+       TALENTPANDA APPLICATION DETAILS
        UI / LAYOUT ONLY
        ========================================================= */
 
@@ -263,7 +263,7 @@
 
     .nc-candidate-info-item:hover {
         border-color: rgba(21, 154, 120, .18);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         box-shadow: 0 5px 16px rgba(23, 34, 53, .035);
     }
 
@@ -1329,7 +1329,7 @@
                             </span>
 
                             <p class="text-muted small mb-0">
-                                NammaCareer ATS Compatibility
+                                TalentPanda ATS Compatibility
                             </p>
 
                         </div>

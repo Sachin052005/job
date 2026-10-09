@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Search Candidates - NammaCareer{% endblock %}
+{% block title %}Search Candidates - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -26,7 +26,7 @@
     .nc-filter-card {
         padding: 24px;
         margin-bottom: 24px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 18px;
         box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);
@@ -51,7 +51,7 @@
     .nc-filter-card .form-select:focus {
         border-color: var(--nc-primary, #159a78);
         box-shadow: 0 0 0 4px rgba(21, 154, 120, 0.10);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-filter-actions {
@@ -73,7 +73,7 @@
     .nc-candidate-card {
         height: 100%;
         padding: 20px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 17px;
         box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
@@ -167,7 +167,7 @@
     .nc-empty-state {
         padding: 70px 25px;
         text-align: center;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 18px;
         box-shadow: 0 10px 30px rgba(23, 34, 53, 0.05);

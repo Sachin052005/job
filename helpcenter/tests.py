@@ -133,7 +133,7 @@ class ChatViewTests(TestCase):
     def test_chat_page_loads(self):
         response = self.client.get(reverse("help:chat"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Ask a question about using NammaCareer")
+        self.assertContains(response, "Ask a question about using TalentPanda")
 
     @patch("helpcenter.views.ask_help_chat")
     def test_valid_question_returns_clean_json(self, mock_ask):

@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Browse Jobs - NammaCareer{% endblock %}
+{% block title %}Browse Jobs - TalentPanda{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/job-filters.css' %}">
@@ -27,7 +27,7 @@
         min-height: 46px;
         border: 1px solid #DCE3EC;
         border-radius: 9px;
-        background: #FFFFFF;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-jobs-search-row .form-control:focus {
@@ -74,7 +74,7 @@
         padding: 65px 25px;
         margin-top: 10px;
         text-align: center;
-        background: #FFFFFF;
+        background: var(--nc-surface, #ffffff);
         border: 1px dashed var(--nc-border, #E2E8F0);
         border-radius: 14px;
         box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);

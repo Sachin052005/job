@@ -1,5 +1,5 @@
 """
-Django settings for the NammaCareer job portal project.
+Django settings for the TalentPanda job portal project.
 """
 
 from pathlib import Path
@@ -375,23 +375,23 @@ JAZZMIN_SETTINGS = {
     # Admin branding
     # --------------------------------------------------------
 
-    "site_title": "NammaCareer Admin",
+    "site_title": "TalentPanda Admin",
 
-    "site_header": "NammaCareer",
+    "site_header": "TalentPanda",
 
-    "site_brand": "NammaCareer",
+    "site_brand": "TalentPanda",
 
     # --------------------------------------------------------
     # Welcome message
     # --------------------------------------------------------
 
-    "welcome_sign": "Welcome to NammaCareer Administration",
+    "welcome_sign": "Welcome to TalentPanda Administration",
 
     # --------------------------------------------------------
     # Copyright
     # --------------------------------------------------------
 
-    "copyright": "NammaCareer",
+    "copyright": "TalentPanda",
 
     # --------------------------------------------------------
     # Sidebar

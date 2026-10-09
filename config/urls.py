@@ -13,9 +13,9 @@ urlpatterns = [
     # (spec section 27) - the manual admin panel below is additive, not a
     # replacement, and both operate on the same database models.
     path("admin/", admin.site.urls),
-    # Manual NammaCareer admin panel: there is deliberately NO separate
+    # Manual TalentPanda admin panel: there is deliberately NO separate
     # admin login route - /accounts/login/ is the single login page for the
-    # whole site (see accounts.views.NammaCareerLoginView), which redirects
+    # whole site (see accounts.views.TalentPandaLoginView), which redirects
     # staff/superuser accounts here after authenticating.
     path("admin-panel/", include("adminpanel.urls")),
     path("accounts/", include("accounts.urls")),

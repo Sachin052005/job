@@ -7,7 +7,7 @@ from helpcenter.forms import ChatMessageForm, FeedbackForm
 from helpcenter.models import ChatMessage
 from services.help_chat_service import MAX_MESSAGE_LENGTH, ask_help_chat
 
-# Real, NammaCareer-specific FAQ content, organized under the tab keys the
+# Real, TalentPanda-specific FAQ content, organized under the tab keys the
 # navbar mega menu already links to (help:faq?tab=<key>) - kept stable so
 # those links (and any bookmarked ones) keep working. Every answer describes
 # actual platform behavior only; every action link points at a real,
@@ -245,7 +245,7 @@ class AboutView(TemplateView):
 
 
 class ChatView(TemplateView):
-    """Chat for Help - the only AI feature in NammaCareer.
+    """Chat for Help - the only AI feature in TalentPanda.
 
     GET renders the page (server-rendered history so it works with JS
     disabled). POST is an AJAX/JSON endpoint: the page's own JS calls it with

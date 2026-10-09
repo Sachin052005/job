@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             name='ResumeScan',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('score', models.PositiveSmallIntegerField(help_text='Overall NammaCareer Resume Health score, 0-100')),
+                ('score', models.PositiveSmallIntegerField(help_text='Overall TalentPanda Resume Health score, 0-100')),
                 ('score_breakdown', models.JSONField(blank=True, default=dict)),
                 ('extracted_data', models.JSONField(blank=True, default=dict)),
                 ('issues', models.JSONField(blank=True, default=list)),

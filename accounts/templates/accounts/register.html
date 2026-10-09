@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}Register - NammaCareer{% endblock %}
+{% block title %}Register - TalentPanda{% endblock %}
 
 {% block content %}
 
 <style>
     /* =========================================================
-       NAMMACAREER REGISTER — UI ONLY
+       TALENTPANDA REGISTER — UI ONLY
        CONTENT + FUNCTIONALITY UNCHANGED
     ========================================================= */
 
@@ -126,7 +126,7 @@
 
     .nc-register-form .form-control:focus {
         border-color: var(--register-green);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         box-shadow: 0 0 0 4px rgba(21, 154, 120, .10);
     }
 
@@ -170,7 +170,7 @@
         padding: 8px 14px;
         border: 1px solid var(--register-border);
         border-radius: 10px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         color: var(--register-text);
         font-size: 12px;
         font-weight: 700;

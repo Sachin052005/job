@@ -1,4 +1,4 @@
-"""NammaCareer's own local Resume Health / ATS Compatibility analysis -
+"""TalentPanda's own local Resume Health / ATS Compatibility analysis -
 deterministic, rule-based, no paid APIs or LLMs. Every score here is
 computed from the actual parsed resume; nothing is hardcoded or random.
 

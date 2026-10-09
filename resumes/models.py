@@ -81,7 +81,7 @@ class Resume(models.Model):
 
 
 class ResumeScan(models.Model):
-    """One NammaCareer Resume Health / ATS Compatibility analysis run against
+    """One TalentPanda Resume Health / ATS Compatibility analysis run against
     a Resume (spec sections 56-64). Stored (not recomputed on every view) so
     the student can revisit a past result. `score_breakdown` holds the
     category sub-scores (ATS Compatibility, Content Quality, Skills Coverage,
@@ -89,7 +89,7 @@ class ResumeScan(models.Model):
     parser found (contact info, sections, detected skills, etc.)."""
 
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name="scans")
-    score = models.PositiveSmallIntegerField(help_text="Overall NammaCareer Resume Health score, 0-100")
+    score = models.PositiveSmallIntegerField(help_text="Overall TalentPanda Resume Health score, 0-100")
     score_breakdown = models.JSONField(default=dict, blank=True)
     extracted_data = models.JSONField(default=dict, blank=True)
     issues = models.JSONField(default=list, blank=True)
@@ -107,7 +107,7 @@ class ResumeScan(models.Model):
 
 class ResumeJobMatch(models.Model):
     """One resume-vs-job-description compatibility analysis (spec section
-    61). `job` is set when matched against an actual NammaCareer job posting;
+    61). `job` is set when matched against an actual TalentPanda job posting;
     `job_description_text` holds the pasted text when the student supplies a
     JD directly instead."""
 

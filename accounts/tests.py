@@ -770,7 +770,7 @@ class PasswordResetTests(TestCase):
         sent = mail.outbox[0]
         self.assertEqual(sent.to, ["dave@example.com"])
         self.assertEqual(sent.from_email, "idpsachin@gmail.com")
-        self.assertEqual(sent.subject, "Reset your NammaCareer password")
+        self.assertEqual(sent.subject, "Reset your TalentPanda password")
 
     def test_unknown_email_returns_same_generic_response_and_sends_nothing(self):
         response = self.client.post(

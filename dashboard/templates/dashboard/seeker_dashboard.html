@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - NammaCareer{% endblock %}
+{% block title %}Dashboard - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -42,7 +42,7 @@
         align-items: center;
         gap: 15px;
         padding: 20px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 17px;
         box-shadow: 0 8px 25px rgba(23, 34, 53, 0.05);
@@ -99,7 +99,7 @@
     /* Main Cards */
 
     .nc-dashboard-card {
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 19px;
         box-shadow: 0 10px 30px rgba(23, 34, 53, 0.06);
@@ -477,7 +477,7 @@
 
                             <h5 class="nc-card-title">
                                 <i class="bi bi-file-earmark-check"></i>
-                                NammaCareer ATS Checker
+                                TalentPanda ATS Checker
                             </h5>
 
                             {% if latest_resume.latest_scan %}
@@ -490,7 +490,7 @@
                         </div>
 
                         <p class="nc-resume-intro mb-3">
-                            Resume Intelligence Center - NammaCareer's own ATS analysis. No external ATS scores, no proprietary claims.
+                            Resume Intelligence Center - TalentPanda's own ATS analysis. No external ATS scores, no proprietary claims.
                         </p>
 
                         <div class="row g-3 mb-4">

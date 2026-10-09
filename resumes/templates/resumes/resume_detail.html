@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}{{ resume.title }} - ATS Analysis - NammaCareer{% endblock %}
+{% block title %}{{ resume.title }} - ATS Analysis - TalentPanda{% endblock %}
 
 {% block content %}
 <style>
@@ -17,7 +17,7 @@
     .nc-ats-title { font-weight: 800; color: var(--nc-heading, #172235); margin: 4px 0 2px; }
     .nc-ats-sub { color: var(--nc-text, #586678); font-size: 0.88rem; }
     .nc-score-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0 16px; }
-    .nc-score-tile { flex: 1 1 130px; background: #fff; border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 14px; text-align: center; }
+    .nc-score-tile { flex: 1 1 130px; background: var(--nc-surface, #fff); border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 14px; text-align: center; }
     .nc-score-tile .val { font-size: 1.6rem; font-weight: 800; color: var(--nc-heading, #172235); }
     .nc-score-tile .lbl { font-size: 0.76rem; color: var(--nc-muted, #8994a3); font-weight: 700; text-transform: uppercase; }
     .nc-score-delta { font-size: 0.8rem; font-weight: 700; }
@@ -27,14 +27,14 @@
     .nc-ats-tabs .nav-link { font-weight: 700; color: var(--nc-text, #586678); border: 0; border-bottom: 3px solid transparent; }
     .nc-ats-tabs .nav-link.active { color: var(--nc-primary-dark, #08785d); border-bottom-color: var(--nc-primary, #159a78); background: transparent; }
 
-    .nc-ats-card { background: #fff; border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .nc-ats-card { background: var(--nc-surface, #fff); border: 1px solid var(--nc-border, #e1e8e4); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
     .nc-check-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--nc-border, #e1e8e4); font-size: 0.88rem; }
     .nc-check-row:last-child { border-bottom: none; }
     .nc-check-good { color: #159a78; }
     .nc-check-warn { color: #b8860b; }
     .nc-check-bad { color: #d64545; }
 
-    .nc-bar-track { height: 8px; border-radius: 999px; background: #eef2f0; overflow: hidden; margin-top: 4px; }
+    .nc-bar-track { height: 8px; border-radius: 999px; background: var(--nc-input-bg, #eef2f0); overflow: hidden; margin-top: 4px; }
     .nc-bar-fill { height: 100%; background: var(--nc-primary, #159a78); }
 
     .nc-issue-item { border: 1px solid var(--nc-border, #e1e8e4); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
@@ -42,6 +42,8 @@
     .nc-issue-item.sev-medium { border-left: 4px solid #d99425; }
     .nc-issue-item.sev-low { border-left: 4px solid #6a8caf; }
     .nc-issue-quote { background: #fff5f5; border-left: 3px solid #d64545; padding: 8px 12px; margin: 8px 0; font-size: 0.85rem; font-style: italic; border-radius: 0 8px 8px 0; }
+    :root[data-theme="dark"] .nc-issue-quote { background: var(--danger-light, #450A0A); }
+    :root[data-theme="dark"] .nc-skill-chip.missing { background: var(--danger-light, #450A0A); color: #FCA5A5; }
     .nc-issue-actions form { display: inline; }
 
     .nc-skill-chip { display: inline-flex; align-items: center; padding: 6px 12px; margin: 0 6px 6px 0; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
@@ -61,7 +63,7 @@
     <div class="container">
 
         <div class="nc-ats-header">
-            <p class="nc-ats-eyebrow mb-0">NammaCareer ATS &middot; Resume Intelligence Center</p>
+            <p class="nc-ats-eyebrow mb-0">TalentPanda ATS &middot; Resume Intelligence Center</p>
             <h2 class="nc-ats-title">{{ resume.title }}</h2>
             <p class="nc-ats-sub mb-0">
                 {% if latest_scan %}Last scanned {{ latest_scan.created_at|date:"d M Y, H:i" }}{% else %}Not scanned yet{% endif %}
@@ -276,14 +278,14 @@
             <div class="tab-pane fade" id="tab-jobmatch">
                 <div class="nc-ats-card">
                     <h6 class="fw-bold mb-3">Run a Job Match</h6>
-                    <p class="text-muted small mb-3">Provide the job description one way - select an existing NammaCareer job, paste the text, or upload a file.</p>
+                    <p class="text-muted small mb-3">Provide the job description one way - select an existing TalentPanda job, paste the text, or upload a file.</p>
                     <form method="post" action="{% url 'resumes:job_match' resume.pk %}" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% if job_match_form.non_field_errors %}
                             <div class="alert alert-danger py-2 small">{{ job_match_form.non_field_errors }}</div>
                         {% endif %}
                         <div class="mb-3">
-                            <label class="fw-bold small mb-1 d-block">Select a NammaCareer Job</label>
+                            <label class="fw-bold small mb-1 d-block">Select a TalentPanda Job</label>
                             {{ job_match_form.job|add_class:"form-select" }}
                         </div>
                         <div class="mb-3">

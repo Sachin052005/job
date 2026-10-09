@@ -1,5 +1,11 @@
-/* NammaCareer manual admin panel - its own theme (spec sections 28-29).
-   Always light mode; does not read the public site's theme cookie/attr. */
+/* TalentPanda manual admin panel - its own surface tokens, shared theme
+   system (spec sections 28-29). The sidebar is intentionally always a dark
+   surface in both Light and Dark mode (a common admin-UI pattern - it is
+   not the thing this file's dark-mode block below is fixing). Everything
+   else - topbar, content background, cards, tables, forms, alerts,
+   pagination - follows the user's saved Light/Dark Appearance preference,
+   driven by the same data-theme attribute as the rest of the application
+   (see templates/adminpanel/base.html + templates/base.html). */
 
 :root {
     --np-primary: #159a78;
@@ -11,6 +17,8 @@
     --np-bg: #f4f7f6;
     --np-surface: #ffffff;
     --np-border: #e1e8e4;
+    --np-input-bg: #ffffff;
+    --np-table-head-bg: #fafcfb;
     --np-sidebar-bg: #12241e;
     --np-sidebar-text: #cfe3db;
     --np-sidebar-active: #159a78;
@@ -21,6 +29,105 @@
     --np-radius: 10px;
     --np-sidebar-width: 260px;
     --np-topbar-height: 64px;
+
+    --np-alert-success-bg: #ECFDF5;
+    --np-alert-success-text: #047857;
+    --np-alert-danger-bg: #FEF2F2;
+    --np-alert-danger-text: #B91C1C;
+    --np-alert-warning-bg: #FFF7ED;
+    --np-alert-warning-text: #B45309;
+    --np-alert-info-bg: #EFF6FF;
+    --np-alert-info-text: #1D4ED8;
+}
+
+/* ==========================================================================
+   Dark theme
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+    --np-heading: #F8FAFC;
+    --np-text: #CBD5E1;
+    --np-muted: #94A3B8;
+    --np-bg: #0B1120;
+    --np-surface: #131D31;
+    --np-border: #24344D;
+    --np-input-bg: #192640;
+    --np-table-head-bg: #192640;
+
+    --np-alert-success-bg: #064E3B;
+    --np-alert-success-text: #6EE7B7;
+    --np-alert-danger-bg: #450A0A;
+    --np-alert-danger-text: #FCA5A5;
+    --np-alert-warning-bg: #451A03;
+    --np-alert-warning-text: #FCD34D;
+    --np-alert-info-bg: #164E63;
+    --np-alert-info-text: #93C5FD;
+
+    color-scheme: dark;
+}
+
+:root[data-theme="dark"] .table,
+:root[data-theme="dark"] .form-control,
+:root[data-theme="dark"] .form-select,
+:root[data-theme="dark"] .dropdown-menu,
+:root[data-theme="dark"] .modal-content {
+    background-color: var(--np-surface);
+    color: var(--np-text);
+    border-color: var(--np-border);
+}
+
+:root[data-theme="dark"] .form-control::placeholder {
+    color: var(--np-muted);
+    opacity: 1;
+}
+
+:root[data-theme="dark"] .table {
+    --bs-table-bg: var(--np-surface);
+    --bs-table-color: var(--np-text);
+    --bs-table-striped-bg: var(--np-input-bg);
+    --bs-table-hover-bg: var(--np-input-bg);
+    --bs-table-border-color: var(--np-border);
+}
+
+:root[data-theme="dark"] .np-table thead th {
+    background: var(--np-table-head-bg);
+    color: var(--np-muted);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+    color: var(--np-text);
+    border-color: var(--np-border);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: var(--np-input-bg);
+    color: var(--np-heading);
+}
+
+:root[data-theme="dark"] .page-link {
+    background-color: var(--np-surface);
+    border-color: var(--np-border);
+    color: var(--np-text);
+}
+
+:root[data-theme="dark"] .page-item.disabled .page-link {
+    background-color: var(--np-bg);
+    color: var(--np-muted);
+}
+
+:root[data-theme="dark"] .text-muted {
+    color: var(--np-muted) !important;
+}
+
+:root[data-theme="dark"] .alert-success { background-color: var(--np-alert-success-bg); color: var(--np-alert-success-text); border-color: transparent; }
+:root[data-theme="dark"] .alert-danger { background-color: var(--np-alert-danger-bg); color: var(--np-alert-danger-text); border-color: transparent; }
+:root[data-theme="dark"] .alert-warning { background-color: var(--np-alert-warning-bg); color: var(--np-alert-warning-text); border-color: transparent; }
+:root[data-theme="dark"] .alert-info { background-color: var(--np-alert-info-bg); color: var(--np-alert-info-text); border-color: transparent; }
+
+:root[data-theme="dark"] .input-group-text {
+    background-color: var(--np-input-bg) !important;
+    color: var(--np-muted);
+    border-color: var(--np-border);
 }
 
 * { box-sizing: border-box; }

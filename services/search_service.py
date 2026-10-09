@@ -125,7 +125,7 @@ def filter_applications(queryset, params):
 
 
 def filter_students(queryset, params):
-    """Recruiter-facing candidate search filters (NammaCareer update spec
+    """Recruiter-facing candidate search filters (TalentPanda update spec
     sections 8-9). Only ever returns job-seeker profiles that have opted
     into recruiter search (UserSettings.show_in_recruiter_search) - this is
     the one place that privacy rule is enforced for search results, never a

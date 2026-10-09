@@ -14,4 +14,4 @@ Application Status:
 {{ cta_text }}: {{ cta_url }}
 {% endif %}
 Regards,
-NammaCareer Team
+TalentPanda Team

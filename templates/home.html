@@ -2,14 +2,14 @@
 
 {% load static %}
 
-{% block title %}NammaCareer - Find Your Next Job{% endblock %}
+{% block title %}TalentPanda - Find Your Next Job{% endblock %}
 
 {% block content %}
 
 <style>
 
 /* =========================================================
-   NAMMACAREER HOMEPAGE — UI ONLY
+   TALENTPANDA HOMEPAGE — UI ONLY
    No content / functionality changes
 ========================================================= */
 
@@ -154,7 +154,7 @@
     padding: 7px 14px;
     border: 1px solid #DBEAFE;
     border-radius: 999px;
-    background: #FFFFFF;
+    background: var(--nc-surface);
     color: var(--nc-primary, #2563EB);
     font-size: 12px;
     font-weight: 700;
@@ -302,7 +302,7 @@
     overflow: hidden;
     border: 1px solid var(--nc-border, #E2E8F0);
     border-radius: var(--nc-radius-lg, 14px);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
@@ -395,7 +395,7 @@
     padding: 60px 25px;
     border: 1px dashed var(--nc-border, #E2E8F0);
     border-radius: var(--nc-radius-lg, 14px);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     text-align: center;
 }
 
@@ -423,7 +423,7 @@
     padding: 28px 22px;
     border: 1px solid var(--nc-border, #E2E8F0);
     border-radius: var(--nc-radius-lg, 14px);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
     transition: transform .2s ease, box-shadow .2s ease;
 }
@@ -473,6 +473,11 @@
     border-radius: var(--nc-radius-xl, 16px) !important;
     background: linear-gradient(135deg, #EFF6FF 0%, #EEF2FF 100%);
     box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
+}
+
+:root[data-theme="dark"] .nc-cta {
+    border-color: var(--nc-border);
+    background: linear-gradient(135deg, var(--nc-surface) 0%, var(--nc-input-bg) 100%);
 }
 
 .nc-cta::before {
@@ -735,7 +740,7 @@
     height: 38px;
     border-radius: 50%;
     border: 1px solid var(--nc-border, #E2E8F0);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     color: var(--nc-text-secondary, #475569);
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
     z-index: 2;
@@ -765,7 +770,7 @@
     padding: 8px 16px;
     border: 1px solid var(--nc-border, #E2E8F0);
     border-radius: 999px;
-    background: #FFFFFF;
+    background: var(--nc-surface);
     color: var(--nc-text-secondary, #475569) !important;
     font-size: 13px;
     font-weight: 600;
@@ -791,7 +796,7 @@
     padding: 26px 20px;
     border: 1px solid var(--nc-border, #E2E8F0);
     border-radius: var(--nc-radius-lg, 14px);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
     text-align: center;
     cursor: pointer;
@@ -857,7 +862,7 @@
     padding: 22px 24px;
     border: 1px solid var(--nc-border, #E2E8F0);
     border-radius: var(--nc-radius-lg, 14px);
-    background: #FFFFFF;
+    background: var(--nc-surface);
     box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
     animation: domainPanelIn .22s ease both;
 }
@@ -925,11 +930,11 @@
 
                         <img
                             src="{% static 'images/logo.png' %}"
-                            alt="NammaCareer"
+                            alt="TalentPanda"
                             class="nc-brand-logo"
                         >
 
-                        NammaCareer
+                        TalentPanda
 
                     </div>
 
@@ -1377,14 +1382,14 @@
 
         {% if not user.is_authenticated %}
 
-        <div class="text-center bg-white rounded-4 p-5 shadow-sm mb-5 reveal nc-cta">
+        <div class="text-center rounded-4 p-5 shadow-sm mb-5 reveal nc-cta">
 
             <h3>
                 Ready to get started?
             </h3>
 
             <p class="text-muted">
-                Join NammaCareer today and take the next step in your career.
+                Join TalentPanda today and take the next step in your career.
             </p>
 
             <a

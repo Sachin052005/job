@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load form_tags %}
-{% block title %}{{ title }} - NammaCareer{% endblock %}
+{% block title %}{{ title }} - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
     .record-form-card {
         border: 1px solid #e1e8e4;
         border-radius: 22px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         box-shadow: 0 15px 45px rgba(23, 34, 53, 0.07);
         overflow: hidden;
     }
@@ -107,7 +107,7 @@
     .record-form-actions .btn-outline-secondary {
         border-color: #d9e2de;
         color: #586678;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .record-form-check {

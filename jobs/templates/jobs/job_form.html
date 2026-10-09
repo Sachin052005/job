@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load form_tags %}
 
-{% block title %}{% if object %}Edit Job{% else %}Post a Job{% endif %} - NammaCareer{% endblock %}
+{% block title %}{% if object %}Edit Job{% else %}Post a Job{% endif %} - TalentPanda{% endblock %}
 
 {% block content %}
 
@@ -108,7 +108,7 @@
         min-height: 44px;
         border: 1px solid var(--nc-border, #e1e8e4);
         border-radius: 10px;
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
         color: var(--nc-heading, #172235);
         padding: 10px 13px;
         box-shadow: none;
@@ -122,7 +122,7 @@
     .nc-job-form-body .form-select:focus {
         border-color: var(--nc-primary, #159a78);
         box-shadow: 0 0 0 3px rgba(21, 154, 120, 0.10);
-        background: #ffffff;
+        background: var(--nc-surface, #ffffff);
     }
 
     .nc-job-form-body textarea.form-control {

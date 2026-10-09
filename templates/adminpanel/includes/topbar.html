@@ -5,7 +5,7 @@
 
     <form method="get" action="{% url 'adminpanel:global_search' %}" class="d-none d-md-block">
         <div class="input-group input-group-sm">
-            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
             <input type="search" name="q" class="form-control" placeholder="Search users, companies, jobs, applications, reviews…" value="{{ request.GET.q }}">
         </div>
     </form>

@@ -5,7 +5,7 @@
         position: relative;
         height: 100%;
         overflow: hidden;
-        background: #FFFFFF;
+        background: var(--nc-surface, #ffffff);
         border: 1px solid var(--nc-border, #E2E8F0);
         border-radius: var(--nc-radius-lg, 14px);
         box-shadow: var(--nc-shadow-card, 0 2px 8px rgba(15, 23, 42, 0.04));
@@ -120,7 +120,7 @@
         border: 1px solid var(--nc-border, #E2E8F0);
         border-radius: var(--nc-radius-sm, 8px);
         color: var(--nc-text-light, #94A3B8);
-        background: #FFFFFF;
+        background: var(--nc-surface, #ffffff);
         transition:
             color 0.18s ease,
             background 0.18s ease,
@@ -186,6 +186,12 @@
         color: #EA580C;
         font-size: 0.72rem;
         font-weight: 600;
+    }
+
+    :root[data-theme="dark"] .nc-job-badge-tag {
+        background: var(--warning-light, #451A03);
+        border-color: transparent;
+        color: #FCD34D;
     }
 
     /* Footer */
